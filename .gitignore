@@ -41,7 +41,7 @@ coverage.xml
 docs/_build/
 
 # Local Stuff
-*.db
+db.sqlite3
 local_settings.py
 /media
 /static
