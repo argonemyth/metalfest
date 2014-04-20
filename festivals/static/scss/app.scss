@@ -38,3 +38,28 @@
 //   "foundation/components/type",
 //   "foundation/components/offcanvas",
 //   "foundation/components/visibility";
+
+html, body#fullscreen{
+    height: 100%;
+}
+
+body#fullscreen {
+    #map {
+        width: 100%;
+        height: 100%;
+        img {
+            // fix the zooming widget display
+            max-width: none !important;
+        }
+    }
+    #footer {
+        position: absolute;
+        width: 100%;
+        z-index: 1000;
+        bottom: 0;
+        left: 0; 
+        // height: 10rem;
+        background-color: $body-bg; 
+        h1 { color: #FFF;}
+    }
+}
