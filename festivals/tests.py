@@ -4,6 +4,7 @@ from django.http import HttpRequest
 
 from festivals.views import home_page
 from festivals.models import Festival
+from cities_light.models import City, Region, Country
 
 class HomePageTest(TestCase):
 
@@ -20,6 +21,16 @@ class HomePageTest(TestCase):
 
 
 class FestivalModelTest(TestCase):
+
+    def create_city(self):
+        # create dummy city, region and country for testing
+        country = Country(name="United States", continent="NA", phone=1)
+        country.save()
+        region = Region(name="Texas", country=country)
+        region.save(0)
+        city = City(name="Amarillo", region=region, country=country)
+        city.save()
+        return city
 
     def test_saving_and_retrieving_itmes(self):
         # Dummy festival 1
@@ -45,3 +56,12 @@ class FestivalModelTest(TestCase):
         self.assertEqual(first_saved.title, "Hellfest")
         self.assertEqual(second_saved.title, "Wacken Open Air")
 
+    def test_geocoder(self):
+        # Dummy festival
+        festival = Festival()
+        festival.title = "Hellfest"
+        festival.location = "6007 East Amarillo Blvd"
+        festival.city = self.create_city() #Amarillo, Texas, United States
+        festival.save()
+        self.assertEqual(festival.latitude, 35.222553)
+        self.assertEqual(festival.longitude, -101.766291)

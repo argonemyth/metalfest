@@ -5,9 +5,15 @@ from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 from django.utils.timezone import now
 from django.conf import settings
+from django.utils.encoding import smart_str
 
+from geopy import geocoders
 from uuslug import uuslug
 from taggit.managers import TaggableManager
+
+import logging
+logger = logging.getLogger(__name__)
+
 # from django.db.models import Q
 #from django.utils.timezone import now
 
@@ -38,8 +44,25 @@ class Festival(models.Model):
     def __unicode__(self):
         return self.title  
 
+    def get_geo_position(self):
+        if (not self.location) or (not self.city):
+            return None
+
+        try:
+            #g = geocoders.GoogleV3(resource='maps')
+            g = geocoders.GoogleV3()
+            address = "%s, %s" % (self.location, self.city)
+            computed_address, (self.latitude, self.longitude) = g.geocode(smart_str(address),
+                                                                          exactly_one=False)[0]
+        except (UnboundLocalError, ValueError,geocoders.google.GQueryError):
+            logger.warning("Can't find the lat, log for %s" % address)
+            return None
+
+
     def save(self, ip=None, *args, **kwargs):
         self.slug = uuslug(self.title, instance=self)
+        if (self.longitude is None) or (self.latitude is None):
+            self.get_geo_position()
         super(Festival, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
