@@ -34,6 +34,8 @@ class Festival(models.Model):
                                    blank=True, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6,
                                     blank=True, null=True)
+    computed_address = models.CharField(max_length=255, null=True, blank=True,
+                                        help_text=_('The address Google Geocoder used to calculate the geo position'))
     genres = TaggableManager(verbose_name=_("genres"), blank=True, 
                              help_text=_('A comma-separated list of genres'))
 
@@ -52,12 +54,11 @@ class Festival(models.Model):
             #g = geocoders.GoogleV3(resource='maps')
             g = geocoders.GoogleV3()
             address = "%s, %s" % (self.location, self.city)
-            computed_address, (self.latitude, self.longitude) = g.geocode(smart_str(address),
-                                                                          exactly_one=False)[0]
+            self.computed_address, (self.latitude, self.longitude) = g.geocode(smart_str(address),
+                                                                     exactly_one=False)[0]
         except (UnboundLocalError, ValueError,geocoders.google.GQueryError):
             logger.warning("Can't find the lat, log for %s" % address)
             return None
-
 
     def save(self, ip=None, *args, **kwargs):
         self.slug = uuslug(self.title, instance=self)
