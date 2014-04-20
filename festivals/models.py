@@ -16,8 +16,8 @@ class Festival(models.Model):
     title = models.CharField(_("title"), max_length=255, unique=True)
     slug = models.CharField(max_length=255, unique=True, editable=False)
     description = models.TextField(_("description"), blank=True, null=True)
-    start_date = models.DateField(_("start_date"))
-    end_date = models.DateField(_("end_date"))
+    start_date = models.DateField(_("start_date"), blank=True, null=True)
+    end_date = models.DateField(_("end_date"), blank=True, null=True)
     url = models.URLField(_("URL"), blank=True, null=True)
     location = models.CharField(_("location"), max_length=300,
                                 null=True, blank=True)
