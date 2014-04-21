@@ -7,6 +7,12 @@ $(document).ready(function () {
 
 });
 
+// This variable store any google map related objects
+// like the actual map and bounds...
+var google_map = {};
+// an empty LatLngBounds object
+google_map.fullBounds = new google.maps.LatLngBounds();
+
 function Festival(data) {
     var self = this;
 
@@ -24,7 +30,7 @@ function Festival(data) {
         position: festLatLng,
         title: self.title(),
         // icon: 'custome_icon.png',
-        map: map, // map is a global var initilized in the map binding 
+        map: google_map.map, // map is a global var initilized in the map binding 
         visible: false, 
         animation: google.maps.Animation.DROP
     });
@@ -32,8 +38,8 @@ function Festival(data) {
     self.enableMarker = function(){
         self.marker.setVisible(true);
         // Extend the map bounds for each address
-        // fullBounds.extend(currLatLng);
-        // map.fitBounds(cm.koThree.fullBounds);
+        google_map.fullBounds.extend(festLatLng);
+        google_map.map.fitBounds(google_map.fullBounds);
         // self.onMap(true);
     }
 }
@@ -75,7 +81,7 @@ ko.bindingHandlers.map = {
             styles: map_style
         };
         // Be careful, map is a global now!!
-        map = new google.maps.Map(element, mapOptions);
+        google_map.map = new google.maps.Map(element, mapOptions);
     },
     update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         var festivals = ko.utils.unwrapObservable(valueAccessor());
