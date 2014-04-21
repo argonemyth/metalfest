@@ -7,5 +7,45 @@
     <div id="footer">
         <h1>METALFEST</h1>
     </div>
-    
+    {% comment %}
+    <div id="overlay" class="off-canvas-wrap" data-offcanvas>
+        <div class="inner-wrap">
+            <section class="right-small">
+                <a class="right-off-canvas-toggle" href="#">
+                    <span class="fa-stack fa-lg">
+                        <i class="fa fa-square fa-stack-2x"></i>
+                        <i class="fa fa-chevron-left fa-stack-1x fa-inverse"></i>
+                    </span>
+                </a>
+            </section>
+            <aside class="right-off-canvas-menu">
+                <ul class="off-canvas-list">
+                    <li><label>Users</label></li>
+                    <li><a href="#">Hari Seldon</a></li>
+                    <li><a href="#">...</a></li>
+                </ul>
+            </aside>
+            <section class="main-section">
+            </section>
+            <a class="exit-off-canvas"></a>
+        </div>
+    </div>
+    {% endcomment %}
+    <div id="overlay" class="panel" data-bind='animatedVisible: displayOverlay'>
+        <h3>Find the festivals!</h3>
+        <p>It has an easy to override visual style, and is appropriately subdued.</p>
+        <a data-bind='click: hideOverlay' href="#">
+            <span class="fa-stack fa-lg">
+                <i class="fa fa-square fa-stack-2x"></i>
+                <i class="fa fa-chevron-right fa-stack-1x fa-inverse"></i>
+            </span>
+        </a>
+    </div>
+    <div id="show-overlay-button" data-bind='click: showOverlay' href="#">
+        <span class="fa-stack fa-lg">
+            <i class="fa fa-square fa-stack-2x"></i>
+            <i class="fa fa-chevron-left fa-stack-1x fa-inverse"></i>
+        </span>
+    </div>
+
 {% endblock content %}

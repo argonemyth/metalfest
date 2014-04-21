@@ -804,8 +804,10 @@ $body-bg: #1F1F21;
 
 // We use these to control the background and border styles
 // $panel-bg: scale-color(#fff, $lightness: -5%);
+$panel-bg: rgba($body-bg,.8);
 // $panel-border-style: solid;
 // $panel-border-size: 1px;
+$panel-border-size: 0px;
 
 // We use this % to control how much we darken things on hover
 // $panel-function-factor: -11%;
