@@ -78,6 +78,7 @@ ko.bindingHandlers.map = {
             zoom: 5, 
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             mapTypeControl: false,
+            minZoom: 3,
             styles: map_style
         };
         // Be careful, map is a global now!!
