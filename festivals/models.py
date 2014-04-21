@@ -57,7 +57,7 @@ class Festival(models.Model):
             self.computed_address, (self.latitude, self.longitude) = g.geocode(smart_str(address),
                                                                      exactly_one=False)[0]
         except (UnboundLocalError, ValueError,geocoders.google.GQueryError):
-            logger.warning("Can't find the lat, log for %s" % address)
+            logger.warning("Can't find the lat, log for %s" % self.location)
             return None
 
     def save(self, ip=None, *args, **kwargs):
@@ -68,3 +68,13 @@ class Festival(models.Model):
 
     def get_absolute_url(self):
         return reverse('festival-detail', args=[self.slug])
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'start_date': self.start_date,
+            'end_data': self.end_date.strftime("%d %M, %Y"),
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+        }
