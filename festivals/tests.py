@@ -59,7 +59,7 @@ class HomePageTest(TestCase):
 
     def test_festival_list_json_view(self):
         festivals = Festival.objects.all()
-        request = self.factory.get('/')
+        request = self.factory.get('/festivals/')
         view = FestivalJSONList.as_view()
         response = view(request)
         self.assertEqual(response.status_code, 200)
