@@ -83,11 +83,14 @@ function FestivalMapViewModel() {
             // Check if the event's start & end dates are within range
             // console.log("Festival Date: " + item.start_date());
             var festival_start_date = new Date(item.start_date());
-            // console.log(festival_start_date, self.min_date(), self.max_date());
-            if ( festival_start_date < self.min_date() || festival_start_date > self.max_date() ) {
-                item.disableMarker();
-            } else {
+            var festival_end_date = new Date(item.end_date());
+            console.log(item.end_date());
+            console.log(festival_start_date, festival_end_date, self.min_date(), self.max_date());
+            if ( (festival_start_date > self.min_date() && festival_start_date < self.max_date()) &&
+                 (festival_end_date > self.min_date() && festival_end_date < self.max_date()) ) {
                 item.enableMarker();
+            } else {
+                item.disableMarker();
             } 
         });
     });

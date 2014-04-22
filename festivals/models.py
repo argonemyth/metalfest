@@ -74,7 +74,7 @@ class Festival(models.Model):
             'id': self.id,
             'title': self.title,
             'start_date': self.start_date,
-            'end_data': self.end_date.strftime("%d %M, %Y"),
+            'end_date': self.end_date,
             'latitude': self.latitude,
             'longitude': self.longitude,
         }
