@@ -5,6 +5,25 @@ $(document).foundation();
 $(document).ready(function () {   
     ko.applyBindings(viewModel);
 
+    // Init date slider
+    var today = new Date();
+    $("#slider").dateRangeSlider({
+        bounds: {
+            min: new Date(today.getFullYear(), 0, 1),
+            max: new Date(today.getFullYear(), 11, 31)
+        },
+        defaultValues: {
+            min: today,
+            max: new Date(today.getFullYear(), 11, 31)
+        }
+    // }).on("valuesChanging", function(e, data){
+    }).on("valuesChanged", function(e, data){
+        // console.log(data.values);
+        // console.log("Something moved. min: " + data.values.min + " max: " + data.values.max);
+        // viewModel.filterMarkersByDates(data.values.min, data.values.max);
+        viewModel.min_date(new Date(data.values.min));
+        viewModel.max_date(new Date(data.values.max));
+    });
 });
 
 // This variable store any google map related objects
@@ -42,11 +61,36 @@ function Festival(data) {
         google_map.map.fitBounds(google_map.fullBounds);
         // self.onMap(true);
     }
+
+    self.disableMarker = function() {
+        self.marker.setVisible(false);
+    }
 }
 
 function FestivalMapViewModel() {
     var self = this;
     self.festivals = ko.observableArray();
+    self.min_date = ko.observable(new Date());
+    self.max_date = ko.observable(new Date(self.min_date().getFullYear(), 11, 31));
+    self.date_range = ko.computed(function() {
+        return self.min_date() + " - " + self.max_date();
+    }, self);
+    // we create the subscription function manually because there is no binding
+    // between date_range observable in the view.
+    self.date_range.subscribe(function (date_range) {
+        // console.log(date_range);
+        ko.utils.arrayForEach(self.festivals(), function(item) {
+            // Check if the event's start & end dates are within range
+            // console.log("Festival Date: " + item.start_date());
+            var festival_start_date = new Date(item.start_date());
+            // console.log(festival_start_date, self.min_date(), self.max_date());
+            if ( festival_start_date < self.min_date() || festival_start_date > self.max_date() ) {
+                item.disableMarker();
+            } else {
+                item.enableMarker();
+            } 
+        });
+    });
 
     self.myMap = ko.observable({
         lat: ko.observable(55),
@@ -67,10 +111,26 @@ function FestivalMapViewModel() {
         });
     }
 
+    // Filter festival markers by dates
+    // self.filterMarkersByDates = function(min, max) {
+    //     var min_date = Date(min);
+    //     var max_date = Date(max);
+    //     console.log("Going to filter markers between" + min_date + " and " + max_date);
+    //     ko.utils.arrayForEach(this.festivals(), function(item) {
+    //         // Check if the event's start & end dates are within range
+    //         var festival_start_date = Date(item.start_date());
+    //         console.log(festival_start_date, min_date, max_date);
+    //         if ( festival_start_date < min_date || festival_start_date > max_date ) item.disableMarker();
+    //     });
+    // }
+
+    // Related to the overlay
     self.displayOverlay = ko.observable(true);
+
     self.hideOverlay = function() {
         self.displayOverlay(false);
     }
+
     self.showOverlay = function() {
         self.displayOverlay(true);
     }

@@ -33,7 +33,13 @@
     {% endcomment %}
     <div id="overlay" class="panel" data-bind='animatedVisible: displayOverlay'>
         <h3>Find the festivals!</h3>
-        <p>It has an easy to override visual style, and is appropriately subdued.</p>
+        {% comment %}
+            
+        <form action="" method="post">{% csrf_token %}
+        {{ form.as_p }}
+        </form>
+        {% endcomment %}
+        <div id="slider" style="width: 400px;"></div>
         <a data-bind='click: hideOverlay' href="#">
             <span class="fa-stack fa-lg">
                 <i class="fa fa-square fa-stack-2x"></i>

@@ -1,7 +1,8 @@
 from django.views.generic import View
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.list import BaseListView
-from django.views.generic.edit import BaseFormView
+from django.views.generic.edit import BaseFormView, FormView
+from django.views.generic import TemplateView
 from django.utils.encoding import force_unicode
 from django.db.models.base import ModelBase
 from django.http import HttpResponseNotAllowed, HttpResponse
@@ -11,6 +12,7 @@ from django.db.models import Q
 import json
 
 from festivals.models import Festival
+from festivals.forms import FilterForm
 
 # JSON serialization helpers
 def dumps(content, json_opts={}):
@@ -104,6 +106,15 @@ class JSONResponseMixin(object):
 
 
 # Actual views for the app
+class FesttivalMap(FormView):
+    """
+    View for our on page app.
+    """
+    template_name="map.html"
+    form_class = FilterForm
+
+
+
 class FestivalJSONList(JSONResponseMixin, BaseListView):
     model = Festival
     context_object_name = 'festivals'

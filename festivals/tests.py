@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 
 import json
 
-from festivals.views import FestivalJSONList
+from festivals.views import FestivalJSONList, FesttivalMap
 from festivals.models import Festival
 from cities_light.models import City, Region, Country
 
@@ -49,7 +49,8 @@ class HomePageTest(TestCase):
 
     def test_home_page_returns_correct_title(self):
         request = self.factory.get('/')
-        view = TemplateView.as_view(template_name="map.html")
+        # view = TemplateView.as_view(template_name="map.html")
+        view = FesttivalMap.as_view()
         response = view(request)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.template_name[0], 'map.html')
