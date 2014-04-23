@@ -6,7 +6,7 @@ class FestivalAdmin(admin.ModelAdmin):
     """
     Admin class for blog posts.
     """
-    list_display = ('title', 'start_date', 'end_date', 'location',  'city', 'latitude', 'longitude')
+    list_display = ('title', 'start_date', 'end_date', 'location',  'city', 'latitude', 'longitude', 'lastfm_id')
     list_editable = ('start_date', 'end_date', 'location')
     # list_filter = ('city',)
     search_fields = ('title', 'description', 'location')

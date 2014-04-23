@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, IntegrityError
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.core.urlresolvers import reverse
 # from django.db.models.signals import post_save
@@ -7,9 +7,16 @@ from django.utils.timezone import now
 from django.conf import settings
 from django.utils.encoding import smart_str
 
+from cities_light.models import City
 from geopy import geocoders
 from uuslug import uuslug
 from taggit.managers import TaggableManager
+from bs4 import BeautifulSoup
+import urllib2, urllib
+import re
+import datetime
+
+from festivals import pylast
 
 import logging
 logger = logging.getLogger(__name__)
@@ -25,6 +32,7 @@ class Festival(models.Model):
     start_date = models.DateField(_("start_date"), blank=True, null=True)
     end_date = models.DateField(_("end_date"), blank=True, null=True)
     url = models.URLField(_("URL"), blank=True, null=True)
+    # lastfm_url = models.URLField(_("URL"), blank=True, null=True)
     location = models.CharField(_("location"), max_length=300,
                                 null=True, blank=True)
     city = models.ForeignKey('cities_light.City',
@@ -38,6 +46,8 @@ class Festival(models.Model):
                                         help_text=_('The address Google Geocoder used to calculate the geo position'))
     genres = TaggableManager(verbose_name=_("genres"), blank=True, 
                              help_text=_('A comma-separated list of genres'))
+    lastfm_id = models.CharField(_("Last.fm event ID"), max_length=100,
+                                 null=True, blank=True, unique=True)
 
     class Meta:
         verbose_name = _('festival')
@@ -56,8 +66,8 @@ class Festival(models.Model):
             address = "%s, %s" % (self.location, self.city)
             self.computed_address, (self.latitude, self.longitude) = g.geocode(smart_str(address),
                                                                      exactly_one=False)[0]
-        except (UnboundLocalError, ValueError,geocoders.google.GQueryError):
-            logger.warning("Can't find the lat, log for %s" % self.location)
+        except Exception as e:
+            logger.warning("Can't find the lat, log for %s (%s)" % (self.location, e))
             return None
 
     def save(self, ip=None, *args, **kwargs):
@@ -78,3 +88,101 @@ class Festival(models.Model):
             'latitude': self.latitude,
             'longitude': self.longitude,
         }
+
+    def get_lastfm_event_id(self):
+        """We will make an event search on lastfm."""
+        if self.lastfm_id is not None:
+            print "Festival %s already got lastfm id (%s)" % (self.title, self.lastfm_id)
+            return
+
+        query = {}
+        query['q'] = r'"%s"' % self.title.encode("utf-8")
+        url_query = urllib.urlencode(query)
+        lastfm_url = 'http://www.last.fm/events/search?search=1&by=festival&' + url_query
+        # print lastfm_url
+        search_result = urllib2.urlopen(lastfm_url).read()
+        soup = BeautifulSoup(search_result)
+        events = soup.find_all('tr', class_="festival")
+        if events:
+            event = events[0]
+            event_url = event.find("a", class_="url")
+            if event_url:
+                # Something like this:
+                # /festival/3647494+Maryland+Deathfest+XII
+                url = event_url.get('href')
+                event_id = re.findall(r'\d+', url)[0]
+                if event_id:
+                    self.lastfm_id = event_id 
+                    try:
+                        self.save()
+                    except IntegrityError:
+                        print "Festival %s id already exit - %s" % (self.title, event_id)
+                        return None
+                    else:
+                        return event_id
+        else:
+            # print "Festival %s not found" % self.title
+            return None
+
+    def get_event_info(self):
+        """Get event info from last.fm"""
+        if self.lastfm_id:
+            network = pylast.LastFMNetwork(api_key = settings.LASTFM_API_KEY,
+                                           api_secret = settings.LASTFM_API_SECRET)
+            e = pylast.Event(self.lastfm_id, network)
+            venue, location = e.get_venue()
+            # print location
+
+            if (self.location is None) and location['name']:
+                self.location = location['name']
+                street = location.get('steet', '')
+                if street:
+                    self.location += ", " + street
+
+            if (self.city is None) and (location['city'] and location['country']):
+                # for US cities, it comes with region name like this: 'Baltimore, MD'
+                city_info = location['city'].split(',')
+                if city_info == 2:
+                    city_name = city_info[0].strip()
+                    region_name = city_info[1].strip()
+                    try:
+                        city = City.objects.get(models.Q(name__iexact = city_name),
+                                                models.Q(region__alternate_names__icontains=region_name),
+                                                models.Q(country__name__iexact=location['country']))
+                    except City.DoesNotExist:
+                        city = None
+                else:
+                    city_name = city_info[0].strip()
+                    try:
+                        city = City.objects.get(models.Q(name__iexact = city_name),
+                                                models.Q(country__name__iexact=location['country']))
+                    except City.DoesNotExist:
+                        city = None
+
+                if city:
+                    self.city = city
+
+            if (self.latitude is None) and location['lat']:
+                self.latitude = location['lat']
+
+            if (self.longitude is None) and location['lng']:
+                self.longitude = location['lng']
+
+            if self.start_date is None:
+                # The date format is this: Wed, 23 Apr 2014 16:36:01
+                start_d = e.get_start_date()
+                if start_d:
+                    self.start_date = datetime.datetime.strptime(
+                                        start_d, '%a, %d %b %Y %H:%M:%S'
+                                      ).strftime('%Y-%m-%d')
+
+            if self.end_date is None:
+                # The date format is this: Wed, 23 Apr 2014 16:36:01
+                end_d = e.get_end_date()
+                if end_d:
+                    self.end_date = datetime.datetime.strptime(
+                                        end_d, '%a, %d %b %Y %H:%M:%S'
+                                      ).strftime('%Y-%m-%d')
+
+            # TODO: Get lineup
+            self.save()
