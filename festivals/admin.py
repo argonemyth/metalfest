@@ -1,6 +1,16 @@
 from django.contrib import admin
+from django.utils.translation import ugettext, ugettext_lazy as _
 
 from festivals.models import Festival
+
+def get_lastfm_info(modeladmin, request, queryset):
+    for f in queryset:
+        if f.lastfm_id is None:
+            f.get_lastfm_event_id()
+
+        if f.lastfm_id:
+            f.get_event_info()
+get_lastfm_info.short_description = _("Get festival info from Last.fm") 
 
 class FestivalAdmin(admin.ModelAdmin):
     """
@@ -13,6 +23,7 @@ class FestivalAdmin(admin.ModelAdmin):
     readonly_fields = ('slug', )
     # date_hierarchy = "date_published"
     ordering = ("start_date", )
+    actions = [get_lastfm_info]
     # inlines = [PhotoInline]
 
     # def save_model(self, request, obj, form, change):

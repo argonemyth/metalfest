@@ -177,8 +177,11 @@ class Festival(models.Model):
                                       ).strftime('%Y-%m-%d')
 
             if self.end_date is None:
-                # The date format is this: Wed, 23 Apr 2014 16:36:01
+                # If there is no end date, it's the same as start date
                 end_d = e.get_end_date()
+                if not end_d: 
+                    end_d = e.get_start_date()
+
                 if end_d:
                     self.end_date = datetime.datetime.strptime(
                                         end_d, '%a, %d %b %Y %H:%M:%S'
