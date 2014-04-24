@@ -189,3 +189,26 @@ class Festival(models.Model):
 
             # TODO: Get lineup
             self.save()
+
+
+class Artist(models.Model):
+    """ This model records the info for a metal band, this model is
+        primarily used to cache genre info.
+    """
+    name = models.CharField(_("title"), max_length=255)
+    slug = models.CharField(max_length=255, unique=True, editable=False)
+    lastfm_id = models.CharField(_("Last.fm event ID"), max_length=100,
+                                 null=True, blank=True, unique=True)
+    genres = TaggableManager(verbose_name=_("genres"), blank=True, 
+                             help_text=_('A comma-separated list of genres'))
+
+    class Meta:
+        verbose_name = _('artist')
+        verbose_name_plural = _('artists')
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, ip=None, *args, **kwargs):
+        self.slug = uuslug(self.name, instance=self)
+        super(Artist, self).save(*args, **kwargs)

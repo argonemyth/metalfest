@@ -7,7 +7,7 @@ import json
 from decimal import Decimal
 
 from festivals.views import FestivalJSONList, FesttivalMap
-from festivals.models import Festival
+from festivals.models import Festival, Artist
 from cities_light.models import City, Region, Country
 
 # Utilities
@@ -38,6 +38,14 @@ def create_festivals():
     third_festival.latitude = 41.643485
     third_festival.longitude = -8.686351
     third_festival.save()
+
+
+def create_artists():
+    artists = ["Satyricon", "Arch Enemy"]
+    for a_name in artists:
+        artist = Artist()
+        artist.name = a_name 
+        artist.save()
 
 
 def create_city():
@@ -104,7 +112,6 @@ class FestivalModelTest(TestCase):
         self.city = create_city()
 
     def test_saving_and_retrieving_itmes(self):
-        # Dummy festival 1
         saved_festivals = Festival.objects.all()
         self.assertEqual(saved_festivals.count(), 3)
         first_saved = saved_festivals[0]
@@ -143,3 +150,18 @@ class FestivalModelTest(TestCase):
         self.assertEqual(festival.latitude, Decimal('41.643485'))
         self.assertEqual(festival.longitude, Decimal('-8.686351'))
         self.assertEqual(festival.end_date, "2014-04-26")
+
+
+class ArtistModelTest(TestCase):
+    def setUp(self):
+        create_artists()
+
+    def test_saving_and_retrieving_itmes(self):
+        saved_artists = Artist.objects.all()
+        self.assertEqual(saved_artists.count(), 2)
+        first_saved = saved_artists[0]
+        second_saved = saved_artists[1]
+        self.assertEqual(first_saved.name, "Satyricon")
+        self.assertEqual(first_saved.slug, "satyricon")
+        self.assertEqual(second_saved.name, "Arch Enemy")
+        self.assertEqual(second_saved.slug, "arch-enemy")
