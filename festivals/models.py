@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup
 import urllib2, urllib
 import re
 import datetime
+import json
 
 from festivals import pylast
 
@@ -83,6 +84,8 @@ class Festival(models.Model):
                                     blank=True, null=True)
     computed_address = models.CharField(max_length=255, null=True, blank=True,
                                         help_text=_('The address Google Geocoder used to calculate the geo position'))
+    lineup = models.TextField(_('lineup'), null=True, blank=True,
+                              help_text=_('Cached value for band lineup, a text field with a json string'))
     genres = TaggableManager(verbose_name=_("genres"), blank=True, 
                              help_text=_('A comma-separated list of genres'))
     lastfm_id = models.CharField(_("Last.fm event ID"), max_length=100,
@@ -94,6 +97,9 @@ class Festival(models.Model):
 
     def __unicode__(self):
         return self.title  
+
+    def get_lineup_display(self):
+        return json.loads(self.lineup)
 
     def get_geo_position(self):
         if (not self.location) or (not self.city):
@@ -108,6 +114,7 @@ class Festival(models.Model):
         except Exception as e:
             logger.warning("Can't find the lat, log for %s (%s)" % (self.location, e))
             return None
+
 
     def save(self, ip=None, *args, **kwargs):
         self.slug = uuslug(self.title, instance=self)
@@ -227,13 +234,16 @@ class Festival(models.Model):
                                       ).strftime('%Y-%m-%d')
 
             # Get Lineup
-            artists = e.get_artists()
-            for a in artists:
-                name = a.get_name()
-                if name:
-                    artist, created = Artist.objects.get_or_create(name=name)
-                    if artist.lastfm_url is None:
-                        artist.get_info_from_lastfm(a)
-
+            if self.lineup is None:
+                artists = e.get_artists()
+                lineup = []
+                for a in artists:
+                    name = a.get_name()
+                    if name and ( name not in lineup ):
+                        lineup.append(name)
+                        artist, created = Artist.objects.get_or_create(name=name)
+                        if artist.lastfm_url is None:
+                            artist.get_info_from_lastfm(a)
+                self.lineup = json.dumps(lineup)
 
             self.save()
