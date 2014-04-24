@@ -24,6 +24,45 @@ logger = logging.getLogger(__name__)
 # from django.db.models import Q
 #from django.utils.timezone import now
 
+
+class Artist(models.Model):
+    """ This model records the info for a metal band, this model is
+        primarily used to cache genre info.
+    """
+    name = models.CharField(_("name"), max_length=255)
+    slug = models.CharField(max_length=255, unique=True, editable=False)
+    lastfm_url = models.URLField(_("last.fm URL"), blank=True, null=True)
+    genres = TaggableManager(verbose_name=_("genres"), blank=True, 
+                             help_text=_('A comma-separated list of genres'))
+
+    class Meta:
+        verbose_name = _('artist')
+        verbose_name_plural = _('artists')
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, ip=None, *args, **kwargs):
+        self.slug = uuslug(self.name, instance=self)
+        super(Artist, self).save(*args, **kwargs)
+
+    def get_info_from_lastfm(self, artist=None):
+        """
+        artist is an Artist object from pylast
+        """
+        if not artist:
+            print "Going to search %s from network." % self.name
+            network = pylast.LastFMNetwork(api_key = settings.LASTFM_API_KEY,
+                               api_secret = settings.LASTFM_API_SECRET)
+            artist = network.get_artist(self.name)
+
+        if artist:
+            self.lastfm_url = artist.get_url()
+            for tag in artist.get_top_tags():
+                self.genres.add(tag)
+            self.save()
+
+
 class Festival(models.Model):
     """ This model records the info for a metal festival """
     title = models.CharField(_("title"), max_length=255, unique=True)
@@ -188,27 +227,13 @@ class Festival(models.Model):
                                       ).strftime('%Y-%m-%d')
 
             # Get Lineup
+            artists = e.get_artists()
+            for a in artists:
+                name = a.get_name()
+                if name:
+                    artist, created = Artist.objects.get_or_create(name=name)
+                    if artist.lastfm_url is None:
+                        artist.get_info_from_lastfm(a)
+
 
             self.save()
-
-
-class Artist(models.Model):
-    """ This model records the info for a metal band, this model is
-        primarily used to cache genre info.
-    """
-    name = models.CharField(_("title"), max_length=255)
-    slug = models.CharField(max_length=255, unique=True, editable=False)
-    lastfm_url = models.URLField(_("last.fm url"), blank=True, null=True)
-    genres = TaggableManager(verbose_name=_("genres"), blank=True, 
-                             help_text=_('A comma-separated list of genres'))
-
-    class Meta:
-        verbose_name = _('artist')
-        verbose_name_plural = _('artists')
-
-    def __unicode__(self):
-        return self.name
-
-    def save(self, ip=None, *args, **kwargs):
-        self.slug = uuslug(self.name, instance=self)
-        super(Artist, self).save(*args, **kwargs)

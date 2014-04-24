@@ -1430,6 +1430,17 @@ class Artist(_BaseObject, _Taggable):
         
         return _extract(self._request("artist.getInfo", True, params), "content")
     
+    def get_top_tags(self):
+        """Return a list of genre tags"""
+
+        doc = self._request("artist.getInfo", True)
+
+        tags = []
+        for node in doc.getElementsByTagName("tag"):
+            tag_name = _extract(node, 'name') 
+            tags.append(tag_name)
+        return tags
+
     def get_upcoming_events(self):
         """Returns a list of the upcoming Events for this artist."""
         

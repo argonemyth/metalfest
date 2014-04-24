@@ -32,7 +32,7 @@ def create_festivals():
 
     # Dummy festival 3
     third_festival = Festival()
-    third_festival.title = "SWR Barroselas Metalfest XVII"
+    third_festival.title = "Eindhoven Metal Meeting"
     third_festival.start_date = "2014-06-20"
     # third_festival.end_date = "2014-06-22"
     third_festival.latitude = 41.643485
@@ -137,7 +137,7 @@ class FestivalModelTest(TestCase):
         # another festival.
         self.assertEqual(festivals[1].get_lastfm_event_id(), "3616395")
         # Unique festival
-        self.assertEqual(festivals[2].get_lastfm_event_id(), "3583454")
+        self.assertEqual(festivals[2].get_lastfm_event_id(), "3839143")
 
     def test_get_event_info(self):
         festival = Festival.objects.get(id=3)
@@ -165,3 +165,9 @@ class ArtistModelTest(TestCase):
         self.assertEqual(first_saved.slug, "satyricon")
         self.assertEqual(second_saved.name, "Arch Enemy")
         self.assertEqual(second_saved.slug, "arch-enemy")
+
+    def test_get_info_from_lastfm(self):
+        artist = Artist.objects.get(id=1)
+        artist.get_info_from_lastfm()
+        self.assertEqual(artist.lastfm_url, "http://www.last.fm/music/satyricon")
+        self.assertEqual(artist.genres.count(), 5)
