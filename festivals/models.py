@@ -187,7 +187,8 @@ class Festival(models.Model):
                                         end_d, '%a, %d %b %Y %H:%M:%S'
                                       ).strftime('%Y-%m-%d')
 
-            # TODO: Get lineup
+            # Get Lineup
+
             self.save()
 
 
@@ -197,8 +198,7 @@ class Artist(models.Model):
     """
     name = models.CharField(_("title"), max_length=255)
     slug = models.CharField(max_length=255, unique=True, editable=False)
-    lastfm_id = models.CharField(_("Last.fm event ID"), max_length=100,
-                                 null=True, blank=True, unique=True)
+    lastfm_url = models.URLField(_("last.fm url"), blank=True, null=True)
     genres = TaggableManager(verbose_name=_("genres"), blank=True, 
                              help_text=_('A comma-separated list of genres'))
 
