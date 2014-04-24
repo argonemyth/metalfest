@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'cities_light',
     'taggit',
     'compressor',
+    'django_object_actions',
     'festivals'
 )
 
