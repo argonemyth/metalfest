@@ -52,16 +52,28 @@ class Artist(models.Model):
         artist is an Artist object from pylast
         """
         if not artist:
-            print "Going to search %s from network." % self.name
             network = pylast.LastFMNetwork(api_key = settings.LASTFM_API_KEY,
                                api_secret = settings.LASTFM_API_SECRET)
             artist = network.get_artist(self.name)
 
         if artist:
-            self.lastfm_url = artist.get_url()
-            for tag in artist.get_top_tags():
-                self.genres.add(tag)
-            self.save()
+            seve = False
+            if not self.lastfm_url:
+                self.lastfm_url = artist.get_url()
+                save = True
+
+            if self.genres.count() == 0:
+                top_tags = artist.get_top_tags() 
+                for tag in top_tags:
+                    self.genres.add(tag)
+                self.save()
+                return top_tags 
+
+            if save == True:
+                # only save lastfm_url
+                self.save()
+        else:
+            return None
 
 
 class Festival(models.Model):
@@ -234,7 +246,7 @@ class Festival(models.Model):
                                       ).strftime('%Y-%m-%d')
 
             # Get Lineup
-            if self.lineup is None:
+            if not self.lineup:
                 artists = e.get_artists()
                 lineup = []
                 for a in artists:
@@ -242,8 +254,17 @@ class Festival(models.Model):
                     if name and ( name not in lineup ):
                         lineup.append(name)
                         artist, created = Artist.objects.get_or_create(name=name)
-                        if artist.lastfm_url is None:
-                            artist.get_info_from_lastfm(a)
+                        if created or ( artist.genres.count() == 0 ):
+                            # Getting from last.fm
+                            top_tags = artist.get_info_from_lastfm(a)
+                        else:
+                            # Getting the existing tags from artist.
+                            top_tags = artist.genres.all()
+
+                        if top_tags:
+                            for tag in top_tags:
+                                self.genres.add(tag)
+
                 self.lineup = json.dumps(lineup)
 
             self.save()

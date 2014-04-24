@@ -140,7 +140,6 @@ class FestivalModelTest(TestCase):
         self.assertEqual(festivals[1].get_lastfm_event_id(), "3616395")
         # Unique festival
         self.assertEqual(festivals[2].get_lastfm_event_id(), "3839143")
-    """
 
     def test_get_event_info(self):
         festival = Festival.objects.get(id=3)
@@ -158,9 +157,9 @@ class FestivalModelTest(TestCase):
                 "Discharge",
                 ]
         self.assertEqual(festival.get_lineup_display()[:3], lineup)
+    """
 
 
-"""
 class ArtistModelTest(TestCase):
     def setUp(self):
         create_artists()
@@ -180,4 +179,3 @@ class ArtistModelTest(TestCase):
         artist.get_info_from_lastfm()
         self.assertEqual(artist.lastfm_url, "http://www.last.fm/music/satyricon")
         self.assertEqual(artist.genres.count(), 5)
-"""
