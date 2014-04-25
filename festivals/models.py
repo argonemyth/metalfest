@@ -146,6 +146,7 @@ class Festival(models.Model):
             'latitude': self.latitude,
             'longitude': self.longitude,
             'lineup': self.lineup, # json string
+            'genres': json.dumps([g.name for g in self.genres.select_related()])
         }
 
     def get_lastfm_event_id(self):

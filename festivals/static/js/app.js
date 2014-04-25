@@ -41,8 +41,10 @@ function Festival(data) {
     this.lat = ko.observable(data.latitude);
     this.lng = ko.observable(data.longitude);
     this.lineup = ko.observable(ko.utils.parseJson(data.lineup)); // json string
+    this.genres = ko.observable(ko.utils.parseJson(data.genres)); // json string
 
-    console.log(this.lineup());
+    // console.log(this.lineup());
+    // console.log(this.genres());
 
     // Google LatLng Object
     var festLatLng = new google.maps.LatLng(self.lat(),self.lng());
@@ -84,6 +86,8 @@ function FestivalMapViewModel() {
     self.selected_bands = ko.observable(new Array());
     // self.bands = ["The Afternoon `Gentlemen", "Palehorse", "Metal Church", "Anaal Nathrakh", "Discharge", "Misery Index", "Gorguts", "Negură Bunget", "Blood Red Throne", "Hirax", "Bonded By Blood", "Sourvein", "Black Witchery", "In Solitude", "Graves at Sea", "Wormed", "Mystifier", "Gwydion", "Grave Miasma", "Warhammer", "Bosque", "Bölzer", "Nuclear", "For The Glory", "We Are The Damned", "Crepitation", "Nami", "Antropofagus", "Nebulous", "Executer", "Verdun", "Eryn Non Dae", "Methedras", "Revolution Within", "Eternal Storm", "In Tha Umbra", "Dolentia", "Ermo", "Age of Woe", "Trinta e Um", "Solar Corona", "Equations", "Dementia 13", "Angist", "THE QUARTET OF WOAH!", "Martelo Negro", "Serrabulho", "Vai-Te Foder", "Destroyers Of All", "Vengha", "Bed Legs", "Display of power", "Pterossauros"];
     self.bands = ko.observable(new Array());
+    self.selected_genres = ko.observable(new Array());
+    self.genres = ko.observable(new Array());
 
 
     // we create the subscription function manually because there is no binding
@@ -125,6 +129,36 @@ function FestivalMapViewModel() {
                     enabled = false;
                 } else {
                     // console.log(band + " found in " + item.title());
+                    enabled = true
+                    break;
+                }
+            };
+
+            // console.log(item.title() + ": " + enabled);
+            enabled ? item.enableMarker() : item.disableMarker();
+        });
+    });
+
+    // filter by genres
+    self.selected_genres.subscribe(function (selected) {
+        console.log(selected);
+        ko.utils.arrayForEach(self.festivals(), function(item) {
+            // We need to pickout all the festivals that have selected bands
+            // a festival will be show as long as it has one band in selected
+            // bands.
+            if (! item.genres() ) {
+                console.log(item.title() + " has no lineup info");
+                item.disableMarker();
+                return false;
+            }
+            var enabled = false;
+            for ( var i in selected ) {
+                var genre = selected[i];
+                if (item.genres().indexOf(genre) == -1) {
+                    // console.log(genre + " not found in " + item.title());
+                    enabled = false;
+                } else {
+                    // console.log(genre + " found in " + item.title());
                     enabled = true
                     break;
                 }
@@ -189,6 +223,12 @@ ko.bindingHandlers.map = {
             });
             // console.log(all_linup);
             viewModel.bands(all_linup);
+            var all_genres = []
+            ko.utils.arrayForEach(festivals, function(item) {
+                if ( item.genres() ) all_genres = _.union(all_genres, item.genres());
+            });
+            console.log(all_genres);
+            viewModel.genres(all_genres);
         } 
     }
 };
