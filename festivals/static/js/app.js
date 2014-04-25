@@ -40,6 +40,9 @@ function Festival(data) {
     this.end_date = ko.observable(data.end_date);
     this.lat = ko.observable(data.latitude);
     this.lng = ko.observable(data.longitude);
+    this.lineup = ko.observable(ko.utils.parseJson(data.lineup)); // json string
+
+    console.log(this.lineup());
 
     // Google LatLng Object
     var festLatLng = new google.maps.LatLng(self.lat(),self.lng());
@@ -78,6 +81,9 @@ function FestivalMapViewModel() {
     self.date_range = ko.computed(function() {
         return self.min_date() + " - " + self.max_date();
     }, self);
+    self.selected_bands = ko.observable(new Array());
+    self.bands = ["The Afternoon Gentlemen", "Palehorse", "Metal Church", "Anaal Nathrakh", "Discharge", "Misery Index", "Gorguts", "Negură Bunget", "Blood Red Throne", "Hirax", "Bonded By Blood", "Sourvein", "Black Witchery", "In Solitude", "Graves at Sea", "Wormed", "Mystifier", "Gwydion", "Grave Miasma", "Warhammer", "Bosque", "Bölzer", "Nuclear", "For The Glory", "We Are The Damned", "Crepitation", "Nami", "Antropofagus", "Nebulous", "Executer", "Verdun", "Eryn Non Dae", "Methedras", "Revolution Within", "Eternal Storm", "In Tha Umbra", "Dolentia", "Ermo", "Age of Woe", "Trinta e Um", "Solar Corona", "Equations", "Dementia 13", "Angist", "THE QUARTET OF WOAH!", "Martelo Negro", "Serrabulho", "Vai-Te Foder", "Destroyers Of All", "Vengha", "Bed Legs", "Display of power", "Pterossauros"];
+
 
     // we create the subscription function manually because there is no binding
     // between date_range observable in the view.
@@ -95,6 +101,36 @@ function FestivalMapViewModel() {
             } else {
                 item.disableMarker();
             } 
+        });
+    });
+
+    // filter bands
+    self.selected_bands.subscribe(function (selected) {
+        console.log(selected);
+        ko.utils.arrayForEach(self.festivals(), function(item) {
+            // We need to pickout all the festivals that have selected bands
+            // a festival will be show as long as it has one band in selected
+            // bands.
+            if (! item.lineup() ) {
+                // console.log(item.title() + " has no lineup info");
+                item.disableMarker();
+                return false;
+            }
+            var enabled = false;
+            for ( var i in selected ) {
+                var band = selected[i];
+                if (item.lineup().indexOf(band) == -1) {
+                    // console.log(band + " not found in " + item.title());
+                    enabled = false;
+                } else {
+                    // console.log(band + " found in " + item.title());
+                    enabled = true
+                    break;
+                }
+            };
+
+            // console.log(item.title() + ": " + enabled);
+            enabled ? item.enableMarker() : item.disableMarker();
         });
     });
 
@@ -173,5 +209,27 @@ ko.bindingHandlers.animatedVisible = {
                 $("#show-overlay-button").fadeIn(200);
             });
         }
+    }
+};
+
+// select2 bind
+ko.bindingHandlers.select2 = {
+    init: function(element, valueAccessor, allBindingsAccessor) {
+        var obj = valueAccessor(),
+            allBindings = allBindingsAccessor(),
+            lookupKey = allBindings.lookupKey;
+        $(element).select2(obj);
+        if (lookupKey) {
+            var value = ko.utils.unwrapObservable(allBindings.value);
+            $(element).select2('data', ko.utils.arrayFirst(obj.data.results, function(item) {
+                return item[lookupKey] === value;
+            }));
+        }
+        ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+            $(element).select2('destroy');
+        });
+    },
+    update: function(element, valueAccessor, allBindingsAccessor) {
+        return $(element).trigger('change');
     }
 };

@@ -46,6 +46,9 @@
                 <i class="fa fa-chevron-right fa-stack-1x fa-inverse"></i>
             </span>
         </a>
+        {# <select data-bind="value: selected_bands, options: bands, select2: {}"></select> #}
+        {# <select multiple="true" data-bind="options: states, optionsValue: 'id', optionsText: 'text', selectedOptions: selectMultipleStates, select2: { }" style="width: 300px"></select> #}
+        <select multiple="true" data-bind="selectedOptions: selected_bands, options: bands, select2: { }" style="width: 300px"></select>
     </div>
     <div id="show-overlay-button" data-bind='click: showOverlay' href="#">
         <span class="fa-stack fa-lg">
