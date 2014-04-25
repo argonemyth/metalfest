@@ -40,9 +40,11 @@
 
 // We use these to control various global styles
 // $body-bg: #fff;
-$body-bg: #1F1F21;
+// $body-bg: #1F1F21;
+$body-bg: #343838;
 // $body-font-color: #222;
 // $body-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+$body-font-family: "Rambla", "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
 // $body-font-weight: normal;
 // $body-font-style: normal;
 
@@ -56,6 +58,7 @@ $body-bg: #1F1F21;
 
 // We use these as default colors throughout
 // $primary-color: #008CBA;
+$primary-color: #005F6B;
 // $secondary-color: #e7e7e7;
 // $alert-color: #f04124;
 // $success-color: #43AC6A;
@@ -120,6 +123,7 @@ $body-bg: #1F1F21;
 
 // We use these to control header font styles
 // $header-font-family: $body-font-family;
+$header-font-family: "Mohave", Helvetica, Arial, Helvetica, sans-serif;
 // $header-font-weight: normal;
 // $header-font-style: normal;
 // $header-font-color: #222;
@@ -506,12 +510,15 @@ $body-bg: #1F1F21;
 // $form-label-font-weight: normal;
 // $form-label-line-height: 1.5;
 // $form-label-font-color: scale-color(#000, $lightness: 30%);
+$form-label-font-color: #FFF;
 // $form-label-small-transform: capitalize;
 // $form-label-bottom-margin: 0;
 // $input-font-family: inherit;
 // $input-font-color: rgba(0,0,0,0.75);
-// $input-font-size: rem-calc(14);
-// $input-bg-color: #fff;
+$input-font-color: #FFF;
+$input-font-size: rem-calc(12);
+$input-bg-color: $body-bg;
+$input-bg-color: $body-bg;
 // $input-focus-bg-color: scale-color(#fff, $lightness: -2%);
 // $input-border-color: scale-color(#fff, $lightness: -20%);
 // $input-focus-border-color: scale-color(#fff, $lightness: -40%);

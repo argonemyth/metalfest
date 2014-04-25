@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 
+{% load i18n %}
+
 {% block bodyid %}fullscreen{% endblock bodyid %}
 
 {% block content %}
     <div id="map" data-bind="map:festivals"></div>
+    {% comment %}
     <div id="footer">
         <h1>METALFEST</h1>
     </div>
-    {% comment %}
     <div id="overlay" class="off-canvas-wrap" data-offcanvas>
         <div class="inner-wrap">
             <section class="right-small">
@@ -32,17 +34,46 @@
     </div>
     {% endcomment %}
     <div id="overlay" class="panel" data-bind='animatedVisible: displayOverlay'>
-        <h3>Find the festivals!</h3>
+        <header>
+            <h1>THE MAP of METAL<i class="fa fa-globe"></i></h1>
+            <h3>Follow the noise!</h3>
+        </header>
         {% comment %}
             
         <form action="" method="post">{% csrf_token %}
         {{ form.as_p }}
         </form>
         {% endcomment %}
-        <div id="slider" style="width: 400px;"></div>
-        {# <select multiple="true" data-bind="options: states, optionsValue: 'id', optionsText: 'text', selectedOptions: selectMultipleStates, select2: { }" style="width: 300px"></select> #}
-        <div><select multiple="true" data-bind="selectedOptions: selected_bands, options: bands, select2: { }" style="width: 300px"></select></div>
-        <div><select multiple="true" data-bind="selectedOptions: selected_genres, options: genres, select2: { }" style="width: 300px"></select></div>
+        <form id="filter">
+            {# <select multiple="true" data-bind="options: states, optionsValue: 'id', optionsText: 'text', selectedOptions: selectMultipleStates, select2: { }" style="width: 300px"></select> #}
+            <div class="row">
+                <div class="small-12 columns">
+                    <label>{% trans "Filter by bands" %}</label>
+                    <select multiple="true" data-bind="selectedOptions: selected_bands, options: bands, select2: { }"></select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="small-12 columns">
+                    <label>{% trans "Filter by genres:" %}</label>
+                    <select multiple="true" data-bind="selectedOptions: selected_genres, options: genres, select2: { }"></select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="small-12 columns">
+                    {# <label>{% trans "Filter by dates" %}</label> #}
+                    <div id="slider"></div>
+                </div>
+            </div>
+        </form>
+
+        <footer>
+            <div class="row">
+                <div class="small-12 columns">
+                    <div id="legend">
+                    </di>
+                </div>
+            </div>
+        </footer>
         <a data-bind='click: hideOverlay' href="#">
             <span class="fa-stack fa-lg">
                 <i class="fa fa-square fa-stack-2x"></i>
