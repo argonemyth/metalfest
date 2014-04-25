@@ -82,7 +82,8 @@ function FestivalMapViewModel() {
         return self.min_date() + " - " + self.max_date();
     }, self);
     self.selected_bands = ko.observable(new Array());
-    self.bands = ["The Afternoon Gentlemen", "Palehorse", "Metal Church", "Anaal Nathrakh", "Discharge", "Misery Index", "Gorguts", "Negură Bunget", "Blood Red Throne", "Hirax", "Bonded By Blood", "Sourvein", "Black Witchery", "In Solitude", "Graves at Sea", "Wormed", "Mystifier", "Gwydion", "Grave Miasma", "Warhammer", "Bosque", "Bölzer", "Nuclear", "For The Glory", "We Are The Damned", "Crepitation", "Nami", "Antropofagus", "Nebulous", "Executer", "Verdun", "Eryn Non Dae", "Methedras", "Revolution Within", "Eternal Storm", "In Tha Umbra", "Dolentia", "Ermo", "Age of Woe", "Trinta e Um", "Solar Corona", "Equations", "Dementia 13", "Angist", "THE QUARTET OF WOAH!", "Martelo Negro", "Serrabulho", "Vai-Te Foder", "Destroyers Of All", "Vengha", "Bed Legs", "Display of power", "Pterossauros"];
+    // self.bands = ["The Afternoon `Gentlemen", "Palehorse", "Metal Church", "Anaal Nathrakh", "Discharge", "Misery Index", "Gorguts", "Negură Bunget", "Blood Red Throne", "Hirax", "Bonded By Blood", "Sourvein", "Black Witchery", "In Solitude", "Graves at Sea", "Wormed", "Mystifier", "Gwydion", "Grave Miasma", "Warhammer", "Bosque", "Bölzer", "Nuclear", "For The Glory", "We Are The Damned", "Crepitation", "Nami", "Antropofagus", "Nebulous", "Executer", "Verdun", "Eryn Non Dae", "Methedras", "Revolution Within", "Eternal Storm", "In Tha Umbra", "Dolentia", "Ermo", "Age of Woe", "Trinta e Um", "Solar Corona", "Equations", "Dementia 13", "Angist", "THE QUARTET OF WOAH!", "Martelo Negro", "Serrabulho", "Vai-Te Foder", "Destroyers Of All", "Vengha", "Bed Legs", "Display of power", "Pterossauros"];
+    self.bands = ko.observable(new Array());
 
 
     // we create the subscription function manually because there is no binding
@@ -180,7 +181,15 @@ ko.bindingHandlers.map = {
     update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         var festivals = ko.utils.unwrapObservable(valueAccessor());
         // console.log("Custom binding update: "+ festivals.length);
-        if (festivals.length > 0 ) viewModel.showMarkers();
+        if (festivals.length > 0 ) {
+            viewModel.showMarkers();
+            var all_linup = []
+            ko.utils.arrayForEach(festivals, function(item) {
+                if ( item.lineup() ) all_linup = _.union(all_linup, item.lineup());
+            });
+            // console.log(all_linup);
+            viewModel.bands(all_linup);
+        } 
     }
 };
 
