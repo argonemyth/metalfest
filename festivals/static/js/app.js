@@ -63,13 +63,18 @@ function Festival(data) {
     this.lng = ko.observable(data.longitude);
     this.lineup = ko.observable(ko.utils.parseJson(data.lineup)); // json string
     this.genres = ko.observable(ko.utils.parseJson(data.genres)); // json string
+    this.if_past = data.if_past;
 
     // Google LatLng Object
     var festLatLng = new google.maps.LatLng(self.lat(),self.lng());
 
     var marker_icon = icon_upcoming;
-    if ( ! self.lineup() ) {
-        marker_icon = icon_nolineup;
+    if ( this.if_past ) {
+        marker_icon = icon_past;
+    } else {
+        if ( ! self.lineup() ) {
+            marker_icon = icon_nolineup;
+        }
     }
 
     // Google Map Marker Object

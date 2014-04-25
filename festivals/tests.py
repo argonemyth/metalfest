@@ -27,8 +27,8 @@ def create_festivals():
     second_festival = Festival()
     # second_festival.title = "Wacken Open Air"
     second_festival.title = "Sweden Rock Festival"
-    second_festival.start_date = "2014-06-20"
-    second_festival.end_date = "2014-06-22"
+    second_festival.start_date = "2014-03-20"
+    second_festival.end_date = "2014-03-22"
     second_festival.save()
 
     # Dummy festival 3
@@ -120,7 +120,12 @@ class FestivalModelTest(TestCase):
         self.assertEqual(first_saved.title, "West Texas Death Fest")
         self.assertEqual(second_saved.title, "Sweden Rock Festival")
 
-    """
+    def test_if_past(self):
+        first_festival = Festival.objects.get(id=1)
+        second_festival = Festival.objects.get(id=2)
+        self.assertEqual(first_festival.if_past(), False)
+        self.assertEqual(second_festival.if_past(), True)
+
     def test_geocoder(self):
         # Dummy festival
         festival = Festival.objects.get(id=2) 
@@ -141,6 +146,7 @@ class FestivalModelTest(TestCase):
         # Unique festival
         self.assertEqual(festivals[2].get_lastfm_event_id(), "3839143")
 
+    """ Disable it right now, as the operatiion is really slow
     def test_get_event_info(self):
         festival = Festival.objects.get(id=3)
         festival.lastfm_id = "3583454"

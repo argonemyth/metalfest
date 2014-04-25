@@ -16,6 +16,7 @@ import urllib2, urllib
 import re
 import datetime
 import json
+from datetime import date
 
 from festivals import pylast
 
@@ -137,6 +138,14 @@ class Festival(models.Model):
     def get_absolute_url(self):
         return reverse('festival-detail', args=[self.slug])
 
+
+    def if_past(self):
+        """check if it's a past event"""
+        today = date.today()
+        if self.end_date < today:
+            return True
+        return False
+
     def serialize(self):
         return {
             'id': self.id,
@@ -146,7 +155,8 @@ class Festival(models.Model):
             'latitude': self.latitude,
             'longitude': self.longitude,
             'lineup': self.lineup, # json string
-            'genres': json.dumps([g.name for g in self.genres.select_related()])
+            'genres': json.dumps([g.name for g in self.genres.select_related()]),
+            'if_past': self.if_past()
         }
 
     def get_lastfm_event_id(self):
