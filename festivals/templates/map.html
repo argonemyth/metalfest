@@ -100,18 +100,33 @@
             </div>
         </footer>
         
-        <a data-bind='click: hideOverlay' href="#">
+        <a class="pull-right" data-bind='click: hideOverlay' href="#">
+            [-]
+            {% comment %}
             <span class="fa-stack fa-lg">
                 <i class="fa fa-square fa-stack-2x"></i>
                 <i class="fa fa-chevron-right fa-stack-1x fa-inverse"></i>
             </span>
+            {% endcomment %}
         </a>
     </div>
+    <div id="logo" class="panel" data-bind='click: showOverlay'>
+        <header>
+            <div class="row">
+                <div class="small-12 columns">
+                    <h1>THE MAP of METAL</h1>
+                    <h4>Follow the noise all over <i class="fa fa-globe"></i>!</h4>
+                </div>
+            </div>
+        </header>
+    </div>
+    {% comment %}
     <div id="show-overlay-button" data-bind='click: showOverlay' href="#">
         <span class="fa-stack fa-lg">
             <i class="fa fa-square fa-stack-2x"></i>
             <i class="fa fa-chevron-left fa-stack-1x fa-inverse"></i>
         </span>
     </div>
+    {% endcomment %}
 
 {% endblock content %}

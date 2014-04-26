@@ -278,11 +278,16 @@ ko.bindingHandlers.animatedVisible = {
         // ko.unwrap(value) ? $(element).fadeIn() : $(element).fadeOut();
         // ko.unwrap(value) ? $(element).animate({right: 0}, 600) : $(element).animate({right: "-100vw"}, 1000);
         if ( ko.unwrap(value) ) {
-            $("#show-overlay-button").fadeOut();
-            $(element).animate({right: 0}, 600)
+            $("#logo").fadeOut();
+            // $("#show-overlay-button").fadeOut();
+            // $(element).animate({right: 0}, 600)
+            $(element).animate({top: 0}, 600)
         } else {
-            $(element).animate({right: "-100vw"}, 600, function() {
-                $("#show-overlay-button").fadeIn(200);
+            // $(element).animate({right: "-100vw"}, 600, function() {
+            $(element).animate({top: "-100vh"}, 600, function() {
+                $("#logo").fadeIn(200);
+                // $("#logo").animate({top: 0}, 300);
+                // $("#show-overlay-button").fadeIn(200);
             });
         }
     }
