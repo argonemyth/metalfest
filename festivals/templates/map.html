@@ -35,8 +35,12 @@
     {% endcomment %}
     <div id="overlay" class="panel" data-bind='animatedVisible: displayOverlay'>
         <header>
-            <h1>THE MAP of METAL<i class="fa fa-globe"></i></h1>
-            <h3>Follow the noise!</h3>
+            <div class="row">
+                <div class="small-12 columns">
+                    <h1>THE MAP of METAL</h1>
+                    <h4>Follow the noise all over <i class="fa fa-globe"></i>!</h4>
+                </div>
+            </div>
         </header>
         {% comment %}
             
@@ -70,10 +74,32 @@
             <div class="row">
                 <div class="small-12 columns">
                     <div id="legend">
-                    </di>
+                        <h5>{% trans "Map Legend" %}</h5>
+                        <ul class="small-block-grid-3">
+                          <li>
+                            <div><i class="icons upcoming"></i></div>
+                            <h6>{% trans "Upcoming Festivals" %}</h6>
+                          </li>
+                          <li>
+                            <div><i class="icons lack-info"></i></div>
+                            <h6>{% trans "Upcoming but Lacking Lineup Info" %}</h6>
+                          </li>
+                          <li>
+                            <div><i class="icons past"></i></div>
+                            <h6>{% trans "Past Festivals" %}</h6>
+                          </li>
+                        </ul>
+                    </div>
+                    <div id="legal" class="row">
+                        <div class="large-12 columns">
+                            {# <p>Copyright &copy; 2009-{% now "Y" %} argonemyth dev.</p> #}
+                            <p>Made with <i class="fa fa-heart"></i> by <a href="www.argonemyth.com" target="_blank" title="Full-stack web app / website developerment">argonemyth</a></p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </footer>
+        
         <a data-bind='click: hideOverlay' href="#">
             <span class="fa-stack fa-lg">
                 <i class="fa fa-square fa-stack-2x"></i>

@@ -58,9 +58,6 @@ body#fullscreen {
             max-width: none !important;
         }
     }
-    form#filter {
-        width: 400px;
-    }
     #footer {
         position: absolute;
         width: 100%;
@@ -75,13 +72,28 @@ body#fullscreen {
         position: absolute;
         top: 1rem;
         right: 0;
+        width: 400px;
+        form#filter {
+            width: 100%;
+        }
         footer {
             margin-top: 1rem;
             border-top: 1px solid #000;
+            padding-top: 1rem;
             #legend {
-                background-color: $primary-color;
+                // background-color: $primary-color;
                 width: 100%;
-                height: 300px;
+                text-align: center;
+                h6 {
+                    font-size: .8rem;
+                    font-weight: 700;
+                    font-family: $body-font-family;
+                    text-transform: uppercase;
+                }
+                // height: 300px;
+            }
+            #legal {
+                text-align: center;
             }
         }
     } 
@@ -91,6 +103,32 @@ body#fullscreen {
         right: 0;
         display: none;
     }
+}
+
+// Sprit Icons.
+$sprite-unit: 20px;
+
+i.icons {
+    @include background(image-url("/static/images/icons.png") no-repeat scroll 0 0);
+    display: inline-block;
+    vertical-align: middle; 
+}
+
+i.upcoming {
+    width: 27px;
+    height: 32px;
+}
+
+i.past {
+    background-position: -2 * $sprite-unit 0;
+    width: 27px;
+    height: 32px;
+}
+
+i.lack-info {
+    background-position: -4 * $sprite-unit 0;
+    width: 27px;
+    height: 32px;
 }
 
 // Date slider override

@@ -58,7 +58,7 @@ $body-font-family: "Rambla", "Helvetica Neue", "Helvetica", Helvetica, Arial, sa
 
 // We use these as default colors throughout
 // $primary-color: #008CBA;
-$primary-color: #005F6B;
+$primary-color: #00B4CC;
 // $secondary-color: #e7e7e7;
 // $alert-color: #f04124;
 // $success-color: #43AC6A;
@@ -811,7 +811,8 @@ $input-bg-color: $body-bg;
 
 // We use these to control the background and border styles
 // $panel-bg: scale-color(#fff, $lightness: -5%);
-$panel-bg: rgba($body-bg,.8);
+// $panel-bg: rgba($body-bg,.9);
+$panel-bg: rgba($body-bg,.9);
 // $panel-border-style: solid;
 // $panel-border-size: 1px;
 $panel-border-size: 0px;
