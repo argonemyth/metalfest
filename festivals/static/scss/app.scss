@@ -73,12 +73,16 @@ body#fullscreen {
         top: 0;
         right: 0;
         width: 400px;
+        header {
+            border-bottom: 1px solid $hr-border-color;
+            margin-bottom: 1rem;
+        }
         form#filter {
             width: 100%;
         }
         footer {
             margin-top: 1rem;
-            border-top: 1px solid #000;
+            border-top: 1px solid $hr-border-color;
             padding-top: 1rem;
             #legend {
                 // background-color: $primary-color;
@@ -90,7 +94,13 @@ body#fullscreen {
                     font-family: $body-font-family;
                     text-transform: uppercase;
                 }
+                ul li {
+                    padding-bottom: 0;
+                }
                 // height: 300px;
+            }
+            hr {
+                margin: .5rem 0 1rem;
             }
             #legal {
                 text-align: center;
