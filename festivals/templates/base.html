@@ -31,8 +31,9 @@
     {% block content %} 
     {% endblock %} 
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCip3FHGM1vwy4ZE7NwvyPQBSqMuX3jXXA&sensor=false"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
+    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?key=AIzaSyCip3FHGM1vwy4ZE7NwvyPQBSqMuX3jXXA&sensor=false"></script>
+    <script type="text/javascript" src="//google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/src/infobox.js"></script>
     {% compress js %}
         <script src="{{ STATIC_URL }}bower_components/foundation/js/vendor/modernizr.js"></script>
         <script src="{{ STATIC_URL }}bower_components/foundation/js/vendor/jquery.js"></script>

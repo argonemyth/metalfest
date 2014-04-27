@@ -57,6 +57,7 @@ function Festival(data) {
     var self = this;
 
     this.title = ko.observable(data.title);
+    this.url = ko.observable(data.url);
     this.start_date = ko.observable(data.start_date);
     this.end_date = ko.observable(data.end_date);
     this.lat = ko.observable(data.latitude);
@@ -68,6 +69,38 @@ function Festival(data) {
     // Google LatLng Object
     var festLatLng = new google.maps.LatLng(self.lat(),self.lng());
 
+    // Define info window
+    // http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/docs/reference.html
+    var boxText = document.createElement("div");
+    $(boxText).addClass("infobox");
+    var header = '';
+    if ( this.url() ) {
+        header = "<h4><a target='_blank' href='" + this.url() + "'>" + this.title() + "</a></h4>"
+    } else {
+        header = "<h4>" + this.title() + "</h4>";
+    }
+    boxText.innerHTML = header +
+                        "<p>" + this.start_date() + " - " + this.end_date() + "</p>"
+    self.infobox = new InfoBox({
+         content: boxText,
+         disableAutoPan: false,
+         maxWidth: 150,
+         pixelOffset: new google.maps.Size(-140, 16),
+         zIndex: null,
+         boxStyle: {
+            // background: "url('http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/examples/tipbox.gif') no-repeat",
+            opacity: 0.85,
+            width: "280px"
+        },
+        closeBoxMargin: "14px 8px 2px 2px",
+        // closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif",
+        closeBoxURL: "/static/images/close.png",
+        infoBoxClearance: new google.maps.Size(1, 1),
+        pane: "floatPane",
+        enableEventPropagation: false
+    });
+
+    // Google Map Marker Object
     var marker_icon = icon_upcoming;
     if ( this.if_past ) {
         marker_icon = icon_past;
@@ -77,7 +110,6 @@ function Festival(data) {
         }
     }
 
-    // Google Map Marker Object
     self.marker = new google.maps.Marker({
         position: festLatLng,
         title: self.title(),
@@ -85,6 +117,13 @@ function Festival(data) {
         map: google_map.map, // map is a global var initilized in the map binding 
         visible: false, 
         animation: google.maps.Animation.DROP
+    });
+
+    // Event listener for clicking marker
+    // google.maps.event.addListener(self.marker, 'mouseover', function() {
+    google.maps.event.addListener(self.marker, 'click', function() {
+        self.infobox.open(google_map.map, this);
+        google_map.map.panTo(festLatLng);
     });
 
     self.enableMarker = function(){
@@ -239,6 +278,7 @@ ko.bindingHandlers.map = {
         };
         // Be careful, map is a global now!!
         google_map.map = new google.maps.Map(element, mapOptions);
+        // google_map.maps.event.addDomListener(window, 'load', initialize);
     },
     update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         var festivals = ko.utils.unwrapObservable(valueAccessor());
