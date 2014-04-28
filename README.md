@@ -1,4 +1,6 @@
-metalfest
-=========
+The Metal Map
+==============
 
-A beautiful full-screen map application that shows all the metal festivals around the globe.
+An interactive map that shows all the metal festivals around the globe. 
+
+The app is powered by Django, Knockoutjs, Google Map & Zurb Foundation.
