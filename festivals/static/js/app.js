@@ -57,6 +57,7 @@ var icon_nolineup = new google.maps.MarkerImage(
 function Festival(data) {
     var self = this;
 
+    // I know those data dosn't need to be observables.
     this.title = ko.observable(data.title);
     this.url = ko.observable(data.url);
     // this.start_date = ko.observable(data.start_date);

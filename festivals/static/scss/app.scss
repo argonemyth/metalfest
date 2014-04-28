@@ -105,6 +105,13 @@ body#fullscreen {
         #logo {
             border-top: 1px solid $hr-border-color;
             padding-top: 1rem;
+            .label {
+                vertical-align: top;
+                margin-top: .3rem;
+            }
+            // .tagline {
+                // color: $secondary-color;
+            // }
         }
             #legal {
                 text-align: center;
@@ -121,6 +128,9 @@ body#fullscreen {
     // }
 }
 
+a.secondary {
+    @include link-colors($secondary-color, darken($secondary-color, 10%), darken($secondary-color, 10%), $secondary-color, darken($secondary-color, 10%));
+}
 // Google Map Infobox
 .infobox {
     border: 1px solid black;
