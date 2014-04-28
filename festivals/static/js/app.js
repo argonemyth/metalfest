@@ -415,26 +415,39 @@ ko.bindingHandlers.animatedVisible = {
     update: function(element, valueAccessor) {
         // Whenever the value subsequently changes, slowly fade the element in or out
         var value = valueAccessor();
+        var clientWidth = $(document).width();
         // ko.unwrap(value) ? $(element).fadeIn() : $(element).fadeOut();
         // ko.unwrap(value) ? $(element).animate({right: 0}, 600) : $(element).animate({right: "-100vw"}, 1000);
         if ( ko.unwrap(value) ) {
             // $("#logo").fadeOut();
             // $("#show-overlay-button").fadeOut();
             // $(element).animate({right: 0}, 600)
+            if ( clientWidth <= 640 ) {
+                $("#overlay").css("overflow-y", "scroll");
+                $(".hide-for-small-slideup").show();
+            }
             $(element).animate({top: 0}, 600)
             $("#hide-overlay-button").show();
             $("#show-overlay-button").hide();
         } else {
             // $(element).animate({right: "-100vw"}, 600, function() {
             var overlayHeight = $("#overlay").outerHeight();
-            var logoHeight = $("#logo").outerHeight();
-            var offset = overlayHeight-logoHeight-19;
+            if ( clientWidth > 640 ) {
+                var logoHeight = $("#logo").outerHeight();
+                var offset = overlayHeight-logoHeight-19;
+            } else {
+                // Reducing info on mobile phone
+                $(".hide-for-small-slideup").hide();
+                var logoHeight = $("#logo").outerHeight();
+                var offset = overlayHeight-logoHeight;
+            }
             $(element).animate({top: "-" + offset + "px"}, 600, function() {
                 // $("#logo").show();
                 // $("#logo").fadeIn(200);
                 // $("#logo").animate({top: 0}, 300);
                 $("#hide-overlay-button").hide();
                 $("#show-overlay-button").show();
+                $("#overlay").css("overflow", "hidden");
             });
         }
     }

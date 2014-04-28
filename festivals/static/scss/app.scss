@@ -72,7 +72,10 @@ body#fullscreen {
         position: absolute;
         top: 0;
         right: 0;
-        width: 400px;
+        width: 100%;
+        height: 100%;
+        overflow-y: scroll;
+        overflow-x: hidden;
         header {
             border-bottom: 1px solid $hr-border-color;
             margin-bottom: 1rem;
@@ -235,4 +238,20 @@ $border-color: #00B4CC;
     background: $border-color;
     color: #FFF;
     box-shadow: none;
+}
+
+@media #{$medium-up} {
+
+    body#fullscreen {
+        #overlay {
+            // position: absolute;
+            // top: 0;
+            // right: 0;
+            width: 400px;
+            height: auto;
+            overflow: hidden;
+            padding: 1.25rem;
+        } 
+    }
+
 }
