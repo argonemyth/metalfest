@@ -13,7 +13,8 @@ $(document).ready(function () {
             max: new Date(today.getFullYear(), 11, 31)
         },
         defaultValues: {
-            min: today,
+            // min: today,
+            min: new Date(today.getFullYear(), 0, 1),
             max: new Date(today.getFullYear(), 11, 31)
         }
     // }).on("valuesChanging", function(e, data){
@@ -58,8 +59,10 @@ function Festival(data) {
 
     this.title = ko.observable(data.title);
     this.url = ko.observable(data.url);
-    this.start_date = ko.observable(data.start_date);
-    this.end_date = ko.observable(data.end_date);
+    // this.start_date = ko.observable(data.start_date);
+    // this.end_date = ko.observable(data.end_date);
+    self.start_date = new Date(data.start_date);
+    self.end_date = new Date(data.end_date);
     this.lat = ko.observable(data.latitude);
     this.lng = ko.observable(data.longitude);
     this.lineup = ko.observable(ko.utils.parseJson(data.lineup)); // json string
@@ -80,7 +83,8 @@ function Festival(data) {
         header = "<h4>" + this.title() + "</h4>";
     }
     boxText.innerHTML = header +
-                        "<p>" + this.start_date() + " - " + this.end_date() + "</p>"
+                        // "<p>" + this.start_date() + " - " + this.end_date() + "</p>"
+                        "<p>" + this.start_date + " - " + this.end_date + "</p>"
     self.infobox = new InfoBox({
          content: boxText,
          disableAutoPan: false,
@@ -144,9 +148,12 @@ function FestivalMapViewModel() {
 
     // Fesivals
     self.festivals = ko.observableArray();
+
     // Filtering options
-    self.min_date = ko.observable(new Date());
-    self.max_date = ko.observable(new Date(self.min_date().getFullYear(), 11, 31));
+    // self.min_date = ko.observable(new Date());
+    var today = new Date();
+    self.min_date = ko.observable(new Date(today.getFullYear(), 0, 31));
+    self.max_date = ko.observable(new Date(today.getFullYear(), 11, 31));
     self.date_range = ko.computed(function() {
         return self.min_date() + " - " + self.max_date();
     }, self);
@@ -156,7 +163,96 @@ function FestivalMapViewModel() {
     self.selected_genres = ko.observable(new Array());
     self.genres = ko.observable(new Array());
 
+    self.displayedFestivals = ko.computed(function() {
+        // Represents a filtered list of festivals
+        return ko.utils.arrayFilter(self.festivals(), function(festival) {
+            var display_by_dates = false;
+            var display_by_bands = false;
+            var display_by_genres = false;
 
+            // Filter by dates
+            if ( (festival.start_date > self.min_date() && festival.start_date < self.max_date()) &&
+                 (festival.end_date > self.min_date() && festival.end_date < self.max_date()) ) {
+                display_by_dates = true;
+            }
+
+            // Filter by bands
+            if ( self.selected_bands().length == 0 ) {
+                display_by_bands = true;
+            } else {
+                if ( ! festival.lineup() ) {
+                    display_by_bands = false;
+                } else {
+                    // we have lineup info & user selected some bands
+                    var found = false;
+                    for ( var i in self.selected_bands() ) {
+                        var band = self.selected_bands()[i];
+                        if (festival.lineup().indexOf(band) == -1) {
+                            // console.log(band + " not found in " + festival.title());
+                            found = false;
+                        } else {
+                            // console.log(band + " found in " + festival.title());
+                            found = true
+                            break;
+                        }
+                    };
+                    if ( found ) display_by_bands = true;
+                }
+            }
+
+            // Filter by Genres
+            if ( self.selected_genres().length == 0 ) {
+                display_by_genres = true;
+            } else {
+                if ( ! festival.genres() ) {
+                    display_by_genres = false;
+                } else {
+                    // we have genre info & user selected some genres
+                    var found = false;
+                    for ( var i in self.selected_genres() ) {
+                        var genre = self.selected_genres()[i];
+                        if (festival.genres().indexOf(genre) == -1) {
+                            // console.log(genre + " not found in " + festival.title());
+                            found = false;
+                        } else {
+                            // console.log(genre + " found in " + festival.title());
+                            found = true
+                            break;
+                        }
+                    };
+                    if ( found ) display_by_genres = true;
+                }
+            }
+
+            // If all three filter function return ture, the marker will show
+            /*
+            if ( display_by_dates && display_by_genres && display_by_bands ) {
+                console.log("Should show");
+                return true;
+            } else {
+                console.log("Date filter (" + festival.start_date + "-" + festival.end_date + "): " + display_by_dates);
+                console.log("Band filter: " + display_by_bands);
+                console.log("Genre filter: " + display_by_genres);
+            }
+            */
+            return display_by_dates && display_by_genres && display_by_bands
+        })
+
+    }, this);
+
+    self.displayedFestivals.subscribe(function (festivals) {
+        // console.log("displayedFestival changed.");
+        ko.utils.arrayForEach(self.festivals(), function(item) {
+            // Only display the one that are in displayedFestival
+            if ( festivals.indexOf(item) == -1 ) {
+                item.disableMarker();
+            } else {
+                item.enableMarker()
+            }
+        });
+    });
+
+    /*
     // we create the subscription function manually because there is no binding
     // between date_range observable in the view.
     self.date_range.subscribe(function (date_range) {
@@ -235,6 +331,7 @@ function FestivalMapViewModel() {
             enabled ? item.enableMarker() : item.disableMarker();
         });
     });
+    */
 
     // Load initial festivals from server, convert it to Task instances, then populate self.festivals
     $.getJSON("/festivals/all/", function(data) {
@@ -263,6 +360,7 @@ function FestivalMapViewModel() {
     }
 }
 
+// This binding only control the initalization of the google map with all the festivals.
 ko.bindingHandlers.map = {
     init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
         var festivals = ko.utils.unwrapObservable(valueAccessor());
@@ -282,7 +380,6 @@ ko.bindingHandlers.map = {
     },
     update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         var festivals = ko.utils.unwrapObservable(valueAccessor());
-        // console.log("Custom binding update: "+ festivals.length);
         if (festivals.length > 0 ) {
             viewModel.showMarkers();
             var all_linup = []
@@ -295,7 +392,7 @@ ko.bindingHandlers.map = {
             ko.utils.arrayForEach(festivals, function(item) {
                 if ( item.genres() ) all_genres = _.union(all_genres, item.genres());
             });
-            console.log(all_genres);
+            // console.log(all_genres);
             viewModel.genres(all_genres);
         } 
     }
