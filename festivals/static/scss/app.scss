@@ -113,19 +113,10 @@ body#fullscreen {
                 // color: $secondary-color;
             // }
         }
-            #legal {
-                text-align: center;
-            }
     } 
     #show-overlay-button {
         display: none;
     }
-    // #logo {
-    //     position: absolute;
-    //     top: 0;
-    //     right: 0;
-    //     display: none;
-    // }
 }
 
 a.secondary {
@@ -141,6 +132,9 @@ a.secondary {
     @include box-shadow(#000 0 0 8px);
     h1, h2, h3, h4, h5, h6 {
         color: #FFF;
+    }
+    p {
+        font-size: .8rem;
     }
 }
 

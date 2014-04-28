@@ -62,8 +62,8 @@ function Festival(data) {
     this.url = ko.observable(data.url);
     // this.start_date = ko.observable(data.start_date);
     // this.end_date = ko.observable(data.end_date);
-    self.start_date = new Date(data.start_date);
-    self.end_date = new Date(data.end_date);
+    this.start_date = new Date(data.start_date);
+    this.end_date = new Date(data.end_date);
     this.lat = ko.observable(data.latitude);
     this.lng = ko.observable(data.longitude);
     this.lineup = ko.observable(ko.utils.parseJson(data.lineup)); // json string
@@ -83,9 +83,11 @@ function Festival(data) {
     } else {
         header = "<h4>" + this.title() + "</h4>";
     }
-    boxText.innerHTML = header +
-                        // "<p>" + this.start_date() + " - " + this.end_date() + "</p>"
-                        "<p>" + this.start_date + " - " + this.end_date + "</p>"
+    var dates = '';
+    if ( this.start_date && this.end_date ) {
+        dates = "<p>" + this.start_date.toDateString() + " - " + this.end_date.toDateString() + "</p>"
+    }
+    boxText.innerHTML = header + dates;
     self.infobox = new InfoBox({
          content: boxText,
          disableAutoPan: false,
