@@ -80,11 +80,14 @@ body#fullscreen {
         form#filter {
             width: 100%;
         }
-        footer {
+        hr {
+            margin: .5rem 0 1rem;
+        }
+        // footer {
+        #legend {
             margin-top: 1rem;
             border-top: 1px solid $hr-border-color;
             padding-top: 1rem;
-            #legend {
                 // background-color: $primary-color;
                 width: 100%;
                 text-align: center;
@@ -98,27 +101,24 @@ body#fullscreen {
                     padding-bottom: 0;
                 }
                 // height: 300px;
-            }
-            hr {
-                margin: .5rem 0 1rem;
-            }
+        }
+        #logo {
+            border-top: 1px solid $hr-border-color;
+            padding-top: 1rem;
+        }
             #legal {
                 text-align: center;
             }
-        }
     } 
     #show-overlay-button {
-        position: absolute;
-        top: 1rem;
-        right: 0;
         display: none;
     }
-    #logo {
-        position: absolute;
-        top: 0;
-        right: 0;
-        display: none;
-    }
+    // #logo {
+    //     position: absolute;
+    //     top: 0;
+    //     right: 0;
+    //     display: none;
+    // }
 }
 
 // Google Map Infobox

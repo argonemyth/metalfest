@@ -318,16 +318,23 @@ ko.bindingHandlers.animatedVisible = {
         // ko.unwrap(value) ? $(element).fadeIn() : $(element).fadeOut();
         // ko.unwrap(value) ? $(element).animate({right: 0}, 600) : $(element).animate({right: "-100vw"}, 1000);
         if ( ko.unwrap(value) ) {
-            $("#logo").fadeOut();
+            // $("#logo").fadeOut();
             // $("#show-overlay-button").fadeOut();
             // $(element).animate({right: 0}, 600)
             $(element).animate({top: 0}, 600)
+            $("#hide-overlay-button").show();
+            $("#show-overlay-button").hide();
         } else {
             // $(element).animate({right: "-100vw"}, 600, function() {
-            $(element).animate({top: "-100vh"}, 600, function() {
-                $("#logo").fadeIn(200);
+            var overlayHeight = $("#overlay").outerHeight();
+            var logoHeight = $("#logo").outerHeight();
+            var offset = overlayHeight-logoHeight-19;
+            $(element).animate({top: "-" + offset + "px"}, 600, function() {
+                // $("#logo").show();
+                // $("#logo").fadeIn(200);
                 // $("#logo").animate({top: 0}, 300);
-                // $("#show-overlay-button").fadeIn(200);
+                $("#hide-overlay-button").hide();
+                $("#show-overlay-button").show();
             });
         }
     }

@@ -34,6 +34,7 @@
     </div>
     {% endcomment %}
     <div id="overlay" class="panel" data-bind='animatedVisible: displayOverlay'>
+        {% comment %}
         <header>
             <div class="row">
                 <div class="small-12 columns">
@@ -42,7 +43,6 @@
                 </div>
             </div>
         </header>
-        {% comment %}
             
         <form action="" method="post">{% csrf_token %}
         {{ form.as_p }}
@@ -50,6 +50,11 @@
         {% endcomment %}
         <form id="filter">
             {# <select multiple="true" data-bind="options: states, optionsValue: 'id', optionsText: 'text', selectedOptions: selectMultipleStates, select2: { }" style="width: 300px"></select> #}
+            <div class="row">
+                <div class="small-12 columns">
+                    <h3>Find the festivals:</h3>
+                </div>
+            </div>
             <div class="row">
                 <div class="small-12 columns">
                     <label>{% trans "Filter by bands" %}</label>
@@ -70,47 +75,56 @@
             </div>
         </form>
 
-        <footer>
-            <div class="row">
-                <div class="small-12 columns">
-                    <div id="legend">
-                        <h5>{% trans "Map Legend" %}</h5>
-                        <ul class="small-block-grid-3">
-                          <li>
-                            <div><i class="icons upcoming"></i></div>
-                            <h6>{% trans "Upcoming Festivals" %}</h6>
-                          </li>
-                          <li>
-                            <div><i class="icons lack-info"></i></div>
-                            <h6>{% trans "Upcoming but Lacking Lineup Info" %}</h6>
-                          </li>
-                          <li>
-                            <div><i class="icons past"></i></div>
-                            <h6>{% trans "Past Festivals" %}</h6>
-                          </li>
-                        </ul>
-                    </div>
-                </div>
+
+        <div id="legend" class="row">
+            <div class="small-12 columns">
+                {# <div id="legend"> #}
+                    <h5>{% trans "Map Legend" %}</h5>
+                    <ul class="small-block-grid-3">
+                      <li>
+                        <div><i class="icons upcoming"></i></div>
+                        <h6>{% trans "Upcoming Festivals" %}</h6>
+                      </li>
+                      <li>
+                        <div><i class="icons lack-info"></i></div>
+                        <h6>{% trans "Upcoming but Lacking Lineup Info" %}</h6>
+                      </li>
+                      <li>
+                        <div><i class="icons past"></i></div>
+                        <h6>{% trans "Past Festivals" %}</h6>
+                      </li>
+                    </ul>
+                {# </div> #}
             </div>
-            <hr>
+        </div>
+
+        <div id="logo" class="row">
+            <div class="small-12 columns">
+                <h1>THE MAP of METAL <small>[- beta -]</small></h1>
+                <h4>Follow the noise all over <i class="fa fa-globe"></i>!</h4>
+                <p>Created by <a href="www.argonemyth.com" target="_blank" title="Full-stack web app / website developerment">argonemyth</a></p>
+            </div>
+            <a id="hide-overlay-button" class="pull-right" data-bind='click: hideOverlay' href="#">[-]</a>
+            <a id="show-overlay-button" class="pull-right" data-bind='click: showOverlay' href="#">[+]</a>
+        </div>
+            {% comment %}
+                
             <div id="legal" class="row">
                 <div class="large-12 columns">
                     {# <p>Copyright &copy; 2009-{% now "Y" %} argonemyth dev.</p> #}
                     <p>Created by <a href="www.argonemyth.com" target="_blank" title="Full-stack web app / website developerment">argonemyth</a></p>
                 </div>
             </div>
-        </footer>
-        
-        <a class="pull-right" data-bind='click: hideOverlay' href="#">
-            [-]
-            {% comment %}
-            <span class="fa-stack fa-lg">
-                <i class="fa fa-square fa-stack-2x"></i>
-                <i class="fa fa-chevron-right fa-stack-1x fa-inverse"></i>
-            </span>
             {% endcomment %}
-        </a>
+        
+        {% comment %}
+        <span class="fa-stack fa-lg">
+            <i class="fa fa-square fa-stack-2x"></i>
+            <i class="fa fa-chevron-right fa-stack-1x fa-inverse"></i>
+        </span>
+        {% endcomment %}
     </div>
+    {% comment %}
     <div id="logo" class="panel" data-bind='click: showOverlay'>
         <header>
             <div class="row">
@@ -121,6 +135,8 @@
             </div>
         </header>
     </div>
+    {% endcomment %}
+
     {% comment %}
     <div id="show-overlay-button" data-bind='click: showOverlay' href="#">
         <span class="fa-stack fa-lg">
