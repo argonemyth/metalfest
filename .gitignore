@@ -43,4 +43,5 @@ db.sqlite3
 local_settings.py
 /media
 /static
+/server
 fabfile.py
