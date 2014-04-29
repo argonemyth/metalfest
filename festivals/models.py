@@ -202,11 +202,11 @@ class Festival(models.Model):
                                            api_secret = settings.LASTFM_API_SECRET)
             e = pylast.Event(self.lastfm_id, network)
             venue, location = e.get_venue()
-            # print location
+            print location
 
-            if (self.location is None) and location['name']:
+            if (not self.location) and location['name']:
                 self.location = location['name']
-                street = location.get('steet', '')
+                street = location.get('street', '')
                 if street:
                     self.location += ", " + street
 
