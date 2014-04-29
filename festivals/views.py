@@ -12,7 +12,7 @@ from django.db.models import Q
 import json
 
 from festivals.models import Festival
-from festivals.forms import FilterForm
+# from festivals.forms import FilterForm
 
 # JSON serialization helpers
 def dumps(content, json_opts={}):
@@ -106,12 +106,13 @@ class JSONResponseMixin(object):
 
 
 # Actual views for the app
-class FesttivalMap(FormView):
+# class FesttivalMap(FormView):
+class FesttivalMap(TemplateView):
     """
     View for our on page app.
     """
     template_name="map.html"
-    form_class = FilterForm
+    # form_class = FilterForm
 
 
 
