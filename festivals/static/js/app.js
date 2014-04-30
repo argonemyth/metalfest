@@ -137,7 +137,7 @@ function Festival(data) {
         self.marker.setVisible(true);
         // Extend the map bounds for each address
         google_map.fullBounds.extend(festLatLng);
-        google_map.map.fitBounds(google_map.fullBounds);
+        // google_map.map.fitBounds(google_map.fullBounds);
         // self.onMap(true);
     }
 
@@ -253,6 +253,11 @@ function FestivalMapViewModel() {
                 item.enableMarker()
             }
         });
+        // Google map auto zoom
+        // var map_center = google_map.fullBounds.getCenter();
+        // google_map.map.setCenter(map_center);
+        google_map.map.panToBounds(google_map.fullBounds);
+        google_map.map.fitBounds(google_map.fullBounds);
     });
 
     /*
@@ -368,10 +373,13 @@ ko.bindingHandlers.map = {
     init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
         var festivals = ko.utils.unwrapObservable(valueAccessor());
         // console.log("Custom binding init: " + festivals.length);
-        var latLng = new google.maps.LatLng(55, 11);
+        // var latLng = new google.maps.LatLng(55, 11);
+        // var latLng = new google.maps.LatLng(40, 3);
+        var latLng = new google.maps.LatLng(30, 25);
         var mapOptions = {
             center: latLng,
-            zoom: 5, 
+            zoom: 2, 
+            // zoom: 5, 
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             mapTypeControl: false,
             minZoom: 3,
