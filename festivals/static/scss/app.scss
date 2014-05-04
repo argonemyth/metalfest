@@ -155,14 +155,32 @@ i.upcoming {
     height: 32px;
 }
 
+i.upcoming-opaque {
+    background-position: 0 -2*$sprite-unit;
+    width: 27px;
+    height: 32px;
+}
+
 i.past {
-    background-position: -2 * $sprite-unit 0;
+    background-position: -2*$sprite-unit 0;
+    width: 27px;
+    height: 32px;
+}
+
+i.past-opaque {
+    background-position: -2*$sprite-unit -2*$sprite-unit;
     width: 27px;
     height: 32px;
 }
 
 i.lack-info {
-    background-position: -4 * $sprite-unit 0;
+    background-position: -4*$sprite-unit 0;
+    width: 27px;
+    height: 32px;
+}
+
+i.lack-info-opaque {
+    background-position: -4*$sprite-unit -2*$sprite-unit;
     width: 27px;
     height: 32px;
 }
