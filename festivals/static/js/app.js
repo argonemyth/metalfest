@@ -254,10 +254,8 @@ function FestivalMapViewModel() {
             }
         });
         // Google map auto zoom
-        // var map_center = google_map.fullBounds.getCenter();
-        // google_map.map.setCenter(map_center);
-        google_map.map.panToBounds(google_map.fullBounds);
-        google_map.map.fitBounds(google_map.fullBounds);
+        // google_map.map.panToBounds(google_map.fullBounds);
+        // google_map.map.fitBounds(google_map.fullBounds);
     });
 
     /*
