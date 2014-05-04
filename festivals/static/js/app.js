@@ -344,6 +344,7 @@ function FestivalMapViewModel() {
         var festival_list = data['festivals']
         var mappedFestivals = $.map(festival_list, function(item) { return new Festival(item) });
         self.festivals(mappedFestivals);
+        $("#loader").hide();
     });
 
     // Show all festival markers
