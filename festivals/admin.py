@@ -20,7 +20,7 @@ class FestivalAdmin(DjangoObjectActions, admin.ModelAdmin):
     """
     Admin class for festivals.
     """
-    list_display = ('title', 'start_date', 'end_date', 'location',  'city', 'latitude', 'longitude', 'lastfm_id')
+    list_display = ('title', 'start_date', 'end_date', 'location',  'city', 'latitude', 'longitude', 'lastfm_id', 'lineup_info')
     list_editable = ('start_date', 'end_date', 'location')
     # list_filter = ('city',)
     search_fields = ('title', 'description', 'location')
@@ -38,8 +38,19 @@ class FestivalAdmin(DjangoObjectActions, admin.ModelAdmin):
                 f.get_event_info()
     get_festival_info.label = _("Get Festival Info")
     get_festival_info.short_description = _("Get festival info from Last.fm") 
+
+    def sync_artists(self, request, obj):
+        obj.sync_artists()
+    sync_artists.label = _("Sync Artists")
+    sync_artists.short_description = _("Sync artists field with lineup field") 
+
+    def sync_lineup(self, request, obj):
+        obj.sync_lineup()
+    sync_lineup.label = _("Sync Lineup")
+    sync_lineup.short_description = _("Sync lineup field with artist field") 
+
     # objectactions = ['get_festival_info']
-    objectactions = ('get_festival_info', )
+    objectactions = ('get_festival_info', 'sync_artists', 'sync_lineup')
     actions = ['get_festival_info']
 admin.site.register(Festival, FestivalAdmin)
 

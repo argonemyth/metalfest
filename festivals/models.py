@@ -218,18 +218,46 @@ class Festival(models.Model):
             # print "Festival %s not found" % self.title
             return None
 
-    def sync_lineup(self):
-        """Sync lineup and artists field, might be a temperary method"""
+    def sync_artists(self):
+        """Sync artists field with lineup, might be a temperary method"""
         if self.lineup:
             lineup = json.loads(self.lineup)
             if len(lineup) != self.artists.count():
                 for band in lineup:
                     artist = Artist.objects.get(name=band)
                     self.artists.add(artist)
+        return
+
+    def sync_lineup(self):
+        """The reverse of sync_artists Sync lineup field with artists,
+           might be a temperary method"""
+        if self.artists.count() > 0:
+            if self.lineup:
+                lineup = json.loads(self.lineup)
             else:
-                print "All synced"
+                lineup = []
+            if len(lineup) != self.artists.count():
+                for artist in self.artists.select_related():
+                    if artist.name not in lineup:
+                        lineup.append(artist.name)
+                        for genre in artist.genres.select_related():
+                            self.genres.add(genre)
+                if lineup:
+                    self.lineup = json.dumps(lineup)
+                    self.save()
+        return
+
+
+    def lineup_info(self):
+        if not self.lineup:
+            return "No Lineup"
         else:
-            print "no lineup"
+            lineup = json.loads(self.lineup)
+            if len(lineup) != self.artists.count():
+                return "Require Sync"
+            else:
+                return "Good"
+
 
     def get_event_info(self):
         """Get event info from last.fm"""
