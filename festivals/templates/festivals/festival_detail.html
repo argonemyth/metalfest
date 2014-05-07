@@ -14,11 +14,11 @@
             <h4>{{ festival.title }}</h4>
         {% endif %}
         {% if festival.start_date == festival.end_date %}
-            <p class="date">{{ festival.start_date }}</p>
+            <div class="date">{{ festival.start_date }}</div>
        {% else %}
-            <p class="date">{{ festival.start_date }} - {{ festival.end_date }}</p>
+            <div class="date">{{ festival.start_date }} - {{ festival.end_date }}</div>
         {% endif %}
-        <p class="location">{{ festival.location }}, {{ festival.city }}</p>
+        <div class="location">{{ festival.location }}<br>{{ festival.city }}</div>
 
         {% comment %}
         {# We don't really need to show the genres             #}
@@ -32,9 +32,9 @@
             {% for artist in  festival.artists.select_related %}
                 <li>
                 {% if  artist.avatar_url_small %}
-                    <img src="{{ artist.avator_url_small }}" alt="{{ artist.name }}">
+                    <img src="{{ artist.avatar_url_small }}" alt="{{ artist.name }}">
                 {% else %}
-                    <img src="http://placehold.it/50x50?text={{ artist.name }}" alt="{{ artist.name }}">
+                    <img src="http://placehold.it/65x65&text={{ artist.name }}" alt="{{ artist.name }}">
                 {% endif %}
                 {# <span class="label">{{ artist.name }}</span> #}
                 </li>

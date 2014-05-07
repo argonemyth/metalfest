@@ -125,6 +125,7 @@ body#fullscreen {
 a.secondary {
     @include link-colors($secondary-color, darken($secondary-color, 10%), darken($secondary-color, 10%), $secondary-color, darken($secondary-color, 10%));
 }
+
 // Google Map Infobox
 .infobox {
     border: 1px solid black;
@@ -136,11 +137,25 @@ a.secondary {
     h1, h2, h3, h4, h5, h6 {
         color: #FFF;
     }
-    p {
+    p, div {
         font-size: .8rem;
     }
     .festival-loader {
       text-align: center;
+    }
+    .artists {
+        margin-top: 1rem;
+        margin-left: 0;
+        // width: 350px;
+        li {
+            margin-left: 0;
+            img {
+                width: rem-calc(65px);
+                height: rem-calc(65px);
+                border: 1px solid $body-bg;
+            }
+
+        }
     }
 }
 
