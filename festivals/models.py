@@ -53,6 +53,14 @@ class Artist(models.Model):
         self.slug = uuslug(self.name, instance=self)
         super(Artist, self).save(*args, **kwargs)
 
+    def band_image(self):
+        """Display band image if available"""
+        if self.avator_url_small:
+            return '<img src="%s">' % self.avator_url_small
+        else:
+            return None
+    band_image.allow_tags = True
+    
     def get_info_from_lastfm(self, artist=None):
         """
         artist is an Artist object from pylast

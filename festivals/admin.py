@@ -48,16 +48,20 @@ class ArtistAdmin(DjangoObjectActions, admin.ModelAdmin):
     """
     Admin class for artists.
     """
-    list_display = ('name', 'lastfm_url')
+    list_display = ('name', 'lastfm_url', 'band_image')
     search_fields = ('name', )
     # list_filter = ('genres',)
     ordering = ('name', )
 
-    def get_artist_info(self, request, obj):
-        obj.get_info_from_lastfm()
+    @takes_instance_or_queryset
+    # def get_artist_info(self, request, obj):
+    def get_artist_info(self, request, queryset):
+        for a in queryset:
+            a.get_info_from_lastfm()
     get_artist_info.label = _("Get Artist Info")
     get_artist_info.short_description = _("Get artist info from last.fm.")
 
     objectactions = ('get_artist_info', )
+    actions = ['get_artist_info']
 
 admin.site.register(Artist, ArtistAdmin)
