@@ -85,17 +85,18 @@ function Festival(data) {
     } else {
         header = "<h4>" + this.title() + "</h4>";
     }
-    var dates = '';
-    if ( this.start_date && this.end_date ) {
-        dates = "<p>" + this.start_date.toDateString() + " - " + this.end_date.toDateString() + "</p>"
-    }
+    // var dates = '';
+    // if ( this.start_date && this.end_date ) {
+    //     dates = "<p>" + this.start_date.toDateString() + " - " + this.end_date.toDateString() + "</p>"
+    // }
     var loader = '<hr><div class="festival-loader '+ this.slug +'"><i class="fa fa-refresh fa-spin fa-2x"></i><p>Loading more info...</p></div>';
-    boxText.innerHTML = header + dates + loader;
+    // boxText.innerHTML = header + dates + loader;
+    boxText.innerHTML = header + loader;
     self.infobox = new InfoBox({
          content: boxText,
          disableAutoPan: false,
-         maxWidth: 150,
-         // maxWidth: 360,
+         // maxWidth: 150,
+         maxWidth: 290,
          pixelOffset: new google.maps.Size(-140, 16),
          zIndex: null,
          boxStyle: {
