@@ -138,11 +138,10 @@ class Festival(models.Model):
     def get_absolute_url(self):
         return reverse('festival-detail', args=[self.slug])
 
-
     def if_past(self):
         """check if it's a past event"""
         today = date.today()
-        if self.end_date < today:
+        if self.end_date and self.end_date < today:
             return True
         return False
 
@@ -150,6 +149,7 @@ class Festival(models.Model):
         return {
             'id': self.id,
             'title': self.title,
+            'slug': self.slug,
             'url': self.url,
             'start_date': self.start_date,
             'end_date': self.end_date,
@@ -157,7 +157,8 @@ class Festival(models.Model):
             'longitude': self.longitude,
             'lineup': self.lineup, # json string
             'genres': json.dumps([g.name for g in self.genres.select_related()]),
-            'if_past': self.if_past()
+            'if_past': self.if_past(),
+            'detail_url': self.get_absolute_url()
         }
 
     def get_lastfm_event_id(self):
