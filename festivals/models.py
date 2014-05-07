@@ -34,6 +34,11 @@ class Artist(models.Model):
     name = models.CharField(_("name"), max_length=255)
     slug = models.CharField(max_length=255, unique=True, editable=False)
     lastfm_url = models.URLField(_("last.fm URL"), blank=True, null=True)
+    lastfm_url = models.URLField(_("last.fm URL"), blank=True, null=True)
+    avator_url_small = models.URLField(_("artist avator URL (small)"),
+                                       blank=True, null=True)
+    avator_url_big = models.URLField(_("artist avator URL (big)"),
+                                     blank=True, null=True)
     genres = TaggableManager(verbose_name=_("genres"), blank=True, 
                              help_text=_('A comma-separated list of genres'))
 
@@ -58,9 +63,17 @@ class Artist(models.Model):
             artist = network.get_artist(self.name)
 
         if artist:
-            seve = False
+            save = False
             if not self.lastfm_url:
                 self.lastfm_url = artist.get_url()
+                save = True
+
+            if not self.avator_url_small:
+                self.avator_url_small = artist.get_cover_image(size=1)
+                save = True
+
+            if not self.avator_url_big:
+                self.avator_url_big = artist.get_cover_image(size=3)
                 save = True
 
             if self.genres.count() == 0:

@@ -176,7 +176,7 @@ class FestivalModelTest(TestCase):
                 ]
         self.assertEqual(festival.get_lineup_display()[:3], lineup)
     """
-
+'''
 
 class ArtistModelTest(TestCase):
     def setUp(self):
@@ -197,4 +197,5 @@ class ArtistModelTest(TestCase):
         artist.get_info_from_lastfm()
         self.assertEqual(artist.lastfm_url, "http://www.last.fm/music/satyricon")
         self.assertEqual(artist.genres.count(), 5)
-'''
+        self.assertEqual(artist.avator_url_small, "http://userserve-ak.last.fm/serve/64/93039281.jpg")
+        self.assertEqual(artist.avator_url_big, "http://userserve-ak.last.fm/serve/252/93039281.jpg")
