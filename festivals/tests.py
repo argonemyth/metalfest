@@ -7,7 +7,9 @@ from django.views.generic import TemplateView
 import json
 from decimal import Decimal
 
-from festivals.views import FestivalJSONList, FesttivalMap
+from festivals.views import (FestivalJSONList,
+                             FestivalMap,
+                             FestivalDetail)
 from festivals.models import Festival, Artist
 from cities_light.models import City, Region, Country
 
@@ -18,7 +20,7 @@ def create_festivals():
     first_festival.title = "West Texas Death Fest"
     first_festival.start_date = "2014-06-20"
     first_festival.end_date = "2014-06-22"
-    first_festival.address = "Rue du Champ Louet"
+    first_festival.location = "Rue du Champ Louet"
     first_festival.latitude = 35.222553
     first_festival.longitude = -101.766291
     first_festival.save()
@@ -81,7 +83,7 @@ class HomePageTest(TestCase):
     def test_home_page_returns_correct_title(self):
         request = self.factory.get('/')
         # view = TemplateView.as_view(template_name="map.html")
-        view = FesttivalMap.as_view()
+        view = FestivalMap.as_view()
         response = view(request)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.template_name[0], 'map.html')
@@ -106,7 +108,17 @@ class HomePageTest(TestCase):
         self.assertEqual(data[0]['latitude'], '35.222553')
         self.assertEqual(data[1]['longitude'], '-8.686351')
 
+    def test_festival_detail_view(self):
+        festival = Festival.objects.all()[0]
+        request = self.factory.get(festival.get_absolute_url())
+        view = FestivalDetail.as_view()
+        response = view(request, slug=festival.slug).render()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.template_name[0], 'festivals/festival_detail.html')
+        self.assertIn(b'Rue du Champ Louet', response.content)
 
+
+'''
 class FestivalModelTest(TestCase):
     def setUp(self):
         create_festivals()
@@ -185,3 +197,4 @@ class ArtistModelTest(TestCase):
         artist.get_info_from_lastfm()
         self.assertEqual(artist.lastfm_url, "http://www.last.fm/music/satyricon")
         self.assertEqual(artist.genres.count(), 5)
+'''

@@ -1,5 +1,5 @@
 from django.views.generic import View
-from django.views.generic.detail import BaseDetailView
+from django.views.generic.detail import BaseDetailView, DetailView
 from django.views.generic.list import BaseListView
 from django.views.generic.edit import BaseFormView, FormView
 from django.views.generic import TemplateView
@@ -99,6 +99,17 @@ class JSONResponseMixin(object):
         return JSONResponse(context, *args, **kwargs)
 
 
+class AjaxResponseMixin(object):
+    def get_context_data(self, **kwargs):
+        context = super(AjaxResponseMixin, self).get_context_data(**kwargs)
+        if self.request.is_ajax():
+            print "Request is ajax"
+            context["ajax"] = True
+        else:
+            print "Regular Request"
+        return context
+
+
 # class JSONListView(JSONResponseMixin, BaseListView):
 #     def get_context_data(self, **kwargs):
 #         context = super(JSONListView, self).get_context_data(**kwargs)
@@ -106,8 +117,8 @@ class JSONResponseMixin(object):
 
 
 # Actual views for the app
-# class FesttivalMap(FormView):
-class FesttivalMap(TemplateView):
+# class FestivalMap(FormView):
+class FestivalMap(TemplateView):
     """
     View for our on page app.
     """
@@ -124,3 +135,8 @@ class FestivalJSONList(JSONResponseMixin, BaseListView):
         all_festivals = super(FestivalJSONList, self).get_queryset()
         return all_festivals.filter(Q(latitude__isnull=False), 
                                     Q(longitude__isnull=False))
+
+
+class FestivalDetail(AjaxResponseMixin, DetailView):
+    model = Festival
+    context_object_name = 'festival'

@@ -1,0 +1,41 @@
+{% extends ajax|yesno:"base_ajax.html,base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+    {% if not ajax %}
+    <div class="infobox">
+    {% endif %}
+
+    <section>
+        {% if festival.url %}
+            <h4><a target='_blank' href='{{ festival.url }}'>{{ festival.title }}</a></h4>
+        {% else %}
+            <h4>{{ festival.title }}</h4>
+        {% endif %}
+        {% if festival.start_date == festival.end_date %}
+            <p class="date">{{ festival.start_date }}</p>
+       {% else %}
+            <p class="date">{{ festival.start_date }} - {{ festival.end_date }}</p>
+        {% endif %}
+        <p class="location">{{ festival.location }}, {{ festival.city }}</p>
+
+        {% comment %}
+        {# We don't really need to show the genres             #}
+        <ul class="genres inline-list">
+            {% for genre in  festival.genres.select_related %}
+                <li><span class="label radius">{{ genre }}</span></li>
+            {% endfor %}
+        </ul>
+        {% endcomment %}
+        <div class="artists">
+            {% for artist in  festival.get_lineup_display %}
+                <span class="label">{{ artist }}</span>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% if not ajax %}
+    </div>
+    {% endif %}
+{% endblock content %}

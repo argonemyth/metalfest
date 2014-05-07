@@ -69,6 +69,8 @@ function Festival(data) {
     this.lineup = ko.observable(ko.utils.parseJson(data.lineup)); // json string
     this.genres = ko.observable(ko.utils.parseJson(data.genres)); // json string
     this.if_past = data.if_past;
+    this.detail_url = data.detail_url; // url of festival detail
+    this.slug = data.slug;
 
     // Google LatLng Object
     var festLatLng = new google.maps.LatLng(self.lat(),self.lng());
@@ -87,7 +89,8 @@ function Festival(data) {
     if ( this.start_date && this.end_date ) {
         dates = "<p>" + this.start_date.toDateString() + " - " + this.end_date.toDateString() + "</p>"
     }
-    boxText.innerHTML = header + dates;
+    var loader = '<hr><div class="festival-loader '+ this.slug +'"><i class="fa fa-refresh fa-spin fa-2x"></i><p>Loading more info...</p></div>';
+    boxText.innerHTML = header + dates + loader;
     self.infobox = new InfoBox({
          content: boxText,
          disableAutoPan: false,
@@ -130,6 +133,14 @@ function Festival(data) {
     // google.maps.event.addListener(self.marker, 'mouseover', function() {
     google.maps.event.addListener(self.marker, 'click', function() {
         self.infobox.open(google_map.map, this);
+        // $(".festival-loader." + this.slug).load(this.festival_url);
+        // self.infobox.setContent(boxText);
+        $.ajax({
+            url: self.detail_url,
+        }).done(function(html) {
+            boxText.innerHTML = html;
+            self.infobox.setContent(boxText);
+        });
         google_map.map.panTo(festLatLng);
     });
 
