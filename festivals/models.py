@@ -35,9 +35,9 @@ class Artist(models.Model):
     slug = models.CharField(max_length=255, unique=True, editable=False)
     lastfm_url = models.URLField(_("last.fm URL"), blank=True, null=True)
     lastfm_url = models.URLField(_("last.fm URL"), blank=True, null=True)
-    avator_url_small = models.URLField(_("artist avator URL (small)"),
+    avatar_url_small = models.URLField(_("artist avatar URL (small)"),
                                        blank=True, null=True)
-    avator_url_big = models.URLField(_("artist avator URL (big)"),
+    avatar_url_big = models.URLField(_("artist avatar URL (big)"),
                                      blank=True, null=True)
     genres = TaggableManager(verbose_name=_("genres"), blank=True, 
                              help_text=_('A comma-separated list of genres'))
@@ -55,12 +55,12 @@ class Artist(models.Model):
 
     def band_image(self):
         """Display band image if available"""
-        if self.avator_url_small:
-            return '<img src="%s">' % self.avator_url_small
+        if self.avatar_url_small:
+            return '<img src="%s">' % self.avatar_url_small
         else:
             return None
     band_image.allow_tags = True
-    
+
     def get_info_from_lastfm(self, artist=None):
         """
         artist is an Artist object from pylast
@@ -76,12 +76,12 @@ class Artist(models.Model):
                 self.lastfm_url = artist.get_url()
                 save = True
 
-            if not self.avator_url_small:
-                self.avator_url_small = artist.get_cover_image(size=1)
+            if not self.avatar_url_small:
+                self.avatar_url_small = artist.get_cover_image(size=1)
                 save = True
 
-            if not self.avator_url_big:
-                self.avator_url_big = artist.get_cover_image(size=3)
+            if not self.avatar_url_big:
+                self.avatar_url_big = artist.get_cover_image(size=3)
                 save = True
 
             if self.genres.count() == 0:
@@ -118,6 +118,7 @@ class Festival(models.Model):
                                     blank=True, null=True)
     computed_address = models.CharField(max_length=255, null=True, blank=True,
                                         help_text=_('The address Google Geocoder used to calculate the geo position'))
+    artists = models.ManyToManyField(Artist, null=True, blank=True)
     lineup = models.TextField(_('lineup'), null=True, blank=True,
                               help_text=_('Cached value for band lineup, a text field with a json string'))
     genres = TaggableManager(verbose_name=_("genres"), blank=True, 
@@ -217,6 +218,19 @@ class Festival(models.Model):
             # print "Festival %s not found" % self.title
             return None
 
+    def sync_lineup(self):
+        """Sync lineup and artists field, might be a temperary method"""
+        if self.lineup:
+            lineup = json.loads(self.lineup)
+            if len(lineup) != self.artists.count():
+                for band in lineup:
+                    artist = Artist.objects.get(name=band)
+                    self.artists.add(artist)
+            else:
+                print "All synced"
+        else:
+            print "no lineup"
+
     def get_event_info(self):
         """Get event info from last.fm"""
         if self.lastfm_id:
@@ -289,6 +303,8 @@ class Festival(models.Model):
                     if name and ( name not in lineup ):
                         lineup.append(name)
                         artist, created = Artist.objects.get_or_create(name=name)
+                        # Need to add it to artists as well
+                        self.artists.add(artist)
                         if created or ( artist.genres.count() == 0 ):
                             # Getting from last.fm
                             top_tags = artist.get_info_from_lastfm(a)
