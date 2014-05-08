@@ -1,4 +1,5 @@
 Django==1.6.2
+Django-Select2==4.2.2
 South==0.8.4
 Unidecode==0.04.14
 beautifulsoup4==4.3.2
