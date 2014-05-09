@@ -96,13 +96,13 @@ function Festival(data) {
          content: boxText,
          disableAutoPan: false,
          // maxWidth: 150,
-         maxWidth: 290,
+         // maxWidth: 290,
          pixelOffset: new google.maps.Size(-140, 16),
          zIndex: null,
          boxStyle: {
             // background: "url('http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/examples/tipbox.gif') no-repeat",
             opacity: 0.85,
-            width: "285px"
+            width: "296px"
         },
         closeBoxMargin: "14px 8px 2px 2px",
         // closeBoxURL: "http://www.google.com/intl/en_us/mapfiles/close.gif",
@@ -141,7 +141,27 @@ function Festival(data) {
             url: self.detail_url,
         }).done(function(html) {
             boxText.innerHTML = html;
+            console.log("set custom scrollbar");
+            // console.log($(boxText).find(".artists li"));
+            // $(boxText).find(".artists").mCustomScrollbar();
+            /*
+            $(boxText).find(".artists").mCustomScrollbar({
+                advanced:{
+                    updateOnContentResize: true
+                }
+            });
+            */
+            // $.when( self.infobox.setContent(boxText) ).done(function() {
+            //     console.log("Infobox finished");
+            //     $(boxText).find(".artists").jScrollPane();
+            // })
+            // BUG: The first click won't work, and then works on every infobox...
             self.infobox.setContent(boxText);
+            setTimeout(function() {
+                // A hack to make sure infobox loadeded the content
+                var artist_list = $(boxText).find(".artists");
+                if ( $(artist_list).length ) $(artist_list).jScrollPane();
+            }, 300);
         });
         google_map.map.panTo(festLatLng);
     });

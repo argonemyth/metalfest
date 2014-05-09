@@ -44,6 +44,53 @@
 // fonts
 @include font-face("Mohave", font-files("/static/fonts/Mohave.otf", opentype)); // For the logo 
 
+@mixin scrollbar($size, $primary, $secondary: lighten($primary, 25%)) {
+    ::-webkit-scrollbar {
+        width:  $size;
+        height: $size;
+    }
+ 
+    ::-webkit-scrollbar-thumb {
+        background: $primary;
+    }
+ 
+    ::-webkit-scrollbar-track {
+        background: $secondary;
+    }
+
+    // For jscrollpane
+    .jspVerticalBar
+    {
+        // position: absolute;
+        // top: 0;
+        // right: 0;
+        width: $size;
+        // height: 100%;
+        background: transparent;
+    }
+    .jspTrack {
+        background: $secondary; /* changed from #dde */
+        position: relative;
+    }
+ 
+    .jspDrag{
+        background: $primary;
+        position: relative;
+        top: 0;
+        left: 0;
+        cursor: pointer;
+    }
+  
+    // For Internet Explorer
+    body {
+        scrollbar-face-color: $primary;
+        scrollbar-track-color: $secondary;
+    }
+}
+
+// @include scrollbar(.5em, tomato);
+@include scrollbar(.5rem, $alert-color, rgba(0,0,0,.8));
+
 html, body#fullscreen{
     height: 100%;
 }
@@ -146,13 +193,21 @@ a.secondary {
     .artists {
         margin-top: 1rem;
         margin-left: 0;
+        max-height: rem-calc(340px);
+        overflow-y: auto;
+        // width: 100%;
         // width: 350px;
         li {
             margin-left: 0;
+            float: left !important;
             img {
+                display: inline-block;
                 width: rem-calc(65px);
                 height: rem-calc(65px);
                 border: 1px solid $body-bg;
+            }
+            .artist-description {
+                display: inline-block;
             }
 
         }

@@ -31,12 +31,18 @@
         <ul class="artists inline-list">
             {% for artist in  festival.artists.select_related %}
                 <li>
-                {% if  artist.avatar_url_small %}
-                    <img src="{{ artist.avatar_url_small }}" alt="{{ artist.name }}">
-                {% else %}
-                    <img src="http://placehold.it/65x65&text={{ artist.name }}" alt="{{ artist.name }}">
-                {% endif %}
-                {# <span class="label">{{ artist.name }}</span> #}
+                    {% if  artist.avatar_url_small %}
+                        <img src="{{ artist.avatar_url_small }}" alt="{{ artist.name }}" title="{{ artist.name }}">
+                    {% else %}
+                        <img src="http://placehold.it/65x65&text={{ artist.name }}" alt="{{ artist.name }}" title="{{ artist.name }}">
+                    {% endif %}
+                    {# <span class="label">{{ artist.name }}</span> #}
+                    {% comment %}
+                        
+                    <div class="artist-description">
+                        <h6>{{ artist.name }}</h6>
+                    </div>
+                    {% endcomment %}
                 </li>
             {% endfor %}
         </ul>
