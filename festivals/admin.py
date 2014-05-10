@@ -22,7 +22,7 @@ class FestivalAdmin(DjangoObjectActions, admin.ModelAdmin):
     Admin class for festivals.
     """
     form = FestivalAdminForm
-    list_display = ('title', 'start_date', 'end_date', 'location',  'city', 'latitude', 'longitude', 'lastfm_id', 'lineup_info')
+    list_display = ('title', 'lineup_info', 'lastfm_id', 'latitude', 'longitude', 'location', 'city', 'start_date', 'end_date')
     list_editable = ('start_date', 'end_date', 'location')
     # list_filter = ('city',)
     search_fields = ('title', 'description', 'location')

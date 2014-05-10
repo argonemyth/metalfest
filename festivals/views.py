@@ -103,10 +103,7 @@ class AjaxResponseMixin(object):
     def get_context_data(self, **kwargs):
         context = super(AjaxResponseMixin, self).get_context_data(**kwargs)
         if self.request.is_ajax():
-            print "Request is ajax"
             context["ajax"] = True
-        else:
-            print "Regular Request"
         return context
 
 
