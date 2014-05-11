@@ -226,6 +226,8 @@ class Festival(models.Model):
                 for band in lineup:
                     artist = Artist.objects.get(name=band)
                     self.artists.add(artist)
+                    for genre in artist.genres.select_related():
+                        self.genres.add(genre)
         return
 
     def sync_lineup(self):
