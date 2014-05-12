@@ -44,7 +44,7 @@ def create_festivals():
 
 
 def create_artists():
-    artists = ["Satyricon", "Arch Enemy"]
+    artists = ["Satyricon", "Arch Enemy", "Kreator"]
     for a_name in artists:
         artist = Artist()
         artist.name = a_name 
@@ -118,10 +118,10 @@ class HomePageTest(TestCase):
         self.assertIn(b'Rue du Champ Louet', response.content)
 
 
-'''
 class FestivalModelTest(TestCase):
     def setUp(self):
         create_festivals()
+        create_artists()
         self.city = create_city()
 
     def test_saving_and_retrieving_itmes(self):
@@ -176,7 +176,24 @@ class FestivalModelTest(TestCase):
                 ]
         self.assertEqual(festival.get_lineup_display()[:3], lineup)
     """
-'''
+    def test_sync_artists(self):
+        festival = Festival.objects.get(id=1)
+        festival.lineup = json.dumps(["Satyricon","arch enemy"])
+        festival.save()
+        festival.sync_artists()
+        # should be case insensitive
+        self.assertEqual(festival.artists.count(), 2)
+
+    def test_sync_lineup(self):
+        festival = Festival.objects.get(id=2)
+        artist1 = Artist.objects.get(id=1)
+        artist2 = Artist.objects.get(id=3)
+        festival.artists.add(artist1)
+        festival.artists.add(artist2)
+        festival.sync_lineup()
+        lineup = festival.get_lineup_display()
+        self.assertEqual(lineup, [u'Satyricon', u'Kreator'])
+
 
 class ArtistModelTest(TestCase):
     def setUp(self):
@@ -184,7 +201,7 @@ class ArtistModelTest(TestCase):
 
     def test_saving_and_retrieving_itmes(self):
         saved_artists = Artist.objects.all()
-        self.assertEqual(saved_artists.count(), 2)
+        self.assertEqual(saved_artists.count(), 3)
         first_saved = saved_artists[0]
         second_saved = saved_artists[1]
         self.assertEqual(first_saved.name, "Satyricon")
@@ -197,5 +214,5 @@ class ArtistModelTest(TestCase):
         artist.get_info_from_lastfm()
         self.assertEqual(artist.lastfm_url, "http://www.last.fm/music/satyricon")
         self.assertEqual(artist.genres.count(), 5)
-        self.assertEqual(artist.avator_url_small, "http://userserve-ak.last.fm/serve/64/93039281.jpg")
-        self.assertEqual(artist.avator_url_big, "http://userserve-ak.last.fm/serve/252/93039281.jpg")
+        self.assertEqual(artist.avatar_url_small, "http://userserve-ak.last.fm/serve/64/93039281.jpg")
+        self.assertEqual(artist.avatar_url_big, "http://userserve-ak.last.fm/serve/252/93039281.jpg")

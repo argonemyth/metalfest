@@ -224,7 +224,7 @@ class Festival(models.Model):
             lineup = json.loads(self.lineup)
             if len(lineup) != self.artists.count():
                 for band in lineup:
-                    artist = Artist.objects.get(name=band)
+                    artist = Artist.objects.get(name__iexact=band)
                     self.artists.add(artist)
                     for genre in artist.genres.select_related():
                         self.genres.add(genre)
@@ -236,11 +236,15 @@ class Festival(models.Model):
         if self.artists.count() > 0:
             if self.lineup:
                 lineup = json.loads(self.lineup)
+                # Convert all names in lineup to lowercase for comparison
+                lineup_lower = [a.lower() for a in lineup]
             else:
                 lineup = []
+                lineup_lower = []
+
             if len(lineup) != self.artists.count():
                 for artist in self.artists.select_related():
-                    if artist.name not in lineup:
+                    if artist.name.lower() not in lineup_lower:
                         lineup.append(artist.name)
                         for genre in artist.genres.select_related():
                             self.genres.add(genre)
