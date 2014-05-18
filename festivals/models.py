@@ -7,7 +7,7 @@ from django.utils.timezone import now
 from django.conf import settings
 from django.utils.encoding import smart_str
 
-from cities_light.models import City
+from cities_light.models import City, Country
 from geopy import geocoders
 from uuslug import uuslug
 from taggit.managers import TaggableManager
@@ -19,6 +19,7 @@ import json
 from datetime import date
 
 from festivals import pylast
+from festivals.utils import query_musicbrainz
 
 import logging
 logger = logging.getLogger(__name__)
@@ -37,8 +38,7 @@ class Artist(models.Model):
     lastfm_url = models.URLField(_("last.fm URL"), blank=True, null=True)
     ma_url = models.URLField(_("MetalArchive URL"), blank=True, null=True)
     fb_url = models.URLField(_("facebook URL"), blank=True, null=True)
-    twitter_name = models.CharField(_("twitter name"), max_length=255,
-                                    blank=True,null=True)
+    twitter_url = models.URLField(_("twitter URL"), blank=True, null=True)
     avatar_url_small = models.URLField(_("artist avatar URL (small)"),
                                        blank=True, null=True)
     avatar_url_big = models.URLField(_("artist avatar URL (big)"),
@@ -85,6 +85,10 @@ class Artist(models.Model):
                 self.lastfm_url = artist.get_url()
                 save = True
 
+            if not self.mbid:
+                self.mbid = artist.get_mbid()
+                save = True
+
             if not self.avatar_url_small:
                 self.avatar_url_small = artist.get_cover_image(size=1)
                 save = True
@@ -106,6 +110,59 @@ class Artist(models.Model):
         else:
             return None
 
+    def get_info_from_musicbrainz(self):
+        """ We will get the following info from musicbrainz:
+            - official_url (typeid: fe33d22f-c3b0-4d68-bd53-a856badf2b15)
+            - ma_url ()
+            - fb_url
+            - twitter_url
+            - country
+        """
+
+        if self.mbid:
+            result = query_musicbrainz(self.mbid)
+            urls = result.get("relations", None)
+            save = False
+            if not self.country:
+                self.country = Country.objects.get(code2=result["country"])
+                save = True
+
+            if not self.official_url and urls:
+                for r in urls:
+                    if r['type-id'] == 'fe33d22f-c3b0-4d68-bd53-a856badf2b15':
+                        self.official_url = r["url"]["resource"]
+                        save = True
+                        break
+
+            if not self.ma_url and urls:
+                for r in urls:
+                    url = r["url"]["resource"]
+                    if 'metal-archives.com' in url:
+                        self.ma_url = url
+                        save = True
+                        break 
+
+            if not self.fb_url and urls:
+                for r in urls:
+                    url = r["url"]["resource"]
+                    if 'facebook.com' in url:
+                        self.fb_url = url
+                        save = True
+                        break 
+
+            if not self.twitter_url and urls:
+                for r in urls:
+                    url = r["url"]["resource"]
+                    if 'twitter.com' in url:
+                        self.twitter_url = url
+                        save = True
+                        break 
+
+            if save == True:
+                self.save()
+
+        else:
+            return None
 
 class Festival(models.Model):
     """ This model records the info for a metal festival """

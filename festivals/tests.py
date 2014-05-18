@@ -67,6 +67,9 @@ def create_city():
     city2 = City(name="Viana do Castelo", region=region2, country=country2)
     city2.save()
 
+    country3 = Country(name="Norway", continent="EU", phone=1, code2="NO")
+    country3.save()
+
     return city
 
 
@@ -117,7 +120,7 @@ class HomePageTest(TestCase):
         self.assertEqual(response.template_name[0], 'festivals/festival_detail.html')
         self.assertIn(b'Rue du Champ Louet', response.content)
 
-
+'''
 class FestivalModelTest(TestCase):
     def setUp(self):
         create_festivals()
@@ -193,11 +196,12 @@ class FestivalModelTest(TestCase):
         festival.sync_lineup()
         lineup = festival.get_lineup_display()
         self.assertEqual(lineup, [u'Satyricon', u'Kreator'])
-
+'''
 
 class ArtistModelTest(TestCase):
     def setUp(self):
         create_artists()
+        create_city()
 
     def test_saving_and_retrieving_itmes(self):
         saved_artists = Artist.objects.all()
@@ -216,11 +220,15 @@ class ArtistModelTest(TestCase):
         self.assertEqual(artist.genres.count(), 5)
         self.assertEqual(artist.avatar_url_small, "http://userserve-ak.last.fm/serve/64/93039281.jpg")
         self.assertEqual(artist.avatar_url_big, "http://userserve-ak.last.fm/serve/252/93039281.jpg")
-        self.assertEqual(artist.mbid,"")
+        self.assertEqual(artist.mbid,"279d1fd5-9be3-4175-bae6-907fa1ec96fc")
 
-    def test_get_info_from_metalarchive(self):
+    def test_get_info_from_musicbrainz(self):
         artist = Artist.objects.get(id=1)
-        artist.get_info_from_metalarchive()
+        artist.mbid = "279d1fd5-9be3-4175-bae6-907fa1ec96fc"
+        normay = Country.objects.get(code2="NO")
+        artist.get_info_from_musicbrainz()
+        self.assertEqual(artist.country, normay)
         self.assertEqual(artist.official_url, "http://www.satyricon.no/")
         self.assertEqual(artist.ma_url, "http://www.metal-archives.com/bands/Satyricon/341")
-        self.assertEqual(artist., "http://www.satyricon.no/")
+        self.assertEqual(artist.fb_url, None)
+        self.assertEqual(artist.twitter_url, "https://twitter.com/satyriconontour")

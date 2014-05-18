@@ -12,6 +12,7 @@ django-taggit==0.11.2
 django-uuslug==1.0.2
 geopy==0.99
 python-slugify==0.0.7
+requests==2.3.0
 selenium==2.41.0
 six==1.6.1
 wsgiref==0.1.2
