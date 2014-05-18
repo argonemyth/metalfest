@@ -118,14 +118,19 @@ class Artist(models.Model):
             - twitter_url
             - country
         """
+        # Let's try to get mbid if it doesn't exist
+        if not self.mbid:
+            self.get_info_from_lastfm()
 
         if self.mbid:
             result = query_musicbrainz(self.mbid)
             urls = result.get("relations", None)
             save = False
             if not self.country:
-                self.country = Country.objects.get(code2=result["country"])
-                save = True
+                c = result["country"]
+                if c:
+                    self.country = Country.objects.get(code2=result["country"])
+                    save = True
 
             if not self.official_url and urls:
                 for r in urls:
