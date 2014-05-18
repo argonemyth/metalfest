@@ -216,3 +216,11 @@ class ArtistModelTest(TestCase):
         self.assertEqual(artist.genres.count(), 5)
         self.assertEqual(artist.avatar_url_small, "http://userserve-ak.last.fm/serve/64/93039281.jpg")
         self.assertEqual(artist.avatar_url_big, "http://userserve-ak.last.fm/serve/252/93039281.jpg")
+        self.assertEqual(artist.mbid,"")
+
+    def test_get_info_from_metalarchive(self):
+        artist = Artist.objects.get(id=1)
+        artist.get_info_from_metalarchive()
+        self.assertEqual(artist.official_url, "http://www.satyricon.no/")
+        self.assertEqual(artist.ma_url, "http://www.metal-archives.com/bands/Satyricon/341")
+        self.assertEqual(artist., "http://www.satyricon.no/")

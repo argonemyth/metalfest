@@ -33,12 +33,21 @@ class Artist(models.Model):
     """
     name = models.CharField(_("name"), max_length=255)
     slug = models.CharField(max_length=255, unique=True, editable=False)
+    official_url = models.URLField(_("official URL"), blank=True, null=True)
     lastfm_url = models.URLField(_("last.fm URL"), blank=True, null=True)
-    lastfm_url = models.URLField(_("last.fm URL"), blank=True, null=True)
+    ma_url = models.URLField(_("MetalArchive URL"), blank=True, null=True)
+    fb_url = models.URLField(_("facebook URL"), blank=True, null=True)
+    twitter_name = models.CharField(_("twitter name"), max_length=255,
+                                    blank=True,null=True)
     avatar_url_small = models.URLField(_("artist avatar URL (small)"),
                                        blank=True, null=True)
     avatar_url_big = models.URLField(_("artist avatar URL (big)"),
                                      blank=True, null=True)
+    mbid = models.CharField(_("Musicbraiz ID"), max_length=50,
+                            blank=True, null=True)
+    country = models.ForeignKey('cities_light.Country',
+                                verbose_name=_('country'),
+                                blank=True, null=True)
     genres = TaggableManager(verbose_name=_("genres"), blank=True, 
                              help_text=_('A comma-separated list of genres'))
 
