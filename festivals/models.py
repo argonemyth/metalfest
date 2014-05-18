@@ -164,6 +164,20 @@ class Artist(models.Model):
         else:
             return None
 
+    def get_external_url(self):
+        """ Return either official, facebook, twitter or ma url """
+        if self.official_url:
+            return self.official_url
+        elif self.fb_url:
+            return self.fb_url
+        elif self.twitter_url:
+            return self.twitter_url
+        elif self.ma_url:
+            return self.ma_url
+        else:
+            return None
+
+
 class Festival(models.Model):
     """ This model records the info for a metal festival """
     title = models.CharField(_("title"), max_length=255, unique=True)

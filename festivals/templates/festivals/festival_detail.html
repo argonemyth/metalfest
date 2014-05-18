@@ -32,9 +32,17 @@
             {% for artist in  festival.artists.select_related %}
                 <li>
                     {% if  artist.avatar_url_small %}
-                        <img src="{{ artist.avatar_url_small }}" alt="{{ artist.name }}" title="{{ artist.name }}">
+                        {% if artist.get_external_url %}
+                            <a href="{{ artist.official_url }}" target="_blank"><img src="{{ artist.avatar_url_small }}" alt="{{ artist.name }}" title="{{ artist.name }}"></a>
+                        {% else %}
+                            <img src="{{ artist.avatar_url_small }}" alt="{{ artist.name }}" title="{{ artist.name }}">
+                        {% endif %}
                     {% else %}
-                        <img src="http://placehold.it/65x65&text={{ artist.name }}" alt="{{ artist.name }}" title="{{ artist.name }}">
+                        {% if artist.get_external_url %}
+                            <a href="{{ artist.official_url }}" target="_blank"><img src="http://placehold.it/65x65&text={{ artist.name }}" alt="{{ artist.name }}" title="{{ artist.name }}"></a>
+                        {% else %}
+                            <img src="http://placehold.it/65x65&text={{ artist.name }}" alt="{{ artist.name }}" title="{{ artist.name }}">
+                        {% endif %}
                     {% endif %}
                     {# <span class="label">{{ artist.name }}</span> #}
                     {% comment %}
