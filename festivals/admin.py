@@ -78,7 +78,17 @@ class ArtistAdmin(DjangoObjectActions, admin.ModelAdmin):
     get_artist_info.label = _("Get Artist Info")
     get_artist_info.short_description = _("Get artist info from last.fm.")
 
-    objectactions = ('get_artist_info', )
-    actions = ['get_artist_info']
+    @takes_instance_or_queryset
+    # def get_artist_info(self, request, obj):
+    def get_artist_info_musicbrainz(self, request, queryset):
+        for a in queryset:
+            a.get_info_from_musicbrainz()
+    get_artist_info_musicbrainz.label = _("Get Artist Info [MB]")
+    get_artist_info_musicbrainz.short_description = _("Get artist info from musicbrainz,\
+                                           you need to get mbid from Get\
+                                           Artist Info first.")
+
+    objectactions = ('get_artist_info', 'get_artist_info_musicbrainz')
+    actions = ['get_artist_info', 'get_artist_info_musicbrainz']
 
 admin.site.register(Artist, ArtistAdmin)
