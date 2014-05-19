@@ -11,7 +11,7 @@ from django.db.models import Q
 
 import json
 
-from festivals.models import Festival
+from festivals.models import Festival, Artist
 # from festivals.forms import FilterForm
 
 # JSON serialization helpers
@@ -137,3 +137,14 @@ class FestivalJSONList(JSONResponseMixin, BaseListView):
 class FestivalDetail(AjaxResponseMixin, DetailView):
     model = Festival
     context_object_name = 'festival'
+
+
+class ArtistJSONList(JSONResponseMixin, BaseListView):
+    model = Artist
+    context_object_name = 'artists'
+    """
+    def get_queryset(self):
+        all_festivals = super(ArtistJSONList, self).get_queryset()
+        return all_festivals.filter(Q(latitude__isnull=False), 
+                                    Q(longitude__isnull=False))
+    """

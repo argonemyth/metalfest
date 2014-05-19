@@ -398,6 +398,17 @@ function FestivalMapViewModel() {
     self.showOverlay = function() {
         self.displayOverlay(true);
     }
+
+    // Get a list of all the band names
+    $.getJSON("/festivals/artists/all/", function(data) {
+        var artist_list = data['artists']
+        var all_artists = [];
+        ko.utils.arrayForEach(artist_list, function(item) {
+            // console.log(item.name);
+            all_artists.push(item.name);
+        });
+        self.bands(all_artists);
+    });
 }
 
 // This binding only control the initalization of the google map with all the festivals.
@@ -425,12 +436,12 @@ ko.bindingHandlers.map = {
         var festivals = ko.utils.unwrapObservable(valueAccessor());
         if (festivals.length > 0 ) {
             viewModel.showMarkers();
-            var all_linup = []
-            ko.utils.arrayForEach(festivals, function(item) {
-                if ( item.lineup() ) all_linup = _.union(all_linup, item.lineup());
-            });
+            // var all_linup = []
+            // ko.utils.arrayForEach(festivals, function(item) {
+            //     if ( item.lineup() ) all_linup = _.union(all_linup, item.lineup());
+            // });
             // console.log(all_linup);
-            viewModel.bands(all_linup);
+            // viewModel.bands(all_linup);
             var all_genres = []
             ko.utils.arrayForEach(festivals, function(item) {
                 if ( item.genres() ) all_genres = _.union(all_genres, item.genres());

@@ -70,6 +70,11 @@ class Artist(models.Model):
             return None
     band_image.allow_tags = True
 
+    def serialize(self):
+        return {
+            'name': self.name
+        }
+
     def get_info_from_lastfm(self, artist=None):
         """
         artist is an Artist object from pylast
