@@ -13,7 +13,8 @@ import json
 from rest_framework import generics, filters
 
 from festivals.models import Festival, Artist
-from festivals.serializers import ArtistSerializer
+from festivals.serializers import ArtistSerializer, GenreTagSerializer
+from taggit.models import Tag
 # from festivals.forms import FilterForm
 
 # JSON serialization helpers
@@ -154,5 +155,12 @@ class ArtistJSONList(JSONResponseMixin, BaseListView):
 class ArtistListView(generics.ListAPIView):
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('^name',)
+
+
+class GenreTagListView(generics.ListAPIView):
+    queryset = Tag.objects.all()
+    serializer_class = GenreTagSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('^name',)

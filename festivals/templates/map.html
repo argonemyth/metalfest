@@ -63,13 +63,14 @@
                 <div class="small-12 columns">
                     <label>{% trans "Filter by bands" %}</label>
                     {# <select multiple="true" data-bind="selectedOptions: selected_bands, value: selected_bands, lookupKey: name, select2: { minimumInputLength: 1, query: bandQuery }"></select> #}
-                    <input type="hidden" data-bind="value: selected_bands_str, select2: { minimumInputLength: 1,  multiple: true, query: bandQuery }">
+                    <input type="hidden" data-bind="value: selected_bands_str, select2: { minimumInputLength: 2,  multiple: true, query: bandQuery }">
                 </div>
             </div>
             <div class="row">
                 <div class="small-12 columns">
                     <label>{% trans "Filter by genres:" %}</label>
-                    <select multiple="true" data-bind="selectedOptions: selected_genres, options: genres, select2: { }"></select>
+                    {# <select multiple="true" data-bind="selectedOptions: selected_genres, options: genres, select2: { }"></select> #}
+                    <input type="hidden" data-bind="value: selected_genres_str, select2: { minimumInputLength: 2,  multiple: true, query: genreQuery }">
                 </div>
             </div>
             <div class="row">

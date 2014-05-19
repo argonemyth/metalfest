@@ -197,6 +197,7 @@ function FestivalMapViewModel() {
     self.selected_bands = ko.observable(new Array());
     // self.bands = ["The Afternoon `Gentlemen", "Palehorse", "Metal Church", "Anaal Nathrakh", "Discharge", "Misery Index", "Gorguts", "Negură Bunget", "Blood Red Throne", "Hirax", "Bonded By Blood", "Sourvein", "Black Witchery", "In Solitude", "Graves at Sea", "Wormed", "Mystifier", "Gwydion", "Grave Miasma", "Warhammer", "Bosque", "Bölzer", "Nuclear", "For The Glory", "We Are The Damned", "Crepitation", "Nami", "Antropofagus", "Nebulous", "Executer", "Verdun", "Eryn Non Dae", "Methedras", "Revolution Within", "Eternal Storm", "In Tha Umbra", "Dolentia", "Ermo", "Age of Woe", "Trinta e Um", "Solar Corona", "Equations", "Dementia 13", "Angist", "THE QUARTET OF WOAH!", "Martelo Negro", "Serrabulho", "Vai-Te Foder", "Destroyers Of All", "Vengha", "Bed Legs", "Display of power", "Pterossauros"];
     self.bands = ko.observable(new Array());
+    self.selected_genres_str = ko.observable();
     self.selected_genres = ko.observable(new Array());
     self.genres = ko.observable(new Array());
 
@@ -279,7 +280,23 @@ function FestivalMapViewModel() {
     
     self.selected_bands_str.subscribe(function(bands) {
         // Need to turn strings to the array
-        self.selected_bands(bands.split(','));
+        if (bands) {
+            self.selected_bands(bands.split(','));
+        } else {
+            // reset bands 
+            self.selected_bands([]);
+        }
+    });
+
+    self.selected_genres_str.subscribe(function(genres) {
+        // Need to turn strings to the array
+        if (genres) {
+            self.selected_genres(genres.split(','));
+            // console.log(self.selected_genres());
+        } else {
+            // reset genres
+            self.selected_genres([]);
+        }
     });
 
     self.displayedFestivals.subscribe(function (festivals) {
@@ -443,6 +460,27 @@ function FestivalMapViewModel() {
                 }
                 query.callback({
                     results: bands 
+                });
+            }
+        });
+    };
+
+    self.genreQuery = function (query) {
+        $.ajax({
+            url: '/festivals/genres/',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                // search: JSON.stringify(states)
+                search: query.term
+            },
+            success: function (data) {
+                var genres = [];
+                for ( i in data ) {
+                    genres.push({id: data[i].name, text: data[i].name});
+                }
+                query.callback({
+                    results: genres
                 });
             }
         });
