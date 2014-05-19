@@ -193,6 +193,7 @@ function FestivalMapViewModel() {
     self.date_range = ko.computed(function() {
         return self.min_date() + " - " + self.max_date();
     }, self);
+    self.selected_bands_str = ko.observable();
     self.selected_bands = ko.observable(new Array());
     // self.bands = ["The Afternoon `Gentlemen", "Palehorse", "Metal Church", "Anaal Nathrakh", "Discharge", "Misery Index", "Gorguts", "Negură Bunget", "Blood Red Throne", "Hirax", "Bonded By Blood", "Sourvein", "Black Witchery", "In Solitude", "Graves at Sea", "Wormed", "Mystifier", "Gwydion", "Grave Miasma", "Warhammer", "Bosque", "Bölzer", "Nuclear", "For The Glory", "We Are The Damned", "Crepitation", "Nami", "Antropofagus", "Nebulous", "Executer", "Verdun", "Eryn Non Dae", "Methedras", "Revolution Within", "Eternal Storm", "In Tha Umbra", "Dolentia", "Ermo", "Age of Woe", "Trinta e Um", "Solar Corona", "Equations", "Dementia 13", "Angist", "THE QUARTET OF WOAH!", "Martelo Negro", "Serrabulho", "Vai-Te Foder", "Destroyers Of All", "Vengha", "Bed Legs", "Display of power", "Pterossauros"];
     self.bands = ko.observable(new Array());
@@ -275,6 +276,11 @@ function FestivalMapViewModel() {
         })
 
     }, this);
+    
+    self.selected_bands_str.subscribe(function(bands) {
+        // Need to turn strings to the array
+        self.selected_bands(bands.split(','));
+    });
 
     self.displayedFestivals.subscribe(function (festivals) {
         // console.log("displayedFestival changed.");
@@ -400,15 +406,47 @@ function FestivalMapViewModel() {
     }
 
     // Get a list of all the band names
-    $.getJSON("/festivals/artists/all/", function(data) {
-        var artist_list = data['artists']
-        var all_artists = [];
-        ko.utils.arrayForEach(artist_list, function(item) {
-            // console.log(item.name);
-            all_artists.push(item.name);
+
+    // $.getJSON("/festivals/artists/?search=ar", function(data) {
+    //     // console.log(data);
+    //     var artist_list = data;
+    //     var all_artists = [];
+    //     ko.utils.arrayForEach(artist_list, function(item) {
+    //         // console.log(item.name);
+    //         all_artists.push(item.name);
+    //     });
+    //     self.bands(all_artists);
+    // });
+
+    self.bandQuery = function (query) {
+        // build response for echoed ajax test
+        // console.log(query);
+        // var bands = [];
+        // ko.utils.arrayForEach(self.bands, function (band) {
+        //     if (band.text.search(new RegExp(query.term, 'i')) >= 0) {
+        //         bands.push(band);
+        //     }
+        // });
+        // console.log(bands);
+        $.ajax({
+            url: '/festivals/artists/',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                // search: JSON.stringify(states)
+                search: query.term
+            },
+            success: function (data) {
+                var bands = [];
+                for ( i in data ) {
+                    bands.push({id: data[i].name, text: data[i].name});
+                }
+                query.callback({
+                    results: bands 
+                });
+            }
         });
-        self.bands(all_artists);
-    });
+    };
 }
 
 // This binding only control the initalization of the google map with all the festivals.
@@ -507,7 +545,7 @@ ko.bindingHandlers.animatedVisible = {
 // select2 bind
 ko.bindingHandlers.select2 = {
     init: function(element, valueAccessor, allBindingsAccessor) {
-        var obj = valueAccessor(),
+        var obj = valueAccessor(), // this is the select2 options
             allBindings = allBindingsAccessor(),
             lookupKey = allBindings.lookupKey;
         $(element).select2(obj);

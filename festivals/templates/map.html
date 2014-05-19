@@ -62,7 +62,8 @@
             <div class="row">
                 <div class="small-12 columns">
                     <label>{% trans "Filter by bands" %}</label>
-                    <select multiple="true" data-bind="selectedOptions: selected_bands, options: bands, select2: { }"></select>
+                    {# <select multiple="true" data-bind="selectedOptions: selected_bands, value: selected_bands, lookupKey: name, select2: { minimumInputLength: 1, query: bandQuery }"></select> #}
+                    <input type="hidden" data-bind="value: selected_bands_str, select2: { minimumInputLength: 1,  multiple: true, query: bandQuery }">
                 </div>
             </div>
             <div class="row">
