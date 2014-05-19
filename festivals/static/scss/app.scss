@@ -89,7 +89,7 @@
 }
 
 // @include scrollbar(.5em, tomato);
-@include scrollbar(.5rem, $alert-color, rgba(0,0,0,.8));
+// @include scrollbar(.5rem, $alert-color, rgba(0,0,0,.8));
 
 html, body#fullscreen{
     height: 100%;
@@ -175,6 +175,7 @@ a.secondary {
 
 // Google Map Infobox
 .infobox {
+    @include scrollbar(.5rem, $alert-color, rgba(0,0,0,.8));
     border: 1px solid black;
     // margin-top: 8px;
     background: #333;
