@@ -10,8 +10,10 @@ from django.shortcuts import render
 from django.db.models import Q
 
 import json
+from rest_framework import generics, filters
 
 from festivals.models import Festival, Artist
+from festivals.serializers import ArtistSerializer
 # from festivals.forms import FilterForm
 
 # JSON serialization helpers
@@ -148,3 +150,9 @@ class ArtistJSONList(JSONResponseMixin, BaseListView):
         return all_festivals.filter(Q(latitude__isnull=False), 
                                     Q(longitude__isnull=False))
     """
+
+class ArtistListView(generics.ListAPIView):
+    queryset = Artist.objects.all()
+    serializer_class = ArtistSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('^name',)

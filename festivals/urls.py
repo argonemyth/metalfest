@@ -4,11 +4,13 @@ from django.conf.urls import patterns, include, url
 from festivals.views import (FestivalJSONList,
                              FestivalMap,
                              FestivalDetail,
-                             ArtistJSONList)
+                             ArtistJSONList,
+                             ArtistListView)
 
 urlpatterns = patterns('festivals.views',
     url(r'^all/$', FestivalJSONList.as_view(), name='festival-list'),
     url(r'^artists/all/$', ArtistJSONList.as_view(), name='artists-list'),
+    url(r'^artists/$', ArtistListView.as_view(), name='artists-search'),
     url(r'^(?P<slug>[\d\w\-]+)/$', FestivalDetail.as_view(), name='festival-detail'),
     url(r'^$', FestivalMap.as_view(), name='festival-map'),
 )
