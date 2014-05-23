@@ -1,6 +1,6 @@
 {% extends ajax|yesno:"base_ajax.html,base.html" %}
 
-{% load i18n %}
+{% load i18n  crispy_forms_tags %}
 
 {% block content %}
     {% if not ajax %}
@@ -54,6 +54,16 @@
                 </li>
             {% endfor %}
         </ul>
+
+        <div class="festival-feedback">
+            <a href="#" data-bind="click: showReportForm" class="report-error button alert expand">{% trans "Report An Error" %}</a>
+        </div>
+    </section>
+
+    <section class="report-form">
+        <form>
+            {% crispy report_form %}
+        <form>
     </section>
 
     {% if not ajax %}

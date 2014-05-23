@@ -161,9 +161,16 @@ function Festival(data) {
                 // A hack to make sure infobox loadeded the content
                 var artist_list = $(boxText).find(".artists");
                 if ( $(artist_list).length ) $(artist_list).jScrollPane();
+                // bind 
+                ko.applyBindings(viewModel, boxText);
             }, 300);
         });
         google_map.map.panTo(festLatLng);
+    });
+
+    // we need remove the boxText ko binding when the infobox closes
+    google.maps.event.addListener(self.infobox, 'closeclick', function() {
+        ko.cleanNode(boxText);
     });
 
     self.enableMarker = function(){
@@ -485,6 +492,13 @@ function FestivalMapViewModel() {
             }
         });
     };
+
+    self.showReportForm = function(vm, event) {
+        var parentSection = $(event.target).parents("section");
+        var form = parentSection.next();
+        parentSection.hide();
+        form.show();
+    } 
 }
 
 // This binding only control the initalization of the google map with all the festivals.

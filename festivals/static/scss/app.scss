@@ -217,7 +217,28 @@ a.secondary {
     }
     .festival-feedback {
         .button {
-            margin-bottom: 0rem;
+            margin-bottom: 0;
+        }
+    }
+    .report-form {
+        display: none;
+        .row {
+            margin-top: .5rem;
+            padding-bottom: .5rem;
+            border-bottom: 1px solid $body-bg;
+            .columns {
+                padding-left: .5rem;
+                padding-right: .5rem;
+            }
+        }
+        label {
+            margin-bottom: .2rem;
+        }
+        input[type="checkbox"], textarea {
+            margin-bottom: .2rem;
+        }
+        .button {
+            margin: .5rem 0 .3rem;
         }
     }
 }

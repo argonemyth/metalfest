@@ -42,7 +42,9 @@ INSTALLED_APPS = (
     'compressor',
     'django_object_actions',
     'django_select2',
-    'festivals'
+    'festivals',
+    'crispy_forms',
+    'crispy_forms_foundation',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -96,6 +98,9 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
+
+# Default layout to use with "crispy_forms"
+CRISPY_TEMPLATE_PACK = 'foundation-5'
 
 # if local_settings.py file present, import the variables from it (overriding
 # locally).

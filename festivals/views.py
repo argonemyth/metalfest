@@ -15,7 +15,7 @@ from rest_framework import generics, filters
 from festivals.models import Festival, Artist
 from festivals.serializers import ArtistSerializer, GenreTagSerializer
 from taggit.models import Tag
-# from festivals.forms import FilterForm
+from festivals.forms import FestivalReportErrorForm
 
 # JSON serialization helpers
 def dumps(content, json_opts={}):
@@ -141,6 +141,11 @@ class FestivalDetail(AjaxResponseMixin, DetailView):
     model = Festival
     context_object_name = 'festival'
 
+    def get_context_data(self, **kwargs):
+        context = super(FestivalDetail, self).get_context_data(**kwargs)
+        context['report_form'] = FestivalReportErrorForm()
+        return context
+
 
 class ArtistJSONList(JSONResponseMixin, BaseListView):
     model = Artist
@@ -164,3 +169,7 @@ class GenreTagListView(generics.ListAPIView):
     serializer_class = GenreTagSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('^name',)
+
+
+class FestivalReportErrorView(FormView):
+    pass

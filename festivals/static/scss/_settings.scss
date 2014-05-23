@@ -41,7 +41,8 @@
 // We use these to control various global styles
 // $body-bg: #fff;
 // $body-bg: #1F1F21;
-$body-bg: #343838;
+// $body-bg: #343838;
+$body-bg: #222;
 // $body-bg: #3C3C3C;
 // $body-font-color: #222;
 // $body-font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
@@ -529,8 +530,11 @@ $input-font-size: rem-calc(12);
 $input-bg-color: $body-bg;
 $input-bg-color: $body-bg;
 // $input-focus-bg-color: scale-color(#fff, $lightness: -2%);
+$input-focus-bg-color: scale-color($body-bg, $lightness: -2%);
 // $input-border-color: scale-color(#fff, $lightness: -20%);
+$input-border-color: scale-color($body-bg, $lightness: -20%);
 // $input-focus-border-color: scale-color(#fff, $lightness: -40%);
+$input-focus-border-color: scale-color($body-bg, $lightness: -40%);
 // $input-border-style: solid;
 // $input-border-width: 1px;
 // $input-border-radius: $global-radius;
