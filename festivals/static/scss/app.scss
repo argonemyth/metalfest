@@ -184,6 +184,7 @@ a.secondary {
     @include box-shadow(#000 0 0 8px);
     h1, h2, h3, h4, h5, h6 {
         color: #FFF;
+        margin: 0;
     }
     p, div {
         font-size: .8rem;
@@ -192,8 +193,9 @@ a.secondary {
       text-align: center;
     }
     .artists {
-        margin-top: 1rem;
-        margin-left: 0;
+        // margin-top: 1rem;
+        // margin-left: 0;
+        margin: .7rem 0 .6rem 0;
         max-height: rem-calc(340px);
         overflow-y: auto;
         // width: 100%;
@@ -211,6 +213,11 @@ a.secondary {
                 display: inline-block;
             }
 
+        }
+    }
+    .festival-feedback {
+        .button {
+            margin-bottom: 0rem;
         }
     }
 }
