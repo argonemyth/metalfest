@@ -32,7 +32,7 @@ class Artist(models.Model):
     """ This model records the info for a metal band, this model is
         primarily used to cache genre info.
     """
-    name = models.CharField(_("name"), max_length=255)
+    name = models.CharField(_("name"), db_index=True, max_length=255)
     slug = models.CharField(max_length=255, unique=True, editable=False)
     official_url = models.URLField(_("official URL"), blank=True, null=True)
     lastfm_url = models.URLField(_("last.fm URL"), blank=True, null=True)
