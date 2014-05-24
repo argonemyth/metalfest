@@ -62,7 +62,8 @@
 
     <section class="report-form">
         {# {% include "festivals/report_error_form.html" %} #}
-        <form method="post" data-bind="submit: submitReportForm" action="{% url 'festival-report' festival.slug %}" data-abide>
+        {# <form method="post" data-bind="submit: submitReportForm" action="{% url 'festival-report' festival.slug %}" data-abide> #}
+        <form method="post" data-bind="submit: submitReportForm" action="{% url 'festival-report' festival.slug %}">
             {% crispy form %}
         <form>
     </section>

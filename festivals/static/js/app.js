@@ -500,29 +500,49 @@ function FestivalMapViewModel() {
 
     self.showReportForm = function(vm, event) {
         var parentSection = $(event.target).parents("section");
-        var form = parentSection.next();
+        var formSection = parentSection.next();
         parentSection.hide();
-        form.show();
+        formSection.show();
+        $(formSection).children('form').validate({
+            errorElement: "small",
+            rules: {
+                info_type: {
+                    required: true,
+                    minlength: 1
+                }
+            },
+            errorPlacement: function(error, element) {
+                if (element.attr("name") == "info_type" )
+                    error.appendTo("#div_id_info_type");
+                else
+                    error.insertAfter(element);
+            } 
+        });
     } 
 
     self.submitReportForm = function (form) {
         var $form = $(form);
        //actually save stuff, call ajax, submit form, etc;
-       
-        console.log($form.attr("action"));
-        console.log($form.serialize());
+        // console.log($form.attr("action"));
+        // console.log($form.serialize());
 
-        var posting = $.post( $form.attr("action"), $form.serialize() );
+        if ( $form.valid() ) {
+            console.log("Form is valie, going to submit");
+            var posting = $.post( $form.attr("action"), $form.serialize() );
 
-        posting.done(function( data ) {
-            if (data.status === "success") {
-                humane.log(data.message);
-                $form.parents("section").hide();
-                $form.parents("section").prev().show();
-            } else {
-                $form.html(data);
-            }
-        }); 
+            posting.done(function( data ) {
+                if (data.status === "success") {
+                    humane.log(data.message);
+                    $form.parents("section").hide();
+                    $form.parents("section").prev().show();
+                } else {
+                    $form.html(data);
+                }
+            });
+        } else {
+            console.log("Form is not valid");
+        }
+         
     }
 }
 
