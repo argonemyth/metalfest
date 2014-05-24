@@ -141,7 +141,7 @@ function Festival(data) {
             url: self.detail_url,
         }).done(function(html) {
             boxText.innerHTML = html;
-            console.log("set custom scrollbar");
+            // console.log("set custom scrollbar");
             // console.log($(boxText).find(".artists li"));
             // $(boxText).find(".artists").mCustomScrollbar();
             /*
@@ -163,6 +163,10 @@ function Festival(data) {
                 if ( $(artist_list).length ) $(artist_list).jScrollPane();
                 // bind 
                 ko.applyBindings(viewModel, boxText);
+                // Need to get abide working for dynamically loaded form.
+                // Not sure if the callidng foundation() is the correct way to go
+                // but Abide works now.
+                $(document).foundation(); 
             }, 300);
         });
         google_map.map.panTo(festLatLng);
@@ -499,6 +503,30 @@ function FestivalMapViewModel() {
         parentSection.hide();
         form.show();
     } 
+
+    self.submitReportForm = function (form) {
+        var $form = $(form);
+       //actually save stuff, call ajax, submit form, etc;
+       
+        console.log($form.attr("action"));
+        console.log($form.serialize());
+
+        var posting = $.post( $form.attr("action"), $form.serialize() );
+
+        posting.done(function( data ) {
+            console.log(data);
+            $form.html(data);
+            if (data.status === "success") {
+                $form.hide();
+                $form.previous().show();
+            } else {
+                if (data.errors) {
+                    // display errors
+                    console.log("something is wrong");
+                }
+            }
+        }); 
+    }
 }
 
 // This binding only control the initalization of the google map with all the festivals.

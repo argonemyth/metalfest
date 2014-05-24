@@ -6,8 +6,9 @@ from django.views.generic import TemplateView
 from django.utils.encoding import force_unicode
 from django.db.models.base import ModelBase
 from django.http import HttpResponseNotAllowed, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.db.models import Q
+from django.core.mail import mail_admins
 
 import json
 from rest_framework import generics, filters
@@ -143,7 +144,7 @@ class FestivalDetail(AjaxResponseMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(FestivalDetail, self).get_context_data(**kwargs)
-        context['report_form'] = FestivalReportErrorForm()
+        context['form'] = FestivalReportErrorForm()
         return context
 
 
@@ -172,4 +173,36 @@ class GenreTagListView(generics.ListAPIView):
 
 
 class FestivalReportErrorView(FormView):
-    pass
+    form_class = FestivalReportErrorForm
+    template_name = "festivals/report_error_form.html" # useless
+
+    def form_valid(self, form):
+        """
+        If the form is valid, send emails and return user a thanks
+        """
+        info_type = form.cleaned_data['info_type']
+        message = form.cleaned_data['message']
+        festival_slug = self.kwargs["slug"]
+        festival = Festival.objects.get(slug__exact=festival_slug)
+        email_subject = "Someone spoted an error"
+        email_msg = '''
+Hi Metalmap Admin,
+
+The following info type might not correct for festival %s [id: %s]:
+
+%s
+
+The user also said:
+
+%s
+
+--
+Best,
+
+metalmap bot 
+''' % (festival.title, festival.id, info_type, message)
+        
+        print email_msg
+        mail_admins(email_subject, email_msg)
+        # return HttpResponseRedirect(self.get_success_url())
+        return render_to_response('festivals/report_error_sent.html')

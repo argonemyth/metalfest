@@ -30,6 +30,18 @@
     <title>The Metal Map - A Map for Headbangers</title>
 </head>
 <body id="{% block bodyid %}{% endblock %}">
+    {% comment %}
+        
+    <div data-alert class="alert-box" id="flash-messages">
+        <ul id="messages">
+            {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        <a href="#" class="close">&times;</a>
+    </div>
+    {% endcomment %}
+
     {% block content %} 
     {% endblock %} 
 

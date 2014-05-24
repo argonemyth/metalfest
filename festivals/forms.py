@@ -24,12 +24,14 @@ class FestivalAdminForm(forms.ModelForm):
 
 
 class FestivalReportErrorForm(forms.Form):
-  info_type = forms.MultipleChoiceField(required=True, choices=INFO_TYPES,
+  # required is the default option for fields
+  info_type = forms.MultipleChoiceField(choices=INFO_TYPES, required=True,
                                         widget=forms.CheckboxSelectMultiple,
                                         label=_("What info are not correct?"))
-  support = forms.CharField(max_length=1000, widget=forms.Textarea,
+  message = forms.CharField(max_length=1000, required=True,
+                            widget=forms.Textarea(attrs={'required':''}),
                             label=_("What's the correct data? / Where can we\
-                                    find the correct data"))
+                                    find the correct data?"))
 
   def __init__(self, *args, **kwargs):
     super(FestivalReportErrorForm, self).__init__(*args, **kwargs)
@@ -37,7 +39,7 @@ class FestivalReportErrorForm(forms.Form):
     self.helper.form_tag = False
     self.helper.layout = Layout(
       Row(Column(Field('info_type'), css_class="small-11")),
-      Row(Column(Field('support'), css_class="small-12")),
+      Row(Column(Field('message'), css_class="small-12"),),
       ButtonHolder(Submit('submit', _("Send"), css_class="expand")),
     )
 

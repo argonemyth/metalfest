@@ -234,15 +234,30 @@ a.secondary {
         label {
             margin-bottom: .2rem;
         }
-        input[type="checkbox"], textarea {
+        input[type="checkbox"], textarea, small.error {
+            margin-bottom: 0;
+        }
+        .holder {
             margin-bottom: .2rem;
         }
         .button {
-            margin: .5rem 0 .3rem;
+            margin: .6rem 0 .3rem;
+        }
+        .error {
+            margin-bottom: .2rem;
         }
     }
 }
 
+#flash-messages {
+    position: absolute;
+    max-width: 100%;
+    width: 300px;
+    left: 50%;
+    margin-left: -150px;
+    // margin: 0 auto;
+    z-index: 2000; 
+}
 
 div#loader {
   position: absolute;
