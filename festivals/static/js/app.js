@@ -25,6 +25,7 @@ $(document).ready(function () {
         viewModel.min_date(new Date(data.values.min));
         viewModel.max_date(new Date(data.values.max));
     });
+
 });
 
 // This variable store any google map related objects
@@ -514,16 +515,12 @@ function FestivalMapViewModel() {
         var posting = $.post( $form.attr("action"), $form.serialize() );
 
         posting.done(function( data ) {
-            console.log(data);
-            $form.html(data);
             if (data.status === "success") {
-                $form.hide();
-                $form.previous().show();
+                humane.log(data.message);
+                $form.parents("section").hide();
+                $form.parents("section").prev().show();
             } else {
-                if (data.errors) {
-                    // display errors
-                    console.log("something is wrong");
-                }
+                $form.html(data);
             }
         }); 
     }
