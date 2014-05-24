@@ -26,6 +26,9 @@ $(document).ready(function () {
         viewModel.max_date(new Date(data.values.max));
     });
 
+    // Custom humane notifier
+    humane.info = humane.spawn({ addnCls: 'info', timeout: 3000, clickToClose: true})
+    humane.error = humane.spawn({ addnCls: 'error', timeout: 3000, clickToClose: true })
 });
 
 // This variable store any google map related objects
@@ -167,7 +170,7 @@ function Festival(data) {
                 // Need to get abide working for dynamically loaded form.
                 // Not sure if the callidng foundation() is the correct way to go
                 // but Abide works now.
-                $(document).foundation(); 
+                // $(document).foundation(); 
             }, 300);
         });
         google_map.map.panTo(festLatLng);
@@ -532,7 +535,7 @@ function FestivalMapViewModel() {
 
             posting.done(function( data ) {
                 if (data.status === "success") {
-                    humane.log(data.message);
+                    humane.info(data.message);
                     $form.parents("section").hide();
                     $form.parents("section").prev().show();
                 } else {

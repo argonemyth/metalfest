@@ -249,15 +249,6 @@ a.secondary {
     }
 }
 
-#flash-messages {
-    position: absolute;
-    max-width: 100%;
-    width: 300px;
-    left: 50%;
-    margin-left: -150px;
-    // margin: 0 auto;
-    z-index: 2000; 
-}
 
 div#loader {
   position: absolute;
@@ -275,6 +266,17 @@ div#loader {
   i {
     margin-top: 45vh;
   }
+}
+
+// Humane notifier
+.humane, .humane-flatty {
+  font-family: $body-font-family;
+  color: #FFF;
+  background-color: $primary-color;
+}
+
+.humane.error {
+  background-color: $alert-color;
 }
 
 // Sprit Icons.
