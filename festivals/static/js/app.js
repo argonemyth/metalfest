@@ -530,7 +530,7 @@ function FestivalMapViewModel() {
         // console.log($form.serialize());
 
         if ( $form.valid() ) {
-            console.log("Form is valie, going to submit");
+            // console.log("Form is valie, going to submit");
             var posting = $.post( $form.attr("action"), $form.serialize() );
 
             posting.done(function( data ) {
@@ -542,10 +542,7 @@ function FestivalMapViewModel() {
                     $form.html(data);
                 }
             });
-        } else {
-            console.log("Form is not valid");
         }
-         
     }
 }
 
