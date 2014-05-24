@@ -11,7 +11,7 @@ venv/
 bin/
 build/
 develop-eggs/
-dist/
+#dist/
 eggs/
 parts/
 sdist/
