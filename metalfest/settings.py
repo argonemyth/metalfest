@@ -24,7 +24,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'metalmap.argonemyth.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'routebelow.com', 'www.routebelow.com', 'metalmap.argonemyth.com']
 
 # Application definition
 
