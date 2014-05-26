@@ -157,7 +157,9 @@ body#fullscreen {
             padding-top: 1rem;
             .label {
                 vertical-align: top;
-                margin-top: .3rem;
+                margin-top: .2rem;
+                padding-top: .5rem;
+                font-size: .75rem;
             }
             // .tagline {
                 // color: $secondary-color;
@@ -171,6 +173,10 @@ body#fullscreen {
 
 a.secondary {
     @include link-colors($secondary-color, darken($secondary-color, 10%), darken($secondary-color, 10%), $secondary-color, darken($secondary-color, 10%));
+}
+
+a.alert {
+    @include link-colors($alert-color, darken($alert-color, 10%), darken($alert-color, 10%), $alert-color, darken($alert-color, 10%));
 }
 
 // Google Map Infobox
@@ -325,10 +331,11 @@ i.lack-info-opaque {
 
 // Date slider override
 .ui-rangeSlider-container, .ui-rangeSlider-arrow, .ui-rangeSlider-label {
-    background: $body-bg;
+    background: darken($body-bg, 5%);
 }
 .ui-rangeSlider-container, .ui-rangeSlider-arrow {
     height: 26px;
+    border: none;
 }
 .ui-rangeSlider-bar{
     background: #00B4CC;
@@ -355,7 +362,7 @@ i.lack-info-opaque {
 }
 
 .ui-rangeSlider-label-inner {
-    border-top-color: $body-bg;
+    border-top-color: darken($body-bg, 5%);
 }
 
 // select2 override
