@@ -617,13 +617,15 @@ ko.bindingHandlers.animatedVisible = {
             $("#show-overlay-button").hide();
         } else {
             // $(element).animate({right: "-100vw"}, 600, function() {
-            var overlayHeight = $("#overlay").outerHeight();
+            // var overlayHeight = $("#overlay").outerHeight();
             if ( clientWidth > 640 ) {
+                var overlayHeight = $("#overlay").outerHeight();
                 var logoHeight = $("#logo").outerHeight();
                 var offset = overlayHeight-logoHeight-19;
             } else {
                 // Reducing info on mobile phone
                 $(".hide-for-small-slideup").hide();
+                var overlayHeight = $("#overlay").outerHeight();
                 var logoHeight = $("#logo").outerHeight();
                 var offset = overlayHeight-logoHeight;
             }

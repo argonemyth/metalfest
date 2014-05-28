@@ -161,9 +161,15 @@ body#fullscreen {
                 padding-top: .5rem;
                 font-size: .75rem;
             }
+            p { 
+                margin-bottom: 0;
+            }
             // .tagline {
                 // color: $secondary-color;
             // }
+        }
+        .social-network {
+            // color: #FFF;
         }
     } 
     #show-overlay-button {
@@ -401,6 +407,15 @@ $border-color: #00B4CC;
     background: $border-color;
     color: #FFF;
     box-shadow: none;
+}
+
+@media only screen and ( min-height: 552px ) {
+    body#fullscreen {
+        #overlay {
+            height: auto;
+            overflow: hidden;
+        }
+    }
 }
 
 @media #{$medium-up} {
