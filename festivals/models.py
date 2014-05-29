@@ -188,6 +188,115 @@ class Artist(models.Model):
             return None
 
 
+class Event(models.Model):
+    """ This model records individual concert of a band."""
+    name = models.CharField(_("name"), db_index=True, max_length=255)
+    slug = models.CharField(max_length=255, unique=True, editable=False)
+    lastfm_id = models.CharField(_("Last.fm event ID"), max_length=100,
+                                 null=True, blank=True, unique=True)
+    # Time & Location
+    date = models.DateField(_("date"), db_index=True)
+    start_time = models.TimeField(_("start time"), null=True, blank=True)
+    location = models.CharField(_("location"), max_length=300,
+                                null=True, blank=True)
+    country = models.ForeignKey('cities_light.Country',
+                                verbose_name=_('country'),
+                                blank=True, null=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6,
+                                   blank=True, null=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6,
+                                    blank=True, null=True)
+    computed_address = models.CharField(max_length=255, null=True, blank=True,
+                                        help_text=_('The address Google Geocoder used to calculate the geo position'))
+    # Lineup info
+    artists = models.ManyToManyField(Artist, null=True, blank=True)
+    lineup = models.TextField(_('lineup'), null=True, blank=True,
+                              help_text=_('Cached value for band lineup, a text field with a json string'))
+
+    # Urls
+    ticket_url = models.URLField(_("ticket URL"), blank=True, null=True)
+    lastfm_url = models.URLField(_("last.fm URL"), blank=True, null=True)
+    facebook_url = models.URLField(_("facebook URL"), blank=True, null=True)
+
+    class Meta:
+        verbose_name = _('event')
+        verbose_name_plural = _('events')
+        ordering = ('-date', 'name')
+
+    def __unicode__(self):
+        return self.name   
+
+    def get_lineup_display(self):
+        return json.loads(self.lineup)
+
+    def get_geo_position(self):
+        if (not self.location) or (not self.country):
+            return None
+
+        try:
+            g = geocoders.GoogleV3()
+            address = "%s, %s" % (self.location, self.country)
+            self.computed_address, (self.latitude, self.longitude) = g.geocode(smart_str(address),
+                                                                     exactly_one=False)[0]
+        except Exception as e:
+            logger.warning("Can't find the lat, log for %s (%s)" % (address, e))
+            return None
+
+    def save(self, ip=None, *args, **kwargs):
+        self.slug = uuslug(self.name, instance=self)
+        if (self.longitude is None) or (self.latitude is None):
+            self.get_geo_position()
+        super(Event, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('event-detail', args=[self.slug])
+
+    def sync_artists(self):
+        """Sync artists field with lineup, might be a temperary method"""
+        if self.lineup:
+            lineup = json.loads(self.lineup)
+            if len(lineup) != self.artists.count():
+                for band in lineup:
+                    artist = Artist.objects.get(name__iexact=band)
+                    self.artists.add(artist)
+                    for genre in artist.genres.select_related():
+                        self.genres.add(genre)
+        return
+
+    def sync_lineup(self):
+        """The reverse of sync_artists Sync lineup field with artists,
+           might be a temperary method"""
+        if self.artists.count() > 0:
+            if self.lineup:
+                lineup = json.loads(self.lineup)
+                # Convert all names in lineup to lowercase for comparison
+                lineup_lower = [a.lower() for a in lineup]
+            else:
+                lineup = []
+                lineup_lower = []
+
+            if len(lineup) != self.artists.count():
+                for artist in self.artists.select_related():
+                    if artist.name.lower() not in lineup_lower:
+                        lineup.append(artist.name)
+                        for genre in artist.genres.select_related():
+                            self.genres.add(genre)
+                if lineup:
+                    self.lineup = json.dumps(lineup)
+                    self.save()
+        return
+
+    def lineup_info(self):
+        if not self.lineup:
+            return "No Lineup"
+        else:
+            lineup = json.loads(self.lineup)
+            if len(lineup) != self.artists.count():
+                return "Require Sync"
+            else:
+                return "Good"
+
+
 class Festival(models.Model):
     """ This model records the info for a metal festival """
     title = models.CharField(_("title"), max_length=255, unique=True)
