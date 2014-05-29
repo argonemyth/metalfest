@@ -1442,16 +1442,32 @@ class Artist(_BaseObject, _Taggable):
         return tags
 
     def get_upcoming_events(self):
-        """Returns a list of the upcoming Events for this artist."""
-        
+        # """Returns a list of the upcoming Events for this artist."""
+        """Return a list of event dictionary along with the Events object
+        for the artist to prevent less last.py queries"""
+
         doc = self._request('artist.getEvents', True)
         
-        ids = _extract_all(doc, 'id')
+        # Bug: it gets the venue id as well.
+        # ids = _extract_all(doc, 'id')
         
+        # events = []
+        # for e_id in ids:
+        #     events.append(Event(e_id, self.network))
+
+        upcoming_events = _extract_all(doc, 'event')
+
         events = []
-        for e_id in ids:
-            events.append(Event(e_id, self.network))
-        
+        for e_node in doc.getElementsByTagName('event'):
+            event = {}
+            event["id"] = _extract(e_node, 'id')
+            event["title"] = _extract(e_node, 'title')
+            event["startDate"] = _extract(e_node, 'startDate')
+            event["endDate"] = _extract(e_node, 'endDate')
+            event["url"] = _extract(e_node, 'url', 1)
+            event["event"] = Event(event["id"], self.network)
+            events.append(event)
+
         return events
     
     def get_similar(self, limit = None):
