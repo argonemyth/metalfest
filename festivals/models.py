@@ -187,6 +187,99 @@ class Artist(models.Model):
         else:
             return None
 
+    def update_events_from_lastfm(self, artist=None):
+        """
+        artist is an Artist object from pylast
+        """
+        if not artist:
+            network = pylast.LastFMNetwork(api_key = settings.LASTFM_API_KEY,
+                               api_secret = settings.LASTFM_API_SECRET)
+            artist = network.get_artist(self.name)
+
+        if artist:
+            upcoming_events = artist.get_upcoming_events()
+            for e in upcoming_events:
+                # Skip the festivals 
+                e_id = e['id']
+                end_date = e['endDate']
+                # make sure there is no end_date
+                if end_date:
+                    # Todo: maybe we could add a festival if it doesn't already exist
+                    # print "%s is a festivals" % (e['title'])
+                    continue
+
+                # make sure the id is not in our Festival list
+                try:
+                    festival = Festival.objects.get(lastfm_id=e_id)
+                except Festival.DoesNotExist:
+                    # print "ID: ", e_id
+                    # print "Title: ", e['title']
+                    # print "Start: ", e['startDate']
+                    event, created = Event.objects.get_or_create(lastfm_id=e_id,
+                                        defaults={"name": e['title'],
+                                                  "date": datetime.datetime.strptime(
+                                                                e['startDate'],
+                                                                '%a, %d %b %Y %H:%M:%S'
+                                                           ).strftime('%Y-%m-%d')})
+                    if created:
+                        event.start_time = datetime.datetime.strptime(
+                                                e['startDate'],
+                                                '%a, %d %b %Y %H:%M:%S'
+                                           ).strftime('%H:%M:%S')
+
+                        venue_id, location = e['event'].get_venue()
+
+                        if location['name']:
+                            event.location = location['name']
+                            street = location.get('street', '')
+                            if street:
+                                event.location += ", " + street
+                            city = location.get('city', '')
+                            if city:
+                                event.location += ", " + city 
+
+                        if location['country']:
+                            # for US cities, it comes with region name like this: 'Baltimore, MD'
+                            try:
+                                event.country = Country.objects.get(models.Q(name__iexact=location['country']) | models.Q(alternate_names__icontains=location['country']))
+                            # except Country.DoesNotExist:
+                            except Exception as e: 
+                                logger.warning("Country %s can't be find: %s" % (location['country'], e))
+                                event.country = None
+
+                        if location['lat']:
+                            event.latitude = location['lat']
+
+                        if location['lng']:
+                            event.longitude = location['lng']
+
+                        event.lastfm_url = e['url']
+
+                        event.save()
+
+                    # Update lineup
+                    artists = e['event'].get_artists()
+                    update = False
+                    if event.lineup:
+                        lineup = json.loads(event.lineup)
+                    else:
+                        lineup = []
+
+                    for a in artists:
+                        name = a.get_name()
+                        if name and ( name not in lineup ):
+                            update = True
+                            lineup.append(name)
+                            artist, created = Artist.objects.get_or_create(name=name)
+                            if created:
+                                artist.get_info_from_musicbrainz()
+                            event.artists.add(artist)
+
+                    if update:
+                        # print "Going to update lineup"
+                        event.lineup = json.dumps(lineup)
+                        event.save()
+
 
 class Event(models.Model):
     """ This model records individual concert of a band."""
@@ -221,7 +314,7 @@ class Event(models.Model):
     class Meta:
         verbose_name = _('event')
         verbose_name_plural = _('events')
-        ordering = ('-date', 'name')
+        ordering = ('date', 'name')
 
     def __unicode__(self):
         return self.name   

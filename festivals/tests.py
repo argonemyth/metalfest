@@ -10,7 +10,7 @@ from decimal import Decimal
 from festivals.views import (FestivalJSONList,
                              FestivalMap,
                              FestivalDetail)
-from festivals.models import Festival, Artist
+from festivals.models import Festival, Artist, Event
 from cities_light.models import City, Region, Country
 
 # Utilities
@@ -230,5 +230,22 @@ class ArtistModelTest(TestCase):
         self.assertEqual(artist.country, normay)
         self.assertEqual(artist.official_url, "http://www.satyricon.no/")
         self.assertEqual(artist.ma_url, "http://www.metal-archives.com/bands/Satyricon/341")
-        self.assertEqual(artist.fb_url, None)
+        # self.assertEqual(artist.fb_url, None)
+        self.assertEqual(artist.fb_url, "https://www.facebook.com/SatyriconOfficial")
         self.assertEqual(artist.twitter_url, "https://twitter.com/satyriconontour")
+
+    def test_update_events_from_lastfm(self):
+        pass
+
+class EventModelTest(TestCase):
+    def setUp(self):
+        create_artists()
+
+    def test_saving_and_retrieving_itmes(self):
+        """
+        We should able to create an Event by supplying event name & date.
+        """
+        event = Event(name="Cher cher", date="2014-06-06")
+        event.save()
+        saved_event = Event.objects.all()[0] 
+        self.assertEqual(saved_event.slug, "cher-cher")

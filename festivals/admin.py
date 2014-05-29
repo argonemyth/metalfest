@@ -4,7 +4,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from django_object_actions import (DjangoObjectActions,
                                    takes_instance_or_queryset)
 
-from festivals.models import Festival, Artist
+from festivals.models import Festival, Artist, Event
 from festivals.forms import FestivalAdminForm
 
 # def get_lastfm_info(modeladmin, request, queryset):
@@ -61,6 +61,20 @@ class FestivalAdmin(DjangoObjectActions, admin.ModelAdmin):
 admin.site.register(Festival, FestivalAdmin)
 
 
+class EventAdmin(DjangoObjectActions, admin.ModelAdmin):
+    """
+    Admin class for events.
+    """
+    list_display = ('name', 'lineup_info', 'lastfm_id', 'latitude', 'longitude', 'location', 'country', 'date')
+    # list_editable = ('date', 'end_date', 'location')
+    # list_filter = ('city',)
+    search_fields = ('name', 'location', 'country__name')
+    readonly_fields = ('slug', )
+    ordering = ("date", 'name')
+
+admin.site.register(Event, EventAdmin)
+
+
 class ArtistAdmin(DjangoObjectActions, admin.ModelAdmin):
     """
     Admin class for artists.
@@ -88,7 +102,14 @@ class ArtistAdmin(DjangoObjectActions, admin.ModelAdmin):
                                            you need to get mbid from Get\
                                            Artist Info first.")
 
-    objectactions = ('get_artist_info', 'get_artist_info_musicbrainz')
-    actions = ['get_artist_info', 'get_artist_info_musicbrainz']
+    @takes_instance_or_queryset
+    def update_events(self, request, queryset):
+        for a in queryset:
+            a.update_events_from_lastfm()
+    update_events.label = _("Update Events")
+    update_events.short_description = _("Update events from last.fm.")
+
+    objectactions = ('get_artist_info', 'get_artist_info_musicbrainz', 'update_events')
+    actions = ['get_artist_info', 'get_artist_info_musicbrainz', 'update_events']
 
 admin.site.register(Artist, ArtistAdmin)
