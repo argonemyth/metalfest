@@ -194,11 +194,100 @@ function Festival(data) {
     }
 }
 
+function Event(data) {
+    var self = this;
+
+    // I know those data dosn't need to be observables.
+    this.name = data.name;
+    // this.url = data.url;
+    // this.date = ko.observable(data.date);
+    this.date = new Date(data.date);
+    this.lat = data.latitude;
+    this.lng = data.longitude;
+    // this.lineup = ko.utils.parseJson(data.lineup); // json string
+    // this.detail_url = data.detail_url; // url of festival detail
+    this.slug = "temp";
+
+    // Google LatLng Object
+    var festLatLng = new google.maps.LatLng(self.lat,self.lng);
+
+    // Define info window
+    var boxText = document.createElement("div");
+    $(boxText).addClass("infobox");
+    var header = "<h4>" + this.name + "</h4>";
+
+    if ( this.date ) {
+        dates = "<p>" + this.date.toDateString() + "</p>"
+    }
+
+    var loader = '<hr><div class="festival-loader '+ this.slug +'"><i class="fa fa-refresh fa-spin fa-2x"></i><p>Loading more info...</p></div>';
+    // boxText.innerHTML = header + dates + loader;
+    boxText.innerHTML = header + loader;
+    self.infobox = new InfoBox({
+         content: boxText,
+         disableAutoPan: false,
+         pixelOffset: new google.maps.Size(-140, 16),
+         zIndex: null,
+         boxStyle: {
+            opacity: 0.85,
+            width: "296px"
+        },
+        closeBoxMargin: "14px 8px 2px 2px",
+        closeBoxURL: "/static/images/close.png",
+        infoBoxClearance: new google.maps.Size(1, 1),
+        pane: "floatPane",
+        enableEventPropagation: false
+    });
+
+    // Google Map Marker Object
+    self.marker = new google.maps.Marker({
+        position: festLatLng,
+        title: self.name,
+        icon: icon_upcoming,
+        map: google_map.map, // map is a global var initilized in the map binding 
+        visible: false, 
+        animation: google.maps.Animation.DROP
+    });
+
+    // Event listener for clicking marker
+    google.maps.event.addListener(self.marker, 'click', function() {
+        self.infobox.open(google_map.map, this);
+        $.ajax({
+            url: self.detail_url,
+        }).done(function(html) {
+            boxText.innerHTML = html;
+            self.infobox.setContent(boxText);
+            setTimeout(function() {
+                // A hack to make sure infobox loadeded the content
+                var artist_list = $(boxText).find(".artists");
+                if ( $(artist_list).length ) $(artist_list).jScrollPane();
+                ko.applyBindings(viewModel, boxText);
+            }, 300);
+        });
+        google_map.map.panTo(festLatLng);
+    });
+
+    // we need remove the boxText ko binding when the infobox closes
+    google.maps.event.addListener(self.infobox, 'closeclick', function() {
+        ko.cleanNode(boxText);
+    });
+
+    self.enableMarker = function(){
+        self.marker.setVisible(true);
+        google_map.fullBounds.extend(festLatLng);
+    }
+
+    self.disableMarker = function() {
+        self.marker.setVisible(false);
+    }
+}
+
 function FestivalMapViewModel() {
     var self = this;
 
-    // Fesivals
+    // Fesivals && events
     self.festivals = ko.observableArray();
+    self.events = ko.observableArray(); //inside of the array, it's a object
 
     // Filtering options
     // self.min_date = ko.observable(new Date());
@@ -210,6 +299,7 @@ function FestivalMapViewModel() {
     }, self);
     self.selected_bands_str = ko.observable();
     self.selected_bands = ko.observable(new Array());
+    self.selected_bands2 = ko.observableArray();
     // self.bands = ["The Afternoon `Gentlemen", "Palehorse", "Metal Church", "Anaal Nathrakh", "Discharge", "Misery Index", "Gorguts", "Negură Bunget", "Blood Red Throne", "Hirax", "Bonded By Blood", "Sourvein", "Black Witchery", "In Solitude", "Graves at Sea", "Wormed", "Mystifier", "Gwydion", "Grave Miasma", "Warhammer", "Bosque", "Bölzer", "Nuclear", "For The Glory", "We Are The Damned", "Crepitation", "Nami", "Antropofagus", "Nebulous", "Executer", "Verdun", "Eryn Non Dae", "Methedras", "Revolution Within", "Eternal Storm", "In Tha Umbra", "Dolentia", "Ermo", "Age of Woe", "Trinta e Um", "Solar Corona", "Equations", "Dementia 13", "Angist", "THE QUARTET OF WOAH!", "Martelo Negro", "Serrabulho", "Vai-Te Foder", "Destroyers Of All", "Vengha", "Bed Legs", "Display of power", "Pterossauros"];
     self.bands = ko.observable(new Array());
     self.selected_genres_str = ko.observable();
@@ -296,12 +386,63 @@ function FestivalMapViewModel() {
     self.selected_bands_str.subscribe(function(bands) {
         // Need to turn strings to the array
         if (bands) {
-            self.selected_bands(bands.split(','));
+            var band_array = bands.split(',');
+            self.selected_bands(band_array);
+            $.each(band_array, function(index, band) {
+                if ( self.selected_bands2.indexOf(band) === -1) {
+                    self.selected_bands2.push(band);
+                }
+            });
+            $.each(self.selected_bands2(), function(index, band) {
+                if ( band_array.indexOf(band) === -1) {
+                    self.selected_bands2.remove(band);
+                }
+            });
         } else {
             // reset bands 
             self.selected_bands([]);
+            self.selected_bands2.removeAll();
         }
     });
+
+    self.selected_bands2.subscribe(function(changes){
+        var band = changes[0].value;
+        // console.log(changes[0]);
+        if (changes[0].status === "added") {
+            console.log(band + " is added");
+            var data = {"artist": band};
+            $.get("/festivals/events/", data, function(returnedData) {
+                if (returnedData.length > 0 ) {
+                    var mappedEvents = $.map(returnedData, function(item) { return new Event(item) });
+                    self.events.push({"band": band, "events": mappedEvents}) 
+                } else {
+                    console.log("No event found!");
+                }
+            })
+        } else {
+            console.log(band + " is removed");
+            self.events.remove(function(item) { return item.band == band });
+        }
+    }, null, "arrayChange");
+
+
+    // self.selected_bands.subscribe(function (selected) {
+    //     if ( selected ) {
+    //         // console.log("Seleted Bands: " + selected);
+    //         // 1. Check if selected are in events array
+    //         $.each(selected, function(index, band){
+    //             obj = _.find(self.events(), function(obj) { return obj.band == band })
+    //             if ( obj == undefined ) {
+    //                 console.log("Adding bands to events");
+    //                 self.events.push({'band': band});
+    //             } else {
+    //                 console.log(obj + "is already in the event list");
+    //             }
+    //         });
+    //     } else {
+    //         console.log("Nothing selected, reset events array");
+    //     }
+    // });
 
     self.selected_genres_str.subscribe(function(genres) {
         // Need to turn strings to the array
@@ -313,6 +454,20 @@ function FestivalMapViewModel() {
             self.selected_genres([]);
         }
     });
+
+    self.events.subscribe(function(changes) {
+         var changed_object = changes[0].value;
+        if (changes[0].status === "added") {
+            // console.log("Going to enable all markers");
+            ko.utils.arrayForEach(changed_object.events, function(item) {
+                item.enableMarker();
+            });
+        } else {
+            ko.utils.arrayForEach(changed_object.events, function(item) {
+                item.disableMarker();
+            });
+        }
+    }, null, "arrayChange");
 
     self.displayedFestivals.subscribe(function (festivals) {
         // console.log("displayedFestival changed.");
