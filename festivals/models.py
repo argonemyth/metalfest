@@ -134,8 +134,13 @@ class Artist(models.Model):
             if not self.country:
                 c = result["country"]
                 if c:
-                    self.country = Country.objects.get(code2=result["country"])
-                    save = True
+                    try:
+                        self.country = Country.objects.get(code2=result["country"])
+                        save = True
+                    except Exception as e:
+                        logger.warning("Got problem finding the country %s" % c)
+                        print "=== Warning: Got problem finding the country %s" % c
+                        # self.country = None 
 
             if not self.official_url and urls:
                 for r in urls:
@@ -246,8 +251,8 @@ class Artist(models.Model):
                                 event.country = Country.objects.get(name__iexact=location['country'])
                             except Country.DoesNotExist:
                                 logger.warning("Country %s can't be find" % (location['country'], ))
+                                print "===== Country %s can't be find" % (location['country'], )
                                 event.country = None
-                                # print "Country %s can't be find" % (location['country'], )
 
                             if event.country is None:
                                 # let's try again with ulternative name
@@ -255,7 +260,7 @@ class Artist(models.Model):
                                     event.country = Country.objects.get(alternate_names__icontains=location['country'])
                                 except Exception as e: 
                                     logger.warning("Can't get country %s - %s" % (location['country'], e))
-                                    # print "Can't get country %s - %s" % (location['country'], exp)
+                                    print "===== Can't get country %s - %s" % (location['country'], e)
                                     event.country = None
 
                         if location['lat']:
