@@ -7,12 +7,14 @@ from festivals.views import (FestivalJSONList,
                              ArtistJSONList,
                              ArtistListView,
                              GenreTagListView,
-                             FestivalReportErrorView)
+                             FestivalReportErrorView,
+                             EventListView)
 
 urlpatterns = patterns('festivals.views',
     url(r'^all/$', FestivalJSONList.as_view(), name='festival-list'),
     url(r'^artists/all/$', ArtistJSONList.as_view(), name='artists-list'),
     url(r'^artists/$', ArtistListView.as_view(), name='artists-search'),
+    url(r'^events/$', EventListView.as_view(), name='events-search'),
     url(r'^genres/$', GenreTagListView.as_view(), name='genres-search'),
     url(r'^(?P<slug>[\d\w\-]+)/report/$', FestivalReportErrorView.as_view(),
         name='festival-report'),

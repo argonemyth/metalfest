@@ -11,10 +11,13 @@ from django.db.models import Q
 from django.core.mail import mail_admins
 
 import json
+import datetime
 from rest_framework import generics, filters
 
-from festivals.models import Festival, Artist
-from festivals.serializers import ArtistSerializer, GenreTagSerializer
+from festivals.models import Festival, Artist, Event
+from festivals.serializers import (ArtistSerializer,
+                                   GenreTagSerializer,
+                                   EventSerializer)
 from taggit.models import Tag
 from festivals.forms import FestivalReportErrorForm
 
@@ -210,3 +213,18 @@ metalmap bot
         return JSONResponse(context)
         # return HttpResponseRedirect(self.get_success_url())
         # return render_to_response('festivals/report_error_sent.html')
+
+
+class EventListView(generics.ListAPIView):
+    serializer_class = EventSerializer
+    # filter_backends = (filters.SearchFilter,)
+    # search_fields = ('^name',)
+    def get_queryset(self):
+        """
+        filtering against a `artist` query parameter in the URL.
+        """
+        queryset = Event.objects.filter(date__gte=datetime.date.today())
+        artist = self.request.QUERY_PARAMS.get('artist', None)
+        if artist is not None:
+            queryset = queryset.filter(artists__name__iexact=artist)
+        return queryset
