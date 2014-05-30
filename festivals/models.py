@@ -199,14 +199,14 @@ class Artist(models.Model):
 
         if artist:
             upcoming_events = artist.get_upcoming_events()
-            for e in upcoming_events:
+            for u_event in upcoming_events:
                 # Skip the festivals 
-                e_id = e['id']
-                end_date = e['endDate']
+                e_id = u_event['id']
+                end_date = u_event['endDate']
                 # make sure there is no end_date
                 if end_date:
                     # Todo: maybe we could add a festival if it doesn't already exist
-                    # print "%s is a festivals" % (e['title'])
+                    # print "%s is a festivals" % (u_event['title'])
                     continue
 
                 # make sure the id is not in our Festival list
@@ -214,21 +214,21 @@ class Artist(models.Model):
                     festival = Festival.objects.get(lastfm_id=e_id)
                 except Festival.DoesNotExist:
                     # print "ID: ", e_id
-                    # print "Title: ", e['title']
-                    # print "Start: ", e['startDate']
+                    # print "Title: ", u_event['title']
+                    # print "Start: ", u_event['startDate']
                     event, created = Event.objects.get_or_create(lastfm_id=e_id,
-                                        defaults={"name": e['title'],
+                                        defaults={"name": u_event['title'],
                                                   "date": datetime.datetime.strptime(
-                                                                e['startDate'],
+                                                                u_event['startDate'],
                                                                 '%a, %d %b %Y %H:%M:%S'
                                                            ).strftime('%Y-%m-%d')})
                     if created:
                         event.start_time = datetime.datetime.strptime(
-                                                e['startDate'],
+                                                u_event['startDate'],
                                                 '%a, %d %b %Y %H:%M:%S'
                                            ).strftime('%H:%M:%S')
 
-                        venue_id, location = e['event'].get_venue()
+                        venue_id, location = u_event['event'].get_venue()
 
                         if location['name']:
                             event.location = location['name']
@@ -253,8 +253,8 @@ class Artist(models.Model):
                                 # let's try again with ulternative name
                                 try:
                                     event.country = Country.objects.get(alternate_names__icontains=location['country'])
-                                except Exception as exp: 
-                                    logger.warning("Can't get country %s - %s" % (location['country'], exp))
+                                except Exception as e: 
+                                    logger.warning("Can't get country %s - %s" % (location['country'], e))
                                     # print "Can't get country %s - %s" % (location['country'], exp)
                                     event.country = None
 
@@ -264,12 +264,12 @@ class Artist(models.Model):
                         if location['lng']:
                             event.longitude = location['lng']
 
-                        event.lastfm_url = e['url']
+                        event.lastfm_url = u_event['url']
 
                         event.save()
 
                     # Update lineup
-                    artists = e['event'].get_artists()
+                    artists = u_event['event'].get_artists()
                     update = False
                     if event.lineup:
                         lineup = json.loads(event.lineup)
