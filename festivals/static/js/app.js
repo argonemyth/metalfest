@@ -275,7 +275,7 @@ function Event(data) {
     // Google Map Marker Object
     self.marker = new google.maps.Marker({
         position: festLatLng,
-        title: self.name,
+        title: self.name + ' on ' + this.date.toDateString(),
         icon: icon_gig,
         map: google_map.map, // map is a global var initilized in the map binding 
         visible: false, 
@@ -455,12 +455,10 @@ function FestivalMapViewModel() {
                 if (returnedData.length > 0 ) {
                     var mappedEvents = $.map(returnedData, function(item) { return new Event(item) });
                     self.events.push({"band": band, "events": mappedEvents}) 
-                } else {
-                    console.log("No event found!");
-                }
+                } 
             })
         } else {
-            console.log(band + " is removed");
+            // console.log(band + " is removed");
             self.events.remove(function(item) { return item.band == band });
         }
     }, null, "arrayChange");
@@ -517,7 +515,6 @@ function FestivalMapViewModel() {
     self.events.subscribe(function(changes) {
          var changed_object = changes[0].value;
         if (changes[0].status === "added") {
-            // console.log("Going to enable all markers");
             ko.utils.arrayForEach(changed_object.events, function(item) {
                 if ( (item.date > self.min_date() && item.date < self.max_date()) ) {
                     item.enableMarker();
