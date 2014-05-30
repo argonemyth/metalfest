@@ -211,25 +211,51 @@ function Event(data) {
     this.date = new Date(data.date);
     this.lat = data.latitude;
     this.lng = data.longitude;
+    this.location = data.location;
+    this.lineup = data.artists;
     // this.lineup = ko.utils.parseJson(data.lineup); // json string
     // this.detail_url = data.detail_url; // url of festival detail
-    this.slug = "temp";
+    // this.slug = "temp";
 
     // Google LatLng Object
     var festLatLng = new google.maps.LatLng(self.lat,self.lng);
 
     // Define info window
+    // TODO: Don't like it!
     var boxText = document.createElement("div");
     $(boxText).addClass("infobox");
     var header = "<h4>" + this.name + "</h4>";
+    var dates = "<div class='date'>" + this.date.toDateString() + "</div>";
+    var location = '<div class="location">' + data.location + ', ' + data.country + '</div>'
 
-    if ( this.date ) {
-        dates = "<p>" + this.date.toDateString() + "</p>"
+    var lineup_html = "";
+    if ( this.lineup.length > 0 ) {
+        lineup_html += '<ul class="artists inline-list">';
+        for (var i = 0; i < this.lineup.length; i++) { 
+            var artist = this.lineup[i];
+            var line = '<li>';
+            if ( artist.avatar_url_small ) {
+                if ( artist.url ) {
+                    line += '<a href="' + artist.url +'" target="_blank"><img src="' + artist.avatar_url_small + '" alt="' + artist.name +'" title="' + artist.name +'"></a>';
+                } else {
+                    line += '<img src="' + artist.avatar_url_small + '" alt="' + artist.name +'" title="' + artist.name +'">';
+                }
+            } else {
+                if ( artist.url ) {
+                    line += '<a href="' + artist.url +'" target="_blank"><img src="http://placehold.it/65x65&text=' + artist.name + '" alt="' + artist.name +'" title="' + artist.name +'"></a>';
+                } else {
+                    line += '<img src="http://placehold.it/65x65&text=' + artist.name + '" alt="' + artist.name +'" title="' + artist.name +'">';
+                }
+            }
+            lineup_html += line
+        }
+        lineup_html += '</ul>'
     }
 
-    var loader = '<hr><div class="festival-loader '+ this.slug +'"><i class="fa fa-refresh fa-spin fa-2x"></i><p>Loading more info...</p></div>';
+
+    // var loader = '<hr><div class="festival-loader '+ this.slug +'"><i class="fa fa-refresh fa-spin fa-2x"></i><p>Loading more info...</p></div>';
     // boxText.innerHTML = header + dates + loader;
-    boxText.innerHTML = header + loader;
+    boxText.innerHTML = header + dates + location + lineup_html;
     self.infobox = new InfoBox({
          content: boxText,
          disableAutoPan: false,
@@ -257,6 +283,7 @@ function Event(data) {
     });
 
     // Event listener for clicking marker
+    /*
     google.maps.event.addListener(self.marker, 'click', function() {
         self.infobox.open(google_map.map, this);
         $.ajax({
@@ -273,11 +300,17 @@ function Event(data) {
         });
         google_map.map.panTo(festLatLng);
     });
+    */
+    google.maps.event.addListener(self.marker, 'click', function() {
+        self.infobox.open(google_map.map, this);
+        google_map.map.panTo(festLatLng);
+    });
 
     // we need remove the boxText ko binding when the infobox closes
-    google.maps.event.addListener(self.infobox, 'closeclick', function() {
-        ko.cleanNode(boxText);
-    });
+
+    // google.maps.event.addListener(self.infobox, 'closeclick', function() {
+    //     ko.cleanNode(boxText);
+    // });
 
     self.enableMarker = function(){
         self.marker.setVisible(true);
@@ -416,7 +449,7 @@ function FestivalMapViewModel() {
         var band = changes[0].value;
         // console.log(changes[0]);
         if (changes[0].status === "added") {
-            console.log(band + " is added");
+            // console.log(band + " is added");
             var data = {"artist": band};
             $.get("/festivals/events/", data, function(returnedData) {
                 if (returnedData.length > 0 ) {

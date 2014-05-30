@@ -16,7 +16,16 @@ class GenreTagSerializer(serializers.ModelSerializer):
         fields = ('name',)
 
 
+class ArtistDetailSerializer(serializers.ModelSerializer):
+    url = serializers.Field(source='get_external_url')
+
+    class Meta:
+        model = Artist
+        fields = ('name', 'avatar_url_small', 'url')
+
 class EventSerializer(serializers.ModelSerializer):
+    country = serializers.CharField(source='country.name')
+    artists = ArtistDetailSerializer(many=True)
     class Meta:
         model = Event
-        fields = ('name', 'date', 'latitude', 'longitude')
+        fields = ('name', 'date', 'location', 'country', 'latitude', 'longitude', 'artists')
