@@ -208,13 +208,19 @@ class Artist(models.Model):
                 # Skip the festivals 
                 e_id = u_event['id']
                 title = u_event['title']
-                end_date = u_event['endDate']
+                start_date = u_event['startDate']
                 url = u_event['url']
 
                 # make sure it's not a festival 
                 if url.startswith("http://www.last.fm/festival/"):
-                    festival, created = Festival.objects.get_or_create(lastfm_id=e_id,
-                                            defaults={"title": title})
+                    try:
+                        festival, created = Festival.objects.get_or_create(lastfm_id=e_id,
+                                                defaults={"title": title})
+                    except IntegrityError:
+                        title += " #" + e_id
+                        festival, created = Festival.objects.get_or_create(lastfm_id=e_id,
+                                                defaults={"title": title})
+
                     if created: 
                         # take too long to get all the info.
                         # festival.get_event_info()
@@ -231,13 +237,13 @@ class Artist(models.Model):
                 event, created = Event.objects.get_or_create(lastfm_id=e_id,
                                     defaults={"name": title,
                                               "date": datetime.datetime.strptime(
-                                                            u_event['startDate'],
+                                                            start_date,
                                                             '%a, %d %b %Y %H:%M:%S'
                                                        ).strftime('%Y-%m-%d')})
                 if created:
                     # print "==== New event created: %s (id #%s) " % (title, event.id)
                     event.start_time = datetime.datetime.strptime(
-                                            u_event['startDate'],
+                                            start_date,
                                             '%a, %d %b %Y %H:%M:%S'
                                        ).strftime('%H:%M:%S')
 
@@ -259,7 +265,7 @@ class Artist(models.Model):
                             event.country = Country.objects.get(name__iexact=location['country'])
                         except Country.DoesNotExist:
                             logger.warning("Country %s can't be find" % (location['country'], ))
-                            print "===== Country %s can't be find" % (location['country'], )
+                            print "==== Country %s can't be find" % (location['country'], )
                             event.country = None
 
                         if event.country is None:
@@ -268,7 +274,7 @@ class Artist(models.Model):
                                 event.country = Country.objects.get(alternate_names__icontains=location['country'])
                             except Exception as e: 
                                 logger.warning("Can't get country %s - %s" % (location['country'], e))
-                                print "===== Can't get country %s - %s" % (location['country'], e)
+                                print "==== Can't get country %s - %s" % (location['country'], e)
                                 event.country = None
 
                     if location['lat']:
