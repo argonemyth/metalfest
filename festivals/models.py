@@ -191,6 +191,7 @@ class Artist(models.Model):
         """
         artist is an Artist object from pylast
         """
+        logger.info("getting events info from %s" % self.name)
         if not artist:
             network = pylast.LastFMNetwork(api_key = settings.LASTFM_API_KEY,
                                api_secret = settings.LASTFM_API_SECRET)
@@ -241,11 +242,21 @@ class Artist(models.Model):
                         if location['country']:
                             # for US cities, it comes with region name like this: 'Baltimore, MD'
                             try:
-                                event.country = Country.objects.get(models.Q(name__iexact=location['country']) | models.Q(alternate_names__icontains=location['country']))
-                            # except Country.DoesNotExist:
-                            except Exception as e: 
-                                logger.warning("Country %s can't be find: %s" % (location['country'], e))
+                                # event.country = Country.objects.get(models.Q(name__iexact=location['country']) | models.Q(alternate_names__icontains=location['country']))
+                                event.country = Country.objects.get(name__iexact=location['country'])
+                            except Country.DoesNotExist:
+                                logger.warning("Country %s can't be find" % (location['country'], ))
                                 event.country = None
+                                # print "Country %s can't be find" % (location['country'], )
+
+                            if event.country is None:
+                                # let's try again with ulternative name
+                                try:
+                                    event.country = Country.objects.get(alternate_names__icontains=location['country'])
+                                except Exception as exp: 
+                                    logger.warning("Can't get country %s - %s" % (location['country'], exp))
+                                    # print "Can't get country %s - %s" % (location['country'], exp)
+                                    event.country = None
 
                         if location['lat']:
                             event.latitude = location['lat']
