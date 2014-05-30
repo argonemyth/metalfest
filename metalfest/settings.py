@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'cities_light',
     'taggit',
+    'raven.contrib.django.raven_compat',
     'compressor',
     'django_object_actions',
     'django_select2',
@@ -54,6 +55,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
 )
 
 ROOT_URLCONF = 'metalfest.urls'
@@ -101,6 +103,10 @@ STATICFILES_FINDERS = (
 
 # Default layout to use with "crispy_forms"
 CRISPY_TEMPLATE_PACK = 'foundation-5'
+
+RAVEN_CONFIG = {
+    'dsn': 'http://388cde39c1dd4053956f14a831a0ba9e:ebf5bb58fe2f44bcad6a3b38fc19c9d8@sentry.sodibur.com/5',
+}
 
 # if local_settings.py file present, import the variables from it (overriding
 # locally).
