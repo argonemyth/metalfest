@@ -207,94 +207,102 @@ class Artist(models.Model):
             for u_event in upcoming_events:
                 # Skip the festivals 
                 e_id = u_event['id']
+                title = u_event['title']
                 end_date = u_event['endDate']
-                # make sure there is no end_date
-                if end_date:
-                    # Todo: maybe we could add a festival if it doesn't already exist
-                    # print "%s is a festivals" % (u_event['title'])
+                url = u_event['url']
+
+                # make sure it's not a festival 
+                if url.startswith("http://www.last.fm/festival/"):
+                    festival, created = Festival.objects.get_or_create(lastfm_id=e_id,
+                                            defaults={"title": title})
+                    if created: 
+                        # take too long to get all the info.
+                        # festival.get_event_info()
+                        logger.info("New festival created: %s (id #%s) " % (title, festival.id) )
+                        print "==== New festival created: %s (id #%s) " % (title, festival.id)
+                    # else:
+                        # print "==== The festival is already created: %s (id #%s) " % (title, festival.id)
                     continue
 
-                # make sure the id is not in our Festival list
-                try:
-                    festival = Festival.objects.get(lastfm_id=e_id)
-                except Festival.DoesNotExist:
-                    # print "ID: ", e_id
-                    # print "Title: ", u_event['title']
-                    # print "Start: ", u_event['startDate']
-                    event, created = Event.objects.get_or_create(lastfm_id=e_id,
-                                        defaults={"name": u_event['title'],
-                                                  "date": datetime.datetime.strptime(
-                                                                u_event['startDate'],
-                                                                '%a, %d %b %Y %H:%M:%S'
-                                                           ).strftime('%Y-%m-%d')})
-                    if created:
-                        event.start_time = datetime.datetime.strptime(
-                                                u_event['startDate'],
-                                                '%a, %d %b %Y %H:%M:%S'
-                                           ).strftime('%H:%M:%S')
+                # Create our event
+                # print "ID: ", e_id
+                # print "Title: ", u_event['title']
+                # print "Start: ", u_event['startDate']
+                event, created = Event.objects.get_or_create(lastfm_id=e_id,
+                                    defaults={"name": title,
+                                              "date": datetime.datetime.strptime(
+                                                            u_event['startDate'],
+                                                            '%a, %d %b %Y %H:%M:%S'
+                                                       ).strftime('%Y-%m-%d')})
+                if created:
+                    # print "==== New event created: %s (id #%s) " % (title, event.id)
+                    event.start_time = datetime.datetime.strptime(
+                                            u_event['startDate'],
+                                            '%a, %d %b %Y %H:%M:%S'
+                                       ).strftime('%H:%M:%S')
 
-                        venue_id, location = u_event['event'].get_venue()
+                    venue_id, location = u_event['event'].get_venue()
 
-                        if location['name']:
-                            event.location = location['name']
-                            street = location.get('street', '')
-                            if street:
-                                event.location += ", " + street
-                            city = location.get('city', '')
-                            if city:
-                                event.location += ", " + city 
+                    if location['name']:
+                        event.location = location['name']
+                        street = location.get('street', '')
+                        if street:
+                            event.location += ", " + street
+                        city = location.get('city', '')
+                        if city:
+                            event.location += ", " + city 
 
-                        if location['country']:
-                            # for US cities, it comes with region name like this: 'Baltimore, MD'
+                    if location['country']:
+                        # for US cities, it comes with region name like this: 'Baltimore, MD'
+                        try:
+                            # event.country = Country.objects.get(models.Q(name__iexact=location['country']) | models.Q(alternate_names__icontains=location['country']))
+                            event.country = Country.objects.get(name__iexact=location['country'])
+                        except Country.DoesNotExist:
+                            logger.warning("Country %s can't be find" % (location['country'], ))
+                            print "===== Country %s can't be find" % (location['country'], )
+                            event.country = None
+
+                        if event.country is None:
+                            # let's try again with ulternative name
                             try:
-                                # event.country = Country.objects.get(models.Q(name__iexact=location['country']) | models.Q(alternate_names__icontains=location['country']))
-                                event.country = Country.objects.get(name__iexact=location['country'])
-                            except Country.DoesNotExist:
-                                logger.warning("Country %s can't be find" % (location['country'], ))
-                                print "===== Country %s can't be find" % (location['country'], )
+                                event.country = Country.objects.get(alternate_names__icontains=location['country'])
+                            except Exception as e: 
+                                logger.warning("Can't get country %s - %s" % (location['country'], e))
+                                print "===== Can't get country %s - %s" % (location['country'], e)
                                 event.country = None
 
-                            if event.country is None:
-                                # let's try again with ulternative name
-                                try:
-                                    event.country = Country.objects.get(alternate_names__icontains=location['country'])
-                                except Exception as e: 
-                                    logger.warning("Can't get country %s - %s" % (location['country'], e))
-                                    print "===== Can't get country %s - %s" % (location['country'], e)
-                                    event.country = None
+                    if location['lat']:
+                        event.latitude = location['lat']
 
-                        if location['lat']:
-                            event.latitude = location['lat']
+                    if location['lng']:
+                        event.longitude = location['lng']
 
-                        if location['lng']:
-                            event.longitude = location['lng']
+                    event.lastfm_url = url
 
-                        event.lastfm_url = u_event['url']
+                    event.save()
 
-                        event.save()
+                # Update lineup
+                artists = u_event['event'].get_artists()
+                update = False
+                if event.lineup:
+                    lineup = json.loads(event.lineup)
+                else:
+                    lineup = []
 
-                    # Update lineup
-                    artists = u_event['event'].get_artists()
-                    update = False
-                    if event.lineup:
-                        lineup = json.loads(event.lineup)
-                    else:
-                        lineup = []
+                for a in artists:
+                    name = a.get_name()
+                    if name and ( name not in lineup ):
+                        update = True
+                        lineup.append(name)
+                        artist, created = Artist.objects.get_or_create(name=name)
+                        if created:
+                            artist.get_info_from_musicbrainz()
+                        event.artists.add(artist)
 
-                    for a in artists:
-                        name = a.get_name()
-                        if name and ( name not in lineup ):
-                            update = True
-                            lineup.append(name)
-                            artist, created = Artist.objects.get_or_create(name=name)
-                            if created:
-                                artist.get_info_from_musicbrainz()
-                            event.artists.add(artist)
-
-                    if update:
-                        # print "Going to update lineup"
-                        event.lineup = json.dumps(lineup)
-                        event.save()
+                if update:
+                    # print "Going to update lineup"
+                    event.lineup = json.dumps(lineup)
+                    event.save()
 
 
 class Event(models.Model):
@@ -580,7 +588,7 @@ class Festival(models.Model):
                                            api_secret = settings.LASTFM_API_SECRET)
             e = pylast.Event(self.lastfm_id, network)
             venue, location = e.get_venue()
-            print location
+            # print location
 
             if (not self.location) and location['name']:
                 self.location = location['name']
