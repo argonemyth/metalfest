@@ -58,6 +58,13 @@ var icon_nolineup = new google.maps.MarkerImage(
     new google.maps.Point(13, 16)
 )
 
+var icon_gig = new google.maps.MarkerImage(
+    '/static/images/icons.png',
+    new google.maps.Size(27, 32),
+    new google.maps.Point(120,0),
+    new google.maps.Point(13, 16)
+)
+
 function Festival(data) {
     var self = this;
 
@@ -243,7 +250,7 @@ function Event(data) {
     self.marker = new google.maps.Marker({
         position: festLatLng,
         title: self.name,
-        icon: icon_upcoming,
+        icon: icon_gig,
         map: google_map.map, // map is a global var initilized in the map binding 
         visible: false, 
         animation: google.maps.Animation.DROP

@@ -231,6 +231,10 @@ a.alert {
         .button {
             margin-bottom: 0;
         }
+        .alert:visited {
+            // Not sure why i need to override this...
+            color: #FFF;
+        }
     }
     .report-form {
         display: none;
@@ -331,6 +335,18 @@ i.lack-info {
 
 i.lack-info-opaque {
     background-position: -4*$sprite-unit -2*$sprite-unit;
+    width: 27px;
+    height: 32px;
+}
+
+i.gig {
+    background-position: -6*$sprite-unit 0;
+    width: 27px;
+    height: 32px;
+}
+
+i.gig-opaque {
+    background-position: -6*$sprite-unit -2*$sprite-unit;
     width: 27px;
     height: 32px;
 }
