@@ -27,7 +27,8 @@ class FestivalAdmin(DjangoObjectActions, admin.ModelAdmin):
     # list_filter = ('city',)
     search_fields = ('title', 'description', 'location')
     readonly_fields = ('slug', )
-    ordering = ("start_date", )
+    # ordering = ("start_date", )
+    ordering = ("title", "start_date", )
     # actions = [get_lastfm_info]
 
     @takes_instance_or_queryset
@@ -65,7 +66,7 @@ class EventAdmin(DjangoObjectActions, admin.ModelAdmin):
     """
     Admin class for events.
     """
-    list_display = ('name', 'lineup_info', 'lastfm_id', 'latitude', 'longitude', 'location', 'country', 'date')
+    list_display = ('name', 'lineup_info', 'lastfm_id', 'lastfm_url', 'latitude', 'longitude', 'location', 'country', 'date')
     # list_editable = ('date', 'end_date', 'location')
     # list_filter = ('city',)
     search_fields = ('name', 'location', 'country__name')
