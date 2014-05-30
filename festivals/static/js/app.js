@@ -495,19 +495,7 @@ function FestivalMapViewModel() {
         }
     });
 
-    self.events.subscribe(function(changes) {
-         var changed_object = changes[0].value;
-        if (changes[0].status === "added") {
-            // console.log("Going to enable all markers");
-            ko.utils.arrayForEach(changed_object.events, function(item) {
-                item.enableMarker();
-            });
-        } else {
-            ko.utils.arrayForEach(changed_object.events, function(item) {
-                item.disableMarker();
-            });
-        }
-    }, null, "arrayChange");
+
 
     self.displayedFestivals.subscribe(function (festivals) {
         // console.log("displayedFestival changed.");
@@ -524,6 +512,38 @@ function FestivalMapViewModel() {
         // google_map.map.fitBounds(google_map.fullBounds);
     });
 
+
+    // Control the displaying of events based on the array change
+    self.events.subscribe(function(changes) {
+         var changed_object = changes[0].value;
+        if (changes[0].status === "added") {
+            // console.log("Going to enable all markers");
+            ko.utils.arrayForEach(changed_object.events, function(item) {
+                if ( (item.date > self.min_date() && item.date < self.max_date()) ) {
+                    item.enableMarker();
+                } else {
+                    item.disableMarker();
+                }
+            });
+        } else {
+            ko.utils.arrayForEach(changed_object.events, function(item) {
+                item.disableMarker();
+            });
+        }
+    }, null, "arrayChange");
+
+    // Control the displaying of events based on the date range.
+    self.date_range.subscribe(function (date_range) { 
+        return ko.utils.arrayFilter(self.events(), function(band) {
+            $.each(band.events, function(index, event){
+                if ( (event.date > self.min_date() && event.date < self.max_date()) ) {
+                    event.enableMarker();
+                } else {
+                    event.disableMarker();
+                }
+            });
+        }, this);
+    });
     /*
     // we create the subscription function manually because there is no binding
     // between date_range observable in the view.
