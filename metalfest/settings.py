@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'festivals',
     'crispy_forms',
     'crispy_forms_foundation',
+    'metalmap',
 )
 
 MIDDLEWARE_CLASSES = (

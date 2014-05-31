@@ -675,3 +675,44 @@ class Festival(models.Model):
                 self.lineup = json.dumps(lineup)
 
             self.save()
+
+
+    def data_migrate(self):
+        """
+        Migrate all the data to metalmap.Festival
+        """
+        from metalmap.models import Festival as NewFestial
+        from metalmap.models import Artist as NewArtist 
+        print "Migrating festival %s (# %s)" % (self.title, self.id)
+
+        # New Festival
+        # Get the country if there is city
+        location = None
+        country = None 
+
+        if self.location:
+            location = self.location 
+
+        if self.city:
+            country = self.city.country
+            if location:
+                location += ', ' + self.city.name
+
+        fest = NewFestial(id=self.id, title=self.title,
+                          slug=self.slug, description=self.description,
+                          start_date=self.start_date, end_date=self.end_date,
+                          url=self.url, location=location, country=country,
+                          latitude=self.latitude, longitude=self.longitude,
+                          computed_address=self.computed_address,
+                          lineup=self.lineup, lastfm_id=self.lastfm_id)
+
+        fest.save()
+        for artist in self.artists.all():
+            try:
+                new_artist = NewArtist.objects.get(slug=artist.slug)
+            except NewArtist.DoesNotExist:
+                continue
+            else:
+                fest.artists.add(new_artist) 
+        for tag in self.genres.all():
+            fest.genres.add(tag)

@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block bodyid %}fullscreen{% endblock bodyid %}
+
+{% block content %}
+    <div id="map" data-bind="map:festivals"></div>
+    {% comment %}
+    <div id="footer">
+        <h1>METALFEST</h1>
+    </div>
+    <div id="overlay" class="off-canvas-wrap" data-offcanvas>
+        <div class="inner-wrap">
+            <section class="right-small">
+                <a class="right-off-canvas-toggle" href="#">
+                    <span class="fa-stack fa-lg">
+                        <i class="fa fa-square fa-stack-2x"></i>
+                        <i class="fa fa-chevron-left fa-stack-1x fa-inverse"></i>
+                    </span>
+                </a>
+            </section>
+            <aside class="right-off-canvas-menu">
+                <ul class="off-canvas-list">
+                    <li><label>Users</label></li>
+                    <li><a href="#">Hari Seldon</a></li>
+                    <li><a href="#">...</a></li>
+                </ul>
+            </aside>
+            <section class="main-section">
+            </section>
+            <a class="exit-off-canvas"></a>
+        </div>
+    </div>
+    {% endcomment %}
+    <div id="loader">
+        <i class="fa fa-refresh fa-spin fa-3x"></i>
+        <p>{% trans "the map will be ready shortly..." %}</p>
+    </div>
+    <div id="overlay" class="panel" data-bind='animatedVisible: displayOverlay'>
+        {% comment %}
+        <header>
+            <div class="row">
+                <div class="small-12 columns">
+                    <h1>THE MAP of METAL</h1>
+                    <h4>Follow the noise all over <i class="fa fa-globe"></i>!</h4>
+                </div>
+            </div>
+        </header>
+            
+        <form action="" method="post">{% csrf_token %}
+        {{ form.as_p }}
+        </form>
+        {% endcomment %}
+        <form id="filter">
+            {# <select multiple="true" data-bind="options: states, optionsValue: 'id', optionsText: 'text', selectedOptions: selectMultipleStates, select2: { }" style="width: 300px"></select> #}
+            <div class="row">
+                <div class="small-12 columns">
+                    <h3>Find your 2014 metal festivals:</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="small-12 columns">
+                    <label>{% trans "Filter by bands" %}</label>
+                    {# <select multiple="true" data-bind="selectedOptions: selected_bands, value: selected_bands, lookupKey: name, select2: { minimumInputLength: 1, query: bandQuery }"></select> #}
+                    <input type="hidden" data-bind="value: selected_bands_str, select2: { minimumInputLength: 2,  multiple: true, query: bandQuery }">
+                </div>
+            </div>
+            <div class="row">
+                <div class="small-12 columns">
+                    <label>{% trans "Filter by genres:" %}</label>
+                    {# <select multiple="true" data-bind="selectedOptions: selected_genres, options: genres, select2: { }"></select> #}
+                    <input type="hidden" data-bind="value: selected_genres_str, select2: { minimumInputLength: 2,  multiple: true, query: genreQuery }">
+                </div>
+            </div>
+            <div class="row">
+                <div class="small-12 columns">
+                    {# <label>{% trans "Filter by dates" %}</label> #}
+                    <div id="slider"></div>
+                </div>
+            </div>
+        </form>
+
+
+        <div id="legend" class="row">
+            <div class="small-12 columns">
+                {# <div id="legend"> #}
+                    <h5>{% trans "Map Legend" %}</h5>
+                    <ul class="small-block-grid-3 medium-block-grid-4">
+                      <li>
+                        <div><i class="icons upcoming-opaque"></i></div>
+                        <h6>{% trans "Upcoming Festivals" %}</h6>
+                      </li>
+                      <li>
+                        <div><i class="icons past-opaque"></i></div>
+                        <h6>{% trans "Past Festivals" %}</h6>
+                      </li>
+                      <li>
+                        <div><i class="icons gig-opaque"></i></div>
+                        <h6>{% trans "Band Gigs" %}</h6>
+                      </li>
+                      <li>
+                        <div><i class="icons lack-info-opaque"></i></div>
+                        <h6>{% trans "Lacking Lineup Info" %}</h6>
+                      </li>
+                    </ul>
+                {# </div> #}
+            </div>
+        </div>
+
+        <div id="logo" class="row">
+            <div class="small-12 columns">
+                <h1>Route Below <span class="label radius">beta · v0.7</span></h1>
+                <h4 class="tagline hide-for-small-slideup">Follow the noise all over the world!</h4>
+                <p class="hide-for-small-slideup">created by <a class="secondary" href="http://www.argonemyth.com" target="_blank" title="Full-stack web app / website developerment">argonemyth</a> · 
+                    <a href="mailto:hello@routebelow.com" class="alert">feedback & bug report</a>
+                </p>
+                <p class="hide-for-small hide-for-small-slideup">
+                    {% trans "Follow us on: " %}
+                    <a class="social-network" href="https://twitter.com/RouteBelow" target="_blank">
+                        <span class="fa-stack fa-lg">
+                              <i class="fa fa-circle fa-stack-2x"></i>
+                              <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                    <a class="social-network" href="https://www.facebook.com/routebelow" target="_blank">
+                        <span class="fa-stack fa-lg">
+                              <i class="fa fa-circle fa-stack-2x"></i>
+                              <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </p>
+                <p class="show-for-small">
+                    {% trans "Follow us on: " %}
+                    <a class="social-network" href="https://twitter.com/RouteBelow" target="_blank">Twitter</a> ·
+                    <a class="social-network" href="https://www.facebook.com/routebelow" target="_blank">Facebook</a>
+                </p>
+            </div>
+            <a id="hide-overlay-button" class="pull-right" data-bind='click: hideOverlay' href="#">[-]</a>
+            <a id="show-overlay-button" class="pull-right" data-bind='click: showOverlay' href="#">[+]</a>
+        </div>
+            {% comment %}
+                
+            <div id="legal" class="row">
+                <div class="large-12 columns">
+                    {# <p>Copyright &copy; 2009-{% now "Y" %} argonemyth dev.</p> #}
+                    <p>Created by <a href="www.argonemyth.com" target="_blank" title="Full-stack web app / website developerment">argonemyth</a></p>
+                </div>
+            </div>
+            {% endcomment %}
+        
+        {% comment %}
+        <span class="fa-stack fa-lg">
+            <i class="fa fa-square fa-stack-2x"></i>
+            <i class="fa fa-chevron-right fa-stack-1x fa-inverse"></i>
+        </span>
+        {% endcomment %}
+    </div>
+    {% comment %}
+    <div id="logo" class="panel" data-bind='click: showOverlay'>
+        <header>
+            <div class="row">
+                <div class="small-12 columns">
+                    <h1>THE MAP of METAL</h1>
+                    <h4>Follow the noise all over <i class="fa fa-globe"></i>!</h4>
+                </div>
+            </div>
+        </header>
+    </div>
+    {% endcomment %}
+
+    {% comment %}
+    <div id="show-overlay-button" data-bind='click: showOverlay' href="#">
+        <span class="fa-stack fa-lg">
+            <i class="fa fa-square fa-stack-2x"></i>
+            <i class="fa fa-chevron-left fa-stack-1x fa-inverse"></i>
+        </span>
+    </div>
+    {% endcomment %}
+
+{% endblock content %}

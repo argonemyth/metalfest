@@ -1,0 +1,451 @@
+@import "settings";
+@import "foundation";
+@import "compass/css3";
+@import "compass/typography/links/link-colors";
+
+// Or selectively include components
+// @import
+//   "foundation/components/accordion",
+//   "foundation/components/alert-boxes",
+//   "foundation/components/block-grid",
+//   "foundation/components/breadcrumbs",
+//   "foundation/components/button-groups",
+//   "foundation/components/buttons",
+//   "foundation/components/clearing",
+//   "foundation/components/dropdown",
+//   "foundation/components/dropdown-buttons",
+//   "foundation/components/flex-video",
+//   "foundation/components/forms",
+//   "foundation/components/grid",
+//   "foundation/components/inline-lists",
+//   "foundation/components/joyride",
+//   "foundation/components/keystrokes",
+//   "foundation/components/labels",
+//   "foundation/components/magellan",
+//   "foundation/components/orbit",
+//   "foundation/components/pagination",
+//   "foundation/components/panels",
+//   "foundation/components/pricing-tables",
+//   "foundation/components/progress-bars",
+//   "foundation/components/reveal",
+//   "foundation/components/side-nav",
+//   "foundation/components/split-buttons",
+//   "foundation/components/sub-nav",
+//   "foundation/components/switch",
+//   "foundation/components/tables",
+//   "foundation/components/tabs",
+//   "foundation/components/thumbs",
+//   "foundation/components/tooltips",
+//   "foundation/components/top-bar",
+//   "foundation/components/type",
+//   "foundation/components/offcanvas",
+//   "foundation/components/visibility";
+
+// fonts
+@include font-face("Mohave", font-files("/static/fonts/Mohave.otf", opentype)); // For the logo 
+
+@mixin scrollbar($size, $primary, $secondary: lighten($primary, 25%)) {
+    ::-webkit-scrollbar {
+        width:  $size;
+        height: $size;
+    }
+ 
+    ::-webkit-scrollbar-thumb {
+        background: $primary;
+    }
+ 
+    ::-webkit-scrollbar-track {
+        background: $secondary;
+    }
+
+    // For jscrollpane
+    .jspVerticalBar
+    {
+        // position: absolute;
+        // top: 0;
+        // right: 0;
+        width: $size;
+        // height: 100%;
+        background: transparent;
+    }
+    .jspTrack {
+        background: $secondary; /* changed from #dde */
+        position: relative;
+    }
+ 
+    .jspDrag{
+        background: $primary;
+        position: relative;
+        top: 0;
+        left: 0;
+        cursor: pointer;
+    }
+  
+    // For Internet Explorer
+    body {
+        scrollbar-face-color: $primary;
+        scrollbar-track-color: $secondary;
+    }
+}
+
+// @include scrollbar(.5em, tomato);
+// @include scrollbar(.5rem, $alert-color, rgba(0,0,0,.8));
+
+html, body#fullscreen{
+    height: 100%;
+}
+
+body#fullscreen {
+    overflow: hidden; // to hide the overlay
+    #map {
+        width: 100%;
+        height: 100%;
+        img {
+            // fix the zooming widget display
+            max-width: none !important;
+        }
+    }
+    #footer {
+        position: absolute;
+        width: 100%;
+        z-index: 1000;
+        bottom: 0;
+        left: 0; 
+        // height: 10rem;
+        background-color: $body-bg; 
+        h1 { color: #FFF;}
+    }
+    #overlay {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        header {
+            border-bottom: 1px solid $hr-border-color;
+            margin-bottom: 1rem;
+        }
+        form#filter {
+            width: 100%;
+        }
+        hr {
+            margin: .5rem 0 1rem;
+        }
+        // footer {
+        #legend {
+            margin-top: 1rem;
+            border-top: 1px solid $hr-border-color;
+            padding-top: 1rem;
+                // background-color: $primary-color;
+                width: 100%;
+                text-align: center;
+                h6 {
+                    font-size: .8rem;
+                    font-weight: 700;
+                    font-family: $body-font-family;
+                    text-transform: uppercase;
+                }
+                ul li {
+                    padding-bottom: 0;
+                }
+                // height: 300px;
+        }
+        #logo {
+            border-top: 1px solid $hr-border-color;
+            padding-top: 1rem;
+            .label {
+                vertical-align: top;
+                margin-top: .2rem;
+                padding-top: .5rem;
+                font-size: .75rem;
+            }
+            p { 
+                margin-bottom: 0;
+            }
+            // .tagline {
+                // color: $secondary-color;
+            // }
+        }
+        .social-network {
+            // color: #FFF;
+        }
+    } 
+    #show-overlay-button {
+        display: none;
+    }
+}
+
+a.secondary {
+    @include link-colors($secondary-color, darken($secondary-color, 10%), darken($secondary-color, 10%), $secondary-color, darken($secondary-color, 10%));
+}
+
+a.alert {
+    @include link-colors($alert-color, darken($alert-color, 10%), darken($alert-color, 10%), $alert-color, darken($alert-color, 10%));
+}
+
+// Google Map Infobox
+.infobox {
+    @include scrollbar(.5rem, $alert-color, rgba(0,0,0,.8));
+    border: 1px solid black;
+    // margin-top: 8px;
+    background: #333;
+    padding: rem-calc(5px);
+    color: #FFF;
+    @include box-shadow(#000 0 0 8px);
+    h1, h2, h3, h4, h5, h6 {
+        color: #FFF;
+        margin: 0;
+    }
+    p, div {
+        font-size: .8rem;
+    }
+    .festival-loader {
+      text-align: center;
+    }
+    .artists {
+        // margin-top: 1rem;
+        // margin-left: 0;
+        margin: .7rem 0 .6rem 0;
+        max-height: rem-calc(340px);
+        overflow-y: auto;
+        // width: 100%;
+        // width: 350px;
+        li {
+            margin-left: 0;
+            float: left !important;
+            img {
+                display: inline-block;
+                width: rem-calc(65px);
+                height: rem-calc(65px);
+                border: 1px solid $body-bg;
+            }
+            .artist-description {
+                display: inline-block;
+            }
+
+        }
+    }
+    .festival-feedback {
+        .button {
+            margin-bottom: 0;
+        }
+        .alert:visited {
+            // Not sure why i need to override this...
+            color: #FFF;
+        }
+    }
+    .report-form {
+        display: none;
+        .row {
+            margin-top: .5rem;
+            padding-bottom: .5rem;
+            border-bottom: 1px solid $body-bg;
+            .columns {
+                padding-left: .5rem;
+                padding-right: .5rem;
+            }
+        }
+        label {
+            margin-bottom: .2rem;
+        }
+        input[type="checkbox"], textarea, small.error {
+            margin-bottom: 0;
+        }
+        .holder {
+            margin-bottom: .2rem;
+        }
+        .button {
+            margin: .6rem 0 .3rem;
+        }
+        small.error {
+            margin-bottom: .2rem;
+        }
+    }
+}
+
+
+div#loader {
+  position: absolute;
+  top: 0;
+  bottom: 0%;
+  left: 0;
+  right: 0%;
+  background-color: rgba(0, 0, 0, .6);
+  z-index: 99;
+  text-align: center;
+  width: 100%;
+  p, i {
+    color: #999999;
+  }
+  i {
+    margin-top: 45vh;
+  }
+}
+
+// Humane notifier
+.humane, .humane-flatty {
+  font-family: $body-font-family;
+  color: #FFF;
+  background-color: $primary-color;
+}
+
+.humane.error {
+  background-color: $alert-color;
+}
+
+// Sprit Icons.
+$sprite-unit: 20px;
+
+i.icons {
+    @include background(image-url("/static/images/icons.png") no-repeat scroll 0 0);
+    display: inline-block;
+    vertical-align: middle; 
+}
+
+i.upcoming {
+    width: 27px;
+    height: 32px;
+}
+
+i.upcoming-opaque {
+    background-position: 0 -2*$sprite-unit;
+    width: 27px;
+    height: 32px;
+}
+
+i.past {
+    background-position: -2*$sprite-unit 0;
+    width: 27px;
+    height: 32px;
+}
+
+i.past-opaque {
+    background-position: -2*$sprite-unit -2*$sprite-unit;
+    width: 27px;
+    height: 32px;
+}
+
+i.lack-info {
+    background-position: -4*$sprite-unit 0;
+    width: 27px;
+    height: 32px;
+}
+
+i.lack-info-opaque {
+    background-position: -4*$sprite-unit -2*$sprite-unit;
+    width: 27px;
+    height: 32px;
+}
+
+i.gig {
+    background-position: -6*$sprite-unit 0;
+    width: 27px;
+    height: 32px;
+}
+
+i.gig-opaque {
+    background-position: -6*$sprite-unit -2*$sprite-unit;
+    width: 27px;
+    height: 32px;
+}
+
+// Date slider override
+.ui-rangeSlider-container, .ui-rangeSlider-arrow, .ui-rangeSlider-label {
+    background: darken($body-bg, 5%);
+}
+.ui-rangeSlider-container, .ui-rangeSlider-arrow {
+    height: 26px;
+    border: none;
+}
+.ui-rangeSlider-bar{
+    background: #00B4CC;
+    height: 25px;
+}
+.ui-rangeSlider-label {
+    box-shadow: none;
+}
+
+.ui-rangeSlider-leftArrow .ui-rangeSlider-arrow-inner{
+  border-right-color: #00B4CC;
+}
+
+.ui-rangeSlider-leftArrow:hover .ui-rangeSlider-arrow-inner{
+  border-right-color: lighten(#00B4CC, 10%);
+}
+
+.ui-rangeSlider-rightArrow .ui-rangeSlider-arrow-inner{
+  border-left:10px solid #00B4CC;
+}
+
+.ui-rangeSlider-rightArrow:hover .ui-rangeSlider-arrow-inner{
+  border-left:10px solid lighten(#00B4CC, 10%);
+}
+
+.ui-rangeSlider-label-inner {
+    border-top-color: darken($body-bg, 5%);
+}
+
+// select2 override
+$border-color: #00B4CC;
+.select2-container, .select2-container-multi {
+    width: 100%;
+}
+
+.select2-container-multi .select2-choices {
+    // background: $body-bg;
+    border-color: $body-bg;
+    .select2-search-field input {
+        height: 26px;
+    }
+}
+
+.select2-container-active .select2-choice,
+.select2-container-active .select2-choices {
+    border-color: $border-color;
+}
+
+.select2-drop-active {
+    border-color: $border-color;
+    // background: $body-bg;
+    .select2-results {
+        // background-color: $body-bg;
+    }
+}
+
+.select2-results .select2-highlighted {
+    background: $border-color;
+}
+
+.select2-container-multi .select2-choices .select2-search-choice {
+    border-color: $border-color;
+    background: $border-color;
+    color: #FFF;
+    box-shadow: none;
+}
+
+@media only screen and ( min-height: 552px ) {
+    body#fullscreen {
+        #overlay {
+            height: auto;
+            overflow: hidden;
+        }
+    }
+}
+
+@media #{$medium-up} {
+
+    body#fullscreen {
+        #overlay {
+            // position: absolute;
+            // top: 0;
+            // right: 0;
+            width: 400px;
+            height: auto;
+            overflow: hidden;
+            padding: 1.25rem;
+        } 
+    }
+
+}
