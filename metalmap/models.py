@@ -514,6 +514,9 @@ class Festival(Event):
 
     def get_event_info(self):
         """Get event info from last.fm"""
+        if self.lastfm_id is None:
+            self.get_lastfm_event_id()
+
         if self.lastfm_id:
             network = pylast.LastFMNetwork(api_key = settings.LASTFM_API_KEY,
                                            api_secret = settings.LASTFM_API_SECRET)
@@ -524,31 +527,26 @@ class Festival(Event):
             if (not self.location) and location['name']:
                 self.location = location['name']
                 street = location.get('street', '')
+                city = location.get('city', '')
                 if street:
-                    self.location += ", " + street
-
-            if (self.city is None) and (location['city'] and location['country']):
-                # for US cities, it comes with region name like this: 'Baltimore, MD'
-                city_info = location['city'].split(',')
-                if city_info == 2:
-                    city_name = city_info[0].strip()
-                    region_name = city_info[1].strip()
-                    try:
-                        city = City.objects.get(models.Q(name__iexact = city_name),
-                                                models.Q(region__alternate_names__icontains=region_name),
-                                                models.Q(country__name__iexact=location['country']))
-                    except City.DoesNotExist:
-                        city = None
-                else:
-                    city_name = city_info[0].strip()
-                    try:
-                        city = City.objects.get(models.Q(name__iexact = city_name),
-                                                models.Q(country__name__iexact=location['country']))
-                    except City.DoesNotExist:
-                        city = None
-
+                    self.location += ", " + street.strip()
                 if city:
-                    self.city = city
+                    self.location += ", " + city.strip()
+
+            if (self.country is None) and location['country']:
+                try:
+                    self.country = Country.objects.get(name__iexact=location['country'])
+                except Country.DoesNotExist:
+                    self.country = None
+
+                if self.country is None:
+                    # let's try again with ulternative name
+                    try:
+                        self.country = Country.objects.get(alternate_names__icontains=location['country'])
+                    except Exception as exp:
+                        logger.warning("Can't get country %s - %s" % (location['country'], exp))
+                        print "==== Can't get country %s - %s" % (location['country'], exp)
+                        self.country = None
 
             if (self.latitude is None) and location['lat']:
                 self.latitude = location['lat']
@@ -574,6 +572,10 @@ class Festival(Event):
                     self.end_date = datetime.datetime.strptime(
                                         end_d, '%a, %d %b %Y %H:%M:%S'
                                       ).strftime('%Y-%m-%d')
+
+            # Get Last.FM url
+            if self.lastfm_url is None:
+                self.lastfm_url = e.get_url()
 
             # Get Lineup
             if not self.lineup:
