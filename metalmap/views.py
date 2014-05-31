@@ -177,7 +177,7 @@ class GenreTagListView(generics.ListAPIView):
 
 class FestivalReportErrorView(FormView):
     form_class = FestivalReportErrorForm
-    template_name = "festivals/report_error_form.html"
+    template_name = "metalmap/report_error_form.html"
 
     def form_valid(self, form):
         """
@@ -212,7 +212,7 @@ metalmap bot
         }
         return JSONResponse(context)
         # return HttpResponseRedirect(self.get_success_url())
-        # return render_to_response('festivals/report_error_sent.html')
+        # return render_to_response('metalmap/report_error_sent.html')
 
 
 class GigListView(generics.ListAPIView):

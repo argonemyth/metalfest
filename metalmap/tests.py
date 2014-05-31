@@ -10,7 +10,7 @@ from decimal import Decimal
 from metalmap.views import (FestivalJSONList,
                             FestivalMap,
                             FestivalDetail)
-from metalmap.models import Festival, Artist, Event
+from metalmap.models import Festival, Artist, Gig
 from cities_light.models import City, Region, Country
 
 # Utilities
@@ -117,15 +117,14 @@ class HomePageTest(TestCase):
         view = FestivalDetail.as_view()
         response = view(request, slug=festival.slug).render()
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.template_name[0], 'festivals/festival_detail.html')
+        self.assertEqual(response.template_name[0], 'metalmap/festival_detail.html')
         self.assertIn(b'Rue du Champ Louet', response.content)
 
-'''
 class FestivalModelTest(TestCase):
     def setUp(self):
         create_festivals()
         create_artists()
-        self.city = create_city()
+        create_city()
 
     def test_saving_and_retrieving_itmes(self):
         saved_festivals = Festival.objects.all()
@@ -144,8 +143,8 @@ class FestivalModelTest(TestCase):
     def test_geocoder(self):
         # Dummy festival
         festival = Festival.objects.get(id=2) 
-        festival.location = "6007 East Amarillo Blvd"
-        festival.city = self.city #Amarillo, Texas, United States
+        festival.location = "6007 East Amarillo Blvd, Amarillo, Texas"
+        festival.country = Country.objects.get(name="United States")  #Amarillo, Texas, United States
         festival.save()
         self.assertEqual(festival.latitude, 35.222553)
         self.assertEqual(festival.longitude, -101.766291)
@@ -196,7 +195,7 @@ class FestivalModelTest(TestCase):
         festival.sync_lineup()
         lineup = festival.get_lineup_display()
         self.assertEqual(lineup, [u'Satyricon', u'Kreator'])
-'''
+
 
 class ArtistModelTest(TestCase):
     def setUp(self):
@@ -237,15 +236,15 @@ class ArtistModelTest(TestCase):
     def test_update_events_from_lastfm(self):
         pass
 
-class EventModelTest(TestCase):
+class GigModelTest(TestCase):
     def setUp(self):
         create_artists()
 
-    def test_saving_and_retrieving_itmes(self):
+    def test_saving_and_retrieving_gigs(self):
         """
-        We should able to create an Event by supplying event name & date.
+        We should able to create an Gig by supplying event name & date.
         """
-        event = Event(name="Cher cher", date="2014-06-06")
+        event = Gig(title="Cher cher", start_date="2014-06-06")
         event.save()
-        saved_event = Event.objects.all()[0] 
+        saved_event = Gig.objects.all()[0] 
         self.assertEqual(saved_event.slug, "cher-cher")

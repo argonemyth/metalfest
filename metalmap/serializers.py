@@ -27,5 +27,5 @@ class GigSerializer(serializers.ModelSerializer):
     country = serializers.CharField(source='country.name')
     artists = ArtistDetailSerializer(many=True)
     class Meta:
-        model = Event
+        model = Gig
         fields = ('name', 'date', 'location', 'country', 'latitude', 'longitude', 'artists')
