@@ -43,7 +43,6 @@ INSTALLED_APPS = (
     'compressor',
     'django_object_actions',
     'django_select2',
-    'festivals',
     'crispy_forms',
     'crispy_forms_foundation',
     'metalmap',

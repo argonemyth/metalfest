@@ -201,13 +201,11 @@ function Festival(data) {
     }
 }
 
-function Event(data) {
+function Gig(data) {
     var self = this;
 
-    // I know those data dosn't need to be observables.
     this.name = data.title;
     // this.url = data.url;
-    // this.date = ko.observable(data.date);
     this.date = new Date(data.start_date);
     this.lat = data.latitude;
     this.lng = data.longitude;
@@ -452,7 +450,7 @@ function FestivalMapViewModel() {
             var data = {"artist": band};
             $.get("/metalmap/gigs/", data, function(returnedData) {
                 if (returnedData.length > 0 ) {
-                    var mappedEvents = $.map(returnedData, function(item) { return new Event(item) });
+                    var mappedEvents = $.map(returnedData, function(item) { return new Gig(item) });
                     self.events.push({"band": band, "events": mappedEvents}) 
                 } 
             })
