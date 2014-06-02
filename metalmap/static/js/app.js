@@ -205,10 +205,10 @@ function Event(data) {
     var self = this;
 
     // I know those data dosn't need to be observables.
-    this.name = data.name;
+    this.name = data.title;
     // this.url = data.url;
     // this.date = ko.observable(data.date);
-    this.date = new Date(data.date);
+    this.date = new Date(data.start_date);
     this.lat = data.latitude;
     this.lng = data.longitude;
     this.location = data.location;
@@ -340,7 +340,6 @@ function FestivalMapViewModel() {
     self.selected_bands_str = ko.observable();
     self.selected_bands = ko.observable(new Array());
     self.selected_bands2 = ko.observableArray();
-    // self.bands = ["The Afternoon `Gentlemen", "Palehorse", "Metal Church", "Anaal Nathrakh", "Discharge", "Misery Index", "Gorguts", "Negură Bunget", "Blood Red Throne", "Hirax", "Bonded By Blood", "Sourvein", "Black Witchery", "In Solitude", "Graves at Sea", "Wormed", "Mystifier", "Gwydion", "Grave Miasma", "Warhammer", "Bosque", "Bölzer", "Nuclear", "For The Glory", "We Are The Damned", "Crepitation", "Nami", "Antropofagus", "Nebulous", "Executer", "Verdun", "Eryn Non Dae", "Methedras", "Revolution Within", "Eternal Storm", "In Tha Umbra", "Dolentia", "Ermo", "Age of Woe", "Trinta e Um", "Solar Corona", "Equations", "Dementia 13", "Angist", "THE QUARTET OF WOAH!", "Martelo Negro", "Serrabulho", "Vai-Te Foder", "Destroyers Of All", "Vengha", "Bed Legs", "Display of power", "Pterossauros"];
     self.bands = ko.observable(new Array());
     self.selected_genres_str = ko.observable();
     self.selected_genres = ko.observable(new Array());
@@ -451,7 +450,7 @@ function FestivalMapViewModel() {
         if (changes[0].status === "added") {
             // console.log(band + " is added");
             var data = {"artist": band};
-            $.get("/festivals/events/", data, function(returnedData) {
+            $.get("/metalmap/gigs/", data, function(returnedData) {
                 if (returnedData.length > 0 ) {
                     var mappedEvents = $.map(returnedData, function(item) { return new Event(item) });
                     self.events.push({"band": band, "events": mappedEvents}) 
@@ -623,7 +622,7 @@ function FestivalMapViewModel() {
     */
 
     // Load initial festivals from server, convert it to Task instances, then populate self.festivals
-    $.getJSON("/festivals/all/", function(data) {
+    $.getJSON("/metalmap/all/", function(data) {
         var festival_list = data['festivals']
         var mappedFestivals = $.map(festival_list, function(item) { return new Festival(item) });
         self.festivals(mappedFestivals);
@@ -650,18 +649,6 @@ function FestivalMapViewModel() {
     }
 
     // Get a list of all the band names
-
-    // $.getJSON("/festivals/artists/?search=ar", function(data) {
-    //     // console.log(data);
-    //     var artist_list = data;
-    //     var all_artists = [];
-    //     ko.utils.arrayForEach(artist_list, function(item) {
-    //         // console.log(item.name);
-    //         all_artists.push(item.name);
-    //     });
-    //     self.bands(all_artists);
-    // });
-
     self.bandQuery = function (query) {
         // build response for echoed ajax test
         // console.log(query);
@@ -673,7 +660,7 @@ function FestivalMapViewModel() {
         // });
         // console.log(bands);
         $.ajax({
-            url: '/festivals/artists/',
+            url: '/metalmap/artists/',
             type: 'GET',
             dataType: 'json',
             data: {
@@ -694,7 +681,7 @@ function FestivalMapViewModel() {
 
     self.genreQuery = function (query) {
         $.ajax({
-            url: '/festivals/genres/',
+            url: '/metalmap/genres/',
             type: 'GET',
             dataType: 'json',
             data: {

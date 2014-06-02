@@ -28,4 +28,4 @@ class GigSerializer(serializers.ModelSerializer):
     artists = ArtistDetailSerializer(many=True)
     class Meta:
         model = Gig
-        fields = ('name', 'date', 'location', 'country', 'latitude', 'longitude', 'artists')
+        fields = ('title', 'start_date', 'location', 'country', 'latitude', 'longitude', 'artists')
