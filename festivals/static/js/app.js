@@ -623,7 +623,7 @@ function FestivalMapViewModel() {
     */
 
     // Load initial festivals from server, convert it to Task instances, then populate self.festivals
-    $.getJSON("/festivals/all/", function(data) {
+    $.getJSON("/metalmap/all/", function(data) {
         var festival_list = data['festivals']
         var mappedFestivals = $.map(festival_list, function(item) { return new Festival(item) });
         self.festivals(mappedFestivals);
