@@ -203,7 +203,13 @@ class Artist(models.Model):
         """
         artist is an Artist object from pylast
         """
-        logger.info("getting events info from %s" % self.name)
+        if not self.is_metal():
+            print "==== %s (#%s) is not a metal band, skip!" % (self.name, self.id)
+            return
+
+        # logger.info("getting events info from %s" % self.name)
+        # print "getting events info from %s" % self.name
+
         if not artist:
             network = pylast.LastFMNetwork(api_key = settings.LASTFM_API_KEY,
                                api_secret = settings.LASTFM_API_SECRET)
@@ -225,22 +231,21 @@ class Artist(models.Model):
 
                 # make sure it's not a festival 
                 if url.startswith("http://www.last.fm/festival/"):
-                    if self.is_metal():
-                        try:
-                            festival, created = Festival.objects.get_or_create(lastfm_id=e_id,
-                                                    defaults={"title": title})
-                        except IntegrityError:
-                            title += " #" + e_id
-                            festival, created = Festival.objects.get_or_create(lastfm_id=e_id,
-                                                    defaults={"title": title})
+                    try:
+                        festival, created = Festival.objects.get_or_create(lastfm_id=e_id,
+                                                defaults={"title": title})
+                    except IntegrityError:
+                        title += " #" + e_id
+                        festival, created = Festival.objects.get_or_create(lastfm_id=e_id,
+                                                defaults={"title": title})
 
-                        if created:
-                            # take too long to get all the info.
-                            # festival.get_event_info()
-                            logger.info("New festival created: %s (id #%s) " % (title, festival.id) )
-                            print "==== New festival created: %s (id #%s) " % (title, festival.id)
-                        # else:
-                            # print "==== The festival is already created: %s (id #%s) " % (title, festival.id)
+                    if created:
+                        # take too long to get all the info.
+                        # festival.get_event_info()
+                        logger.info("New festival created: %s (id #%s) " % (title, festival.id) )
+                        print "==== New festival created: %s (id #%s) " % (title, festival.id)
+                    # else:
+                        # print "==== The festival is already created: %s (id #%s) " % (title, festival.id)
                     continue
 
                 # Create our event
