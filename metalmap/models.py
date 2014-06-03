@@ -360,7 +360,7 @@ class Event(models.Model):
     class Meta:
         abstract = True
         ordering = ('date', 'name')
-        unique_together = ("title", "lastfm_id")
+        # unique_together = ("title", "lastfm_id")
 
     def __unicode__(self):
         if self.start_date and self.country:
