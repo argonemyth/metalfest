@@ -76,7 +76,7 @@ class Artist(models.Model):
             'name': self.name
         }
 
-    def if_metal(self):
+    def is_metal(self):
         """ Check if the band is a metal band by genres tags """
         if self.genres.filter(name__icontains="metal"):
             return True
@@ -207,7 +207,12 @@ class Artist(models.Model):
         if not artist:
             network = pylast.LastFMNetwork(api_key = settings.LASTFM_API_KEY,
                                api_secret = settings.LASTFM_API_SECRET)
-            artist = network.get_artist(self.name)
+            try:
+                artist = network.get_artist(self.name)
+            except Exception as exp:
+                artist = None
+                logger.warning("can't find artist %s (#%s) on Last.fm" % (self.name, self.id))
+                print "==== can't find artist %s (#%s) on Last.fm" % (self.name, self.id)
 
         if artist:
             upcoming_events = artist.get_upcoming_events()
@@ -220,21 +225,22 @@ class Artist(models.Model):
 
                 # make sure it's not a festival 
                 if url.startswith("http://www.last.fm/festival/"):
-                    try:
-                        festival, created = Festival.objects.get_or_create(lastfm_id=e_id,
-                                                defaults={"title": title})
-                    except IntegrityError:
-                        title += " #" + e_id
-                        festival, created = Festival.objects.get_or_create(lastfm_id=e_id,
-                                                defaults={"title": title})
+                    if self.is_metal():
+                        try:
+                            festival, created = Festival.objects.get_or_create(lastfm_id=e_id,
+                                                    defaults={"title": title})
+                        except IntegrityError:
+                            title += " #" + e_id
+                            festival, created = Festival.objects.get_or_create(lastfm_id=e_id,
+                                                    defaults={"title": title})
 
-                    if created: 
-                        # take too long to get all the info.
-                        # festival.get_event_info()
-                        logger.info("New festival created: %s (id #%s) " % (title, festival.id) )
-                        print "==== New festival created: %s (id #%s) " % (title, festival.id)
-                    # else:
-                        # print "==== The festival is already created: %s (id #%s) " % (title, festival.id)
+                        if created:
+                            # take too long to get all the info.
+                            # festival.get_event_info()
+                            logger.info("New festival created: %s (id #%s) " % (title, festival.id) )
+                            print "==== New festival created: %s (id #%s) " % (title, festival.id)
+                        # else:
+                            # print "==== The festival is already created: %s (id #%s) " % (title, festival.id)
                     continue
 
                 # Create our event
