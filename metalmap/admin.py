@@ -84,7 +84,7 @@ class ArtistAdmin(DjangoObjectActions, admin.ModelAdmin):
     """
     Admin class for artists.
     """
-    list_display = ('name', 'official_url', 'lastfm_url', 'mbid', 'band_image')
+    list_display = ('name', 'if_metal', 'official_url', 'lastfm_url', 'mbid', 'band_image')
     search_fields = ('name', )
     # list_filter = ('genres',)
     ordering = ('name', )

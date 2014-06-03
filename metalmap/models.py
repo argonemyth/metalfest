@@ -76,6 +76,12 @@ class Artist(models.Model):
             'name': self.name
         }
 
+    def if_metal(self):
+        """ Check if the band is a metal band by genres tags """
+        if self.genres.filter(name__icontains="metal"):
+            return True
+        return False
+
     def get_info_from_lastfm(self, artist=None):
         """
         artist is an Artist object from pylast
