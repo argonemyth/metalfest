@@ -247,9 +247,9 @@ class Artist(models.Model):
                 # print "ID: ", e_id
                 # print "Title: ", u_event['title']
                 # print "Start: ", u_event['startDate']
-                event, created = Event.objects.get_or_create(lastfm_id=e_id,
-                                    defaults={"name": title,
-                                              "date": datetime.datetime.strptime(
+                event, created = Gig.objects.get_or_create(lastfm_id=e_id,
+                                    defaults={"title": title,
+                                              "start_date": datetime.datetime.strptime(
                                                             start_date,
                                                             '%a, %d %b %Y %H:%M:%S'
                                                        ).strftime('%Y-%m-%d')})
@@ -621,5 +621,5 @@ class Gig(Event):
     start_time = models.TimeField(_("start time"), null=True, blank=True)
 
     class Meta:
-        verbose_name = _('event')
-        verbose_name_plural = _('events')
+        verbose_name = _('gig')
+        verbose_name_plural = _('gigs')
