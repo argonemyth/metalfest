@@ -26,7 +26,7 @@ class FestivalAdmin(DjangoObjectActions, admin.ModelAdmin):
                     'longitude', 'location', 'country', 'start_date',
                     'end_date')
     list_editable = ('is_metal', 'start_date', 'end_date', 'location')
-    # list_filter = ('city',)
+    list_filter = ('is_metal',)
     search_fields = ('title', 'description', 'location', 'country__name')
     readonly_fields = ('slug', )
     # ordering = ("start_date", )
