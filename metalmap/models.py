@@ -470,6 +470,8 @@ class Festival(Event):
     genres = TaggableManager(verbose_name=_("genres"), blank=True, 
                              related_name='metalmap_festivals',
                              help_text=_('A comma-separated list of genres'))
+    is_metal = models.BooleanField(_("if metal festival"), blank=True,
+                                   default=True)
 
     class Meta:
         verbose_name = _('festival')

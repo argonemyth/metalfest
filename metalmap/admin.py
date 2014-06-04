@@ -22,14 +22,18 @@ class FestivalAdmin(DjangoObjectActions, admin.ModelAdmin):
     Admin class for festivals.
     """
     form = FestivalAdminForm
-    list_display = ('title', 'lineup_info', 'lastfm_id', 'latitude',
+    list_display = ('title', 'is_metal', 'lineup_info', 'lastfm_id', 'latitude',
                     'longitude', 'location', 'country', 'start_date',
                     'end_date')
-    list_editable = ('start_date', 'end_date', 'location')
+    list_editable = ('is_metal', 'start_date', 'end_date', 'location')
     # list_filter = ('city',)
     search_fields = ('title', 'description', 'location', 'country__name')
     readonly_fields = ('slug', )
     # ordering = ("start_date", )
+    fields = ('title', 'slug', 'is_metal', 'lastfm_id', 'start_date', 'end_date',
+              'location', 'country', 'latitude', 'longitude', 'computed_address',
+              'url', 'facebook_url', 'ticket_url', 'lastfm_url',
+              'artists', 'lineup', 'genres', 'description')
     ordering = ("title", "start_date", )
     # actions = [get_lastfm_info]
 
