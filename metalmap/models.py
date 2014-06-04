@@ -377,10 +377,10 @@ class Event(models.Model):
 
     def __unicode__(self):
         if self.start_date and self.country:
-            return u"%s - %s @ %s" % (self.title, self.start_date, self.country)
+            return u"%s @ %s on %s" % (self.title, self.country, self.start_date)
 
         if self.start_date:
-            return u"%s - %s" % (self.title, self.start_date)
+            return u"%s on %s" % (self.title, self.start_date)
 
         if self.country:
             return u"%s @ %s" % (self.title, self.country)
@@ -408,7 +408,6 @@ class Event(models.Model):
         if (self.longitude is None) or (self.latitude is None):
             self.get_geo_position()
         super(Event, self).save(*args, **kwargs)
-
 
     def sync_artists(self):
         """Sync artists field with lineup, might be a temperary method"""
@@ -487,12 +486,22 @@ class Festival(Event):
             return True
         return False
 
+    def get_url(self):
+        if self.url:
+            return self.url
+        elif self.facebook_url:
+            return self.facebook_url
+        elif self.lastfm_url:
+            return self.lastfm_url
+        else:
+            return ''
+
     def serialize(self):
         return {
             'id': self.id,
-            'title': self.title,
+            'title': self.__unicode__(),
             'slug': self.slug,
-            'url': self.url,
+            'url': self.get_url(),
             'start_date': self.start_date,
             'end_date': self.end_date,
             'latitude': self.latitude,
