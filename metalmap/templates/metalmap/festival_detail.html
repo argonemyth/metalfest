@@ -18,7 +18,14 @@
        {% else %}
             <div class="date">{{ festival.start_date }} - {{ festival.end_date }}</div>
         {% endif %}
-        <div class="location">{{ festival.location }}<br>{{ festival.city }}</div>
+        <div class="location">
+            {% if festival.location %}
+                {{ festival.location }}
+            {% endif %}
+            {% if festival.country %}
+                , {{ festival.country }}
+            {% endif %}
+        </div>
 
         {% comment %}
         {# We don't really need to show the genres             #}
