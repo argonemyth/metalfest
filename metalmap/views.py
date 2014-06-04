@@ -175,7 +175,6 @@ class ArtistListView(generics.ListAPIView):
         queryset = None
         artist = self.request.QUERY_PARAMS.get('search', None)
         if artist is not None:
-            print "Searching for ", artist
             queryset = Artist.objects.filter(name__icontains=artist)
         return queryset
 
@@ -193,7 +192,6 @@ class GenreTagListView(generics.ListAPIView):
         queryset = None
         genre = self.request.QUERY_PARAMS.get('search', None)
         if genre is not None:
-            print "Searching for ", genre
             queryset = Tag.objects.filter(name__icontains=genre)
         return queryset
 
