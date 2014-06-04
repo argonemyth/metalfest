@@ -162,17 +162,40 @@ class ArtistJSONList(JSONResponseMixin, BaseListView):
     """
 
 class ArtistListView(generics.ListAPIView):
-    queryset = Artist.objects.all()
+    # queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('^name',)
+    # filter_backends = (filters.SearchFilter,)
+    # search_fields = ('^name',)
+
+    def get_queryset(self):
+        """
+        filtering against a `search` query parameter in the URL.
+        """
+        # queryset = Gig.objects.filter(start_date__gte=datetime.date.today())
+        queryset = None
+        artist = self.request.QUERY_PARAMS.get('search', None)
+        if artist is not None:
+            print "Searching for ", artist
+            queryset = Artist.objects.filter(name__icontains=artist)
+        return queryset
 
 
 class GenreTagListView(generics.ListAPIView):
-    queryset = Tag.objects.all()
+    # queryset = Tag.objects.all()
     serializer_class = GenreTagSerializer
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('^name',)
+    # filter_backends = (filters.SearchFilter,)
+    # search_fields = ('^name',)
+
+    def get_queryset(self):
+        """
+        filtering against a `search` query parameter in the URL.
+        """
+        queryset = None
+        genre = self.request.QUERY_PARAMS.get('search', None)
+        if genre is not None:
+            print "Searching for ", genre
+            queryset = Tag.objects.filter(name__icontains=genre)
+        return queryset
 
 
 class FestivalReportErrorView(FormView):
