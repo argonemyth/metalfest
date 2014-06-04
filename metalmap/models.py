@@ -82,6 +82,14 @@ class Artist(models.Model):
             return True
         return False
 
+    def festival_count(self):
+        return self.festivals.count()
+    festival_count.short_description = _("# of festivals")
+
+    def gig_count(self):
+        return self.gigs.count()
+    gig_count.short_description = _("# of gigs")
+
     def get_info_from_lastfm(self, artist=None):
         """
         artist is an Artist object from pylast

@@ -80,14 +80,23 @@ class GigAdmin(DjangoObjectActions, admin.ModelAdmin):
 admin.site.register(Gig, GigAdmin)
 
 
+class FestivalInline(admin.TabularInline):
+    model = Festival.artists.through
+
+
+class GigInline(admin.TabularInline):
+    model = Gig.artists.through
+    
+
 class ArtistAdmin(DjangoObjectActions, admin.ModelAdmin):
     """
     Admin class for artists.
     """
-    list_display = ('name', 'is_metal', 'official_url', 'lastfm_url', 'mbid', 'band_image')
+    list_display = ('name', 'is_metal', 'festival_count', 'gig_count', 'official_url', 'lastfm_url', 'mbid', 'band_image')
     search_fields = ('name', )
     # list_filter = ('genres',)
     ordering = ('name', )
+    inlines = [FestivalInline, GigInline]
 
     @takes_instance_or_queryset
     # def get_artist_info(self, request, obj):
