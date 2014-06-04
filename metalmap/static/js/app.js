@@ -69,32 +69,37 @@ function Festival(data) {
     var self = this;
 
     // I know those data dosn't need to be observables.
-    this.title = ko.observable(data.title);
-    this.url = ko.observable(data.url);
+    // this.title = ko.observable(data.title);
+    // this.url = ko.observable(data.url);
+    this.title = data.title;
+    this.title_long = data.title_long;
+    this.url = data.url;
     // this.start_date = ko.observable(data.start_date);
     // this.end_date = ko.observable(data.end_date);
     this.start_date = new Date(data.start_date);
     this.end_date = new Date(data.end_date);
-    this.lat = ko.observable(data.latitude);
-    this.lng = ko.observable(data.longitude);
-    this.lineup = ko.observable(ko.utils.parseJson(data.lineup)); // json string
-    this.genres = ko.observable(ko.utils.parseJson(data.genres)); // json string
+    this.lat = data.latitude;
+    this.lng = data.longitude;
+    // this.lineup = ko.observable(ko.utils.parseJson(data.lineup)); // json string
+    // this.genres = ko.observable(ko.utils.parseJson(data.genres)); // json string
+    this.lineup = ko.utils.parseJson(data.lineup); // json string
+    this.genres = ko.utils.parseJson(data.genres); // json string
     this.if_past = data.if_past;
     this.detail_url = data.detail_url; // url of festival detail
     this.slug = data.slug;
 
     // Google LatLng Object
-    var festLatLng = new google.maps.LatLng(self.lat(),self.lng());
+    var festLatLng = new google.maps.LatLng(self.lat,self.lng);
 
     // Define info window
     // http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/docs/reference.html
     var boxText = document.createElement("div");
     $(boxText).addClass("infobox");
     var header = '';
-    if ( this.url() ) {
-        header = "<h4><a target='_blank' href='" + this.url() + "'>" + this.title() + "</a></h4>"
+    if ( this.url ) {
+        header = "<h4><a target='_blank' href='" + this.url + "'>" + this.title + "</a></h4>"
     } else {
-        header = "<h4>" + this.title() + "</h4>";
+        header = "<h4>" + this.title + "</h4>";
     }
     // var dates = '';
     // if ( this.start_date && this.end_date ) {
@@ -128,14 +133,14 @@ function Festival(data) {
     if ( this.if_past ) {
         marker_icon = icon_past;
     } else {
-        if ( ! self.lineup() ) {
+        if ( ! self.lineup ) {
             marker_icon = icon_nolineup;
         }
     }
 
     self.marker = new google.maps.Marker({
         position: festLatLng,
-        title: self.title(),
+        title: self.title_long,
         icon: marker_icon,
         map: google_map.map, // map is a global var initilized in the map binding 
         visible: false, 
@@ -338,10 +343,10 @@ function FestivalMapViewModel() {
     self.selected_bands_str = ko.observable();
     self.selected_bands = ko.observable(new Array());
     self.selected_bands2 = ko.observableArray();
-    self.bands = ko.observable(new Array());
+    // self.bands = ko.observable(new Array());
     self.selected_genres_str = ko.observable();
     self.selected_genres = ko.observable(new Array());
-    self.genres = ko.observable(new Array());
+    // self.genres = ko.observable(new Array());
 
     self.displayedFestivals = ko.computed(function() {
         // Represents a filtered list of festivals
@@ -360,14 +365,14 @@ function FestivalMapViewModel() {
             if ( self.selected_bands().length == 0 ) {
                 display_by_bands = true;
             } else {
-                if ( ! festival.lineup() ) {
+                if ( ! festival.lineup ) {
                     display_by_bands = false;
                 } else {
                     // we have lineup info & user selected some bands
                     var found = false;
                     for ( var i in self.selected_bands() ) {
                         var band = self.selected_bands()[i];
-                        if (festival.lineup().indexOf(band) == -1) {
+                        if (festival.lineup.indexOf(band) == -1) {
                             // console.log(band + " not found in " + festival.title());
                             found = false;
                         } else {
@@ -384,14 +389,14 @@ function FestivalMapViewModel() {
             if ( self.selected_genres().length == 0 ) {
                 display_by_genres = true;
             } else {
-                if ( ! festival.genres() ) {
+                if ( ! festival.genres ) {
                     display_by_genres = false;
                 } else {
                     // we have genre info & user selected some genres
                     var found = false;
                     for ( var i in self.selected_genres() ) {
                         var genre = self.selected_genres()[i];
-                        if (festival.genres().indexOf(genre) == -1) {
+                        if (festival.genres.indexOf(genre) == -1) {
                             // console.log(genre + " not found in " + festival.title());
                             found = false;
                         } else {
@@ -774,12 +779,12 @@ ko.bindingHandlers.map = {
             // });
             // console.log(all_linup);
             // viewModel.bands(all_linup);
-            var all_genres = []
-            ko.utils.arrayForEach(festivals, function(item) {
-                if ( item.genres() ) all_genres = _.union(all_genres, item.genres());
-            });
+            // var all_genres = []
+            // ko.utils.arrayForEach(festivals, function(item) {
+            //     if ( item.genres() ) all_genres = _.union(all_genres, item.genres());
+            // });
             // console.log(all_genres);
-            viewModel.genres(all_genres);
+            // viewModel.genres(all_genres);
         } 
     }
 };

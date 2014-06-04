@@ -499,7 +499,8 @@ class Festival(Event):
     def serialize(self):
         return {
             'id': self.id,
-            'title': self.__unicode__(),
+            'title': self.title,
+            'title_long': self.__unicode__(),
             'slug': self.slug,
             'url': self.get_url(),
             'start_date': self.start_date,
