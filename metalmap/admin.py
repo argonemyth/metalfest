@@ -100,7 +100,8 @@ class ArtistAdmin(DjangoObjectActions, admin.ModelAdmin):
     search_fields = ('name', )
     # list_filter = ('genres',)
     ordering = ('name', )
-    inlines = [FestivalInline, GigInline]
+    # it seems the inlines are making the page very long to load
+    # inlines = [FestivalInline, GigInline]
 
     @takes_instance_or_queryset
     # def get_artist_info(self, request, obj):
