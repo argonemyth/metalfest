@@ -63,7 +63,14 @@
         </ul>
 
         <div class="festival-feedback">
-            <a href="#" data-bind="click: showReportForm" class="report-error button alert expand">{% trans "Report An Error" %}</a>
+            {% if festival.ticket_url %}
+                <ul class="small-block-grid-2">
+                    <li class="padding-right"><a href="{{ festival.ticket_url }}" target="_blank" class="button expand">{% trans "Get Ticket" %}</a></li>
+                    <li class="padding-left"><a href="#" data-bind="click: showReportForm" class="report-error button alert expand">{% trans "Report An Error" %}</a></li>
+                </ul>
+            {% else %}
+                <a href="#" data-bind="click: showReportForm" class="report-error button alert expand">{% trans "Report An Error" %}</a>
+            {% endif %}
         </div>
     </section>
 

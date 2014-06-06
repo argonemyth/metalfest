@@ -228,6 +228,15 @@ a.alert {
         }
     }
     .festival-feedback {
+        li {
+            padding-bottom: 0;
+        }
+        li.padding-right {
+            padding-right: .2rem;
+        }
+        li.padding-left {
+            padding-left: .2rem;
+        }
         .button {
             margin-bottom: 0;
         }
