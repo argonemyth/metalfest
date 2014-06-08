@@ -640,6 +640,53 @@ class Festival(Event):
 
             self.save()
 
+    def if_metal(self):
+        """
+        Check if this festival is metal festival or not.
+        Criterial: if less than half of the bands are non-metal bands, it's not
+        a metal festival!
+        """
+        criteria = 0.5
+
+        if self.lineup:
+            lineup = json.loads(self.lineup)
+        else:
+            lineup = []
+            if self.lastfm_id:
+                network = pylast.LastFMNetwork(api_key = settings.LASTFM_API_KEY,
+                                               api_secret = settings.LASTFM_API_SECRET)
+                festival = pylast.Event(self.lastfm_id, network)
+
+                artists = festival.get_artists()
+                for a in artists:
+                    name = a.get_name()
+                    if name and ( name not in lineup ):
+                        lineup.append(name)
+            else:
+                print "%s (#%s) doesn't have lastfm_id, quitting" % (self.title, self.id)
+                return None
+
+        metal_bands = 0
+
+        for artist_name in lineup:
+            artist, created = Artist.objects.get_or_create(name=artist_name)
+            if created or ( artist.genres.count() == 0 ):
+                artist.get_info_from_lastfm(a)
+
+            if artist.is_metal():
+                metal_bands += 1.0
+
+        if (metal_bands / len(lineup)) < criteria:
+            if self.is_metal == True:
+                self.is_metal = False
+                self.save()
+            return False
+        else:
+            if self.is_metal == False:
+                self.is_metal = True
+                self.save()
+            return True
+
 
 class Gig(Event):
     """ This model records individual concert of a band."""

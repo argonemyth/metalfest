@@ -3,7 +3,9 @@ from django.core.urlresolvers import resolve
 from django.test import TestCase, RequestFactory
 from django.http import HttpRequest
 from django.views.generic import TemplateView
+from django.conf import settings
 
+from mock import patch, Mock
 import json
 from decimal import Decimal
 
@@ -11,6 +13,8 @@ from metalmap.views import (FestivalJSONList,
                             FestivalMap,
                             FestivalDetail)
 from metalmap.models import Festival, Artist, Gig
+from metalmap import pylast
+
 from cities_light.models import City, Region, Country
 
 # Utilities
@@ -31,24 +35,42 @@ def create_festivals():
     second_festival.title = "Sweden Rock Festival"
     second_festival.start_date = "2014-03-20"
     second_festival.end_date = "2014-03-22"
+    second_festival.lineup = json.dumps(["Satyricon", "Arch Enemy", "Kreator", "Muse"])
     second_festival.save()
 
     # Dummy festival 3
     third_festival = Festival()
     third_festival.title = "Eindhoven Metal Meeting"
+    third_festival.lastfm_id = "3839143"
     third_festival.start_date = "2014-06-20"
     # third_festival.end_date = "2014-06-22"
     third_festival.latitude = 41.643485
     third_festival.longitude = -8.686351
     third_festival.save()
 
+    # Dummy festival 4
+    fourth_festival = Festival()
+    fourth_festival.title = "Rock Fest"
+    fourth_festival.start_date = "2014-07-20"
+    fourth_festival.end_date = "2014-07-22"
+    fourth_festival.lineup = json.dumps(["Muse"])
+    fourth_festival.save()
+
 
 def create_artists():
-    artists = ["Satyricon", "Arch Enemy", "Kreator"]
+    artists = ["Satyricon", "Arch Enemy", "Kreator", "Muse"]
     for a_name in artists:
         artist = Artist()
         artist.name = a_name 
         artist.save()
+        if a_name == "Satyricon":
+            artist.genres.add("black metal")
+        if a_name == "Arch Enemy":
+            artist.genres.add("melodic death metal")
+        if a_name == "Kreator":
+            artist.genres.add("thrash metal")
+        if a_name == "Muse":
+            artist.genres.add("alternative rock")
 
 
 def create_city():
@@ -120,6 +142,7 @@ class HomePageTest(TestCase):
         self.assertEqual(response.template_name[0], 'metalmap/festival_detail.html')
         self.assertIn(b'Rue du Champ Louet', response.content)
 
+
 class FestivalModelTest(TestCase):
     def setUp(self):
         create_festivals()
@@ -128,7 +151,7 @@ class FestivalModelTest(TestCase):
 
     def test_saving_and_retrieving_itmes(self):
         saved_festivals = Festival.objects.all()
-        self.assertEqual(saved_festivals.count(), 3)
+        self.assertEqual(saved_festivals.count(), 4)
         first_saved = saved_festivals[0]
         second_saved = saved_festivals[1]
         self.assertEqual(first_saved.title, "West Texas Death Fest")
@@ -149,6 +172,8 @@ class FestivalModelTest(TestCase):
         self.assertEqual(festival.latitude, 35.222553)
         self.assertEqual(festival.longitude, -101.766291)
 
+    """
+    You won't be able to find the festival if it's already past.
     def test_get_lastfm_id(self):
         festivals = Festival.objects.all()
         # This festival is not in lastfm
@@ -159,6 +184,7 @@ class FestivalModelTest(TestCase):
         self.assertEqual(festivals[1].get_lastfm_event_id(), "3616395")
         # Unique festival
         self.assertEqual(festivals[2].get_lastfm_event_id(), "3839143")
+    """
 
     """ Disable it right now, as the operatiion is really slow
     def test_get_event_info(self):
@@ -187,7 +213,7 @@ class FestivalModelTest(TestCase):
         self.assertEqual(festival.artists.count(), 2)
 
     def test_sync_lineup(self):
-        festival = Festival.objects.get(id=2)
+        festival = Festival.objects.get(id=3)
         artist1 = Artist.objects.get(id=1)
         artist2 = Artist.objects.get(id=3)
         festival.artists.add(artist1)
@@ -195,6 +221,28 @@ class FestivalModelTest(TestCase):
         festival.sync_lineup()
         lineup = festival.get_lineup_display()
         self.assertEqual(lineup, [u'Satyricon', u'Kreator'])
+
+    def test_if_metal_with_current_lineup(self):
+        metal_fest = Festival.objects.get(title="Sweden Rock Festival")
+        self.assertEqual(metal_fest.lineup, '["Satyricon", "Arch Enemy", "Kreator", "Muse"]')
+        self.assertEqual(metal_fest.if_metal(), True)
+        self.assertEqual(metal_fest.is_metal, True)
+        rock_fest = Festival.objects.get(title="Rock Fest")
+        self.assertEqual(rock_fest.lineup, '["Muse"]')
+        self.assertEqual(rock_fest.if_metal(), False)
+        self.assertEqual(rock_fest.is_metal, False)
+
+    @patch.object(pylast.Event, 'get_artists')
+    def test_if_metal_with_no_lineup(self, mock_get_artists):
+        network = pylast.LastFMNetwork(api_key = settings.LASTFM_API_KEY,
+                                       api_secret = settings.LASTFM_API_SECRET)
+        mock_get_artists.return_value=[pylast.Artist('Satyricon', network),
+                                       pylast.Artist('Arch Enemy', network),
+                                       pylast.Artist('Kreator', network)]
+        fest = Festival.objects.get(title="Eindhoven Metal Meeting")
+        self.assertEqual(fest.lineup, None)
+        self.assertEqual(fest.if_metal(), True)
+        self.assertEqual(fest.is_metal, True)
 
 
 class ArtistModelTest(TestCase):
@@ -204,7 +252,7 @@ class ArtistModelTest(TestCase):
 
     def test_saving_and_retrieving_itmes(self):
         saved_artists = Artist.objects.all()
-        self.assertEqual(saved_artists.count(), 3)
+        self.assertEqual(saved_artists.count(), 4)
         first_saved = saved_artists[0]
         second_saved = saved_artists[1]
         self.assertEqual(first_saved.name, "Satyricon")
@@ -212,6 +260,13 @@ class ArtistModelTest(TestCase):
         self.assertEqual(second_saved.name, "Arch Enemy")
         self.assertEqual(second_saved.slug, "arch-enemy")
 
+    def test_is_metal(self):
+        saved_artists = Artist.objects.all()
+        self.assertEqual(saved_artists[0].is_metal(), True)
+        self.assertEqual(saved_artists[1].is_metal(), True)
+        self.assertEqual(saved_artists[2].is_metal(), True)
+        self.assertEqual(saved_artists[3].is_metal(), False)
+    """
     def test_get_info_from_lastfm(self):
         artist = Artist.objects.get(id=1)
         artist.get_info_from_lastfm()
@@ -235,6 +290,7 @@ class ArtistModelTest(TestCase):
 
     def test_update_events_from_lastfm(self):
         pass
+    """
 
 class GigModelTest(TestCase):
     def setUp(self):
