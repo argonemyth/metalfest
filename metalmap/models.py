@@ -671,7 +671,7 @@ class Festival(Event):
         for artist_name in lineup:
             artist, created = Artist.objects.get_or_create(name=artist_name)
             if created or ( artist.genres.count() == 0 ):
-                print "=== Going to get info for band %s (%s)" (artist.name, artist.id)
+                print "=== Going to get info for band %s (%s)" % (artist.name, artist.id)
                 artist.get_info_from_lastfm()
 
             if artist.is_metal():
