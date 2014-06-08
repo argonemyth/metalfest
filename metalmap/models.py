@@ -663,7 +663,7 @@ class Festival(Event):
                     if name and ( name not in lineup ):
                         lineup.append(name)
             else:
-                print "%s (#%s) doesn't have lastfm_id, quitting" % (self.title, self.id)
+                print "=== %s (#%s) doesn't have lastfm_id, quitting" % (self.title, self.id)
                 return None
 
         metal_bands = 0
@@ -671,7 +671,8 @@ class Festival(Event):
         for artist_name in lineup:
             artist, created = Artist.objects.get_or_create(name=artist_name)
             if created or ( artist.genres.count() == 0 ):
-                artist.get_info_from_lastfm(a)
+                print "=== Going to get info for band %s (%s)" (artist.name, artist.id)
+                artist.get_info_from_lastfm()
 
             if artist.is_metal():
                 metal_bands += 1.0
