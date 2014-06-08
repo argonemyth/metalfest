@@ -646,7 +646,7 @@ class Festival(Event):
         Criterial: if less than half of the bands are non-metal bands, it's not
         a metal festival!
         """
-        criteria = 0.5
+        criteria = 0.5 # we lower the criteria in case 
 
         if self.lineup:
             lineup = json.loads(self.lineup)
@@ -666,27 +666,47 @@ class Festival(Event):
                 print "=== %s (#%s) doesn't have lastfm_id, quitting" % (self.title, self.id)
                 return None
 
+        if not lineup:
+            print "=== The festival has no lineup info, quitting"
+            return None
+
         metal_bands = 0
+        total_bands = float(len(lineup))
 
         for artist_name in lineup:
             artist, created = Artist.objects.get_or_create(name=artist_name)
-            if created or ( artist.genres.count() == 0 ):
+            # if created or ( artist.genres.count() == 0 ):
+            if created:
                 print "=== Going to get info for band %s (%s)" % (artist.name, artist.id)
                 artist.get_info_from_lastfm()
+                # print artist.genres.count()
 
-            if artist.is_metal():
+            if artist.genres.count() == 0:
+                # We will remove the number of total artist.
+                total_bands -= 1
+                print "=== The band %s (%s) has no lineup info" % (artist.name, artist.id)
+                continue
+
+            if artist.genres.count() > 0 and artist.is_metal():
                 metal_bands += 1.0
 
-        if (metal_bands / len(lineup)) < criteria:
-            if self.is_metal == True:
-                self.is_metal = False
-                self.save()
-            return False
+        # print "Festival: ", self.title
+        # print "Metal bands: ", metal_bands
+        # print "Total bands: ", total_bands
+
+        if total_bands > 0:
+            if (metal_bands / total_bands) < criteria:
+                if self.is_metal == True:
+                    self.is_metal = False
+                    self.save()
+                return False
+            else:
+                if self.is_metal == False:
+                    self.is_metal = True
+                    self.save()
+                return True
         else:
-            if self.is_metal == False:
-                self.is_metal = True
-                self.save()
-            return True
+            return None 
 
 
 class Gig(Event):
