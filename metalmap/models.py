@@ -678,8 +678,11 @@ class Festival(Event):
             # if created or ( artist.genres.count() == 0 ):
             if created:
                 print "=== Going to get info for band %s (%s)" % (artist.name, artist.id)
-                artist.get_info_from_lastfm()
-                # print artist.genres.count()
+                try:
+                    artist.get_info_from_lastfm()
+                except Exception as exp:
+                    logger.warning("Can't get last.fm info for artist %s (#%s)" % (artist.name, artist.id))
+                    print "==== Can't get lastfm infor for artist %s (#%s)" % (artist.name, artist.id)
 
             if artist.genres.count() == 0:
                 # We will remove the number of total artist.
