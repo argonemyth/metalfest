@@ -546,7 +546,7 @@ class LastFMNetwork(_Network):
     def __init__(self, api_key="", api_secret="", session_key="", username="", password_hash=""):
         _Network.__init__(self,
             name = "Last.fm",
-                    homepage = "http://www.last.fm",
+                    homepage = "http://last.fm",
                     ws_server = ("ws.audioscrobbler.com", "/2.0/"),
                     api_key = api_key,
                     api_secret = api_secret,
