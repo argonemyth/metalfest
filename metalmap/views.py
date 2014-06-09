@@ -138,7 +138,9 @@ class FestivalJSONList(JSONResponseMixin, BaseListView):
     def get_queryset(self):
         all_festivals = super(FestivalJSONList, self).get_queryset()
         return all_festivals.filter(Q(latitude__isnull=False), 
-                                    Q(longitude__isnull=False))
+                                    Q(longitude__isnull=False),
+                                    Q(start_date__gte=datetime.date(2014, 1, 1)),
+                                    Q(start_date__lte=datetime.date(2014, 12, 31)))
 
 
 class FestivalDetail(AjaxResponseMixin, DetailView):
