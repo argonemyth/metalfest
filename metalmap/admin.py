@@ -23,9 +23,10 @@ class FestivalAdmin(DjangoObjectActions, admin.ModelAdmin):
     """
     form = FestivalAdminForm
     list_display = ('title', 'is_metal', 'lineup_info', 'lastfm_id', 'latitude',
-                    'longitude', 'location', 'country', 'start_date',
-                    'end_date')
-    list_editable = ('is_metal', 'start_date', 'end_date', 'location')
+                    'longitude', 'url', 'facebook_url', 'ticket_url', 'country',
+                    'start_date', 'end_date')
+    list_editable = ('is_metal', 'url', 'facebook_url', 'ticket_url',
+                     'start_date', 'end_date',)
     list_filter = ('is_metal',)
     search_fields = ('title', 'description', 'location', 'country__name')
     readonly_fields = ('slug', )
