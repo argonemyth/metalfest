@@ -186,24 +186,27 @@ class FestivalModelTest(TestCase):
         self.assertEqual(festivals[2].get_lastfm_event_id(), "3839143")
     """
 
-    """ Disable it right now, as the operatiion is really slow
     def test_get_event_info(self):
         festival = Festival.objects.get(id=3)
         festival.lastfm_id = "3583454"
         festival.get_event_info()
         # should get location and city from last.fm
-        self.assertEqual(festival.location, "SWR Fest, Barroselas")
-        self.assertEqual(festival.city, City.objects.get(id=2))
+        self.assertEqual(festival.location, "SWR Fest, Barroselas, Viana do Castelo")
+        self.assertEqual(festival.country, Country.objects.get(id=2))
         # lat and lng shouldn't be changed
         self.assertEqual(festival.latitude, Decimal('41.643485'))
         self.assertEqual(festival.longitude, Decimal('-8.686351'))
         self.assertEqual(festival.end_date, "2014-04-26")
+        self.assertEqual(festival.facebook_url, "https://www.facebook.com/events/669204766431352/?fref=ts")
+        """
         lineup = ["Metal Church",
                 "Anaal Nathrakh",
                 "Discharge",
                 ]
+
         self.assertEqual(festival.get_lineup_display()[:3], lineup)
-    """
+        """
+
     def test_sync_artists(self):
         festival = Festival.objects.get(id=1)
         festival.lineup = json.dumps(["Satyricon","arch enemy"])

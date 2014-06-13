@@ -1821,6 +1821,14 @@ class Event(_BaseObject):
         
         return self.network._get_url(domain_name, "event") %{'id': self.get_id()}
 
+    def get_website(self):
+        """Return the website of the event."""
+        doc = self._request("event.getInfo", True)
+
+        # there will be always two website sections, the first one will be the
+        # website for venue.
+        return _extract_all(doc, "website")[1]
+
     def share(self, users, message = None):
         """Shares this event (sends out recommendations). 
           * users: A list that can contain usernames, emails, User objects, or all of them.
@@ -3581,7 +3589,7 @@ def _extract(node, name, index = 0):
     """Extracts a value from the xml string"""
     
     nodes = node.getElementsByTagName(name)
-    
+
     if len(nodes):
         if nodes[index].firstChild:
             return _unescape_htmlentity(nodes[index].firstChild.data.strip())

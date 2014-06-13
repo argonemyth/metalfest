@@ -614,6 +614,18 @@ class Festival(Event):
             if self.lastfm_url is None:
                 self.lastfm_url = e.get_url()
 
+            # Get Website
+            if self.url is None:
+                website = e.get_website()
+                print "Website: ", website
+                if website is not None:
+                    if ("www.facebook.com" in website) and (website != self.facebook_url):
+                        print "It's facebook"
+                        self.facebook_url = website
+                    else:
+                        print "It's normal url"
+                        self.url = website
+
             # Get Lineup
             if not self.lineup:
                 artists = e.get_artists()
