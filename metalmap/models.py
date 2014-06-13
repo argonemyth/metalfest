@@ -626,7 +626,7 @@ class Festival(Event):
                         print "It's normal url"
                         self.url = website
 
-            # Get Lineup
+            # Get Lineup - this part is not tested
             if not self.lineup:
                 artists = e.get_artists()
                 lineup = []
