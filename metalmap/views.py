@@ -246,7 +246,9 @@ class GigListView(generics.ListAPIView):
         """
         filtering against a `artist` query parameter in the URL.
         """
-        queryset = Gig.objects.filter(start_date__gte=datetime.date.today())
+        queryset = Gig.objects.filter(Q(latitude__isnull=False), 
+                                      Q(longitude__isnull=False),
+                                      Q(start_date__gte=datetime.date.today()))
         artist = self.request.QUERY_PARAMS.get('artist', None)
         if artist is not None:
             queryset = queryset.filter(artists__name__iexact=artist)
