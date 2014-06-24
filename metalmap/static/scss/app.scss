@@ -307,6 +307,12 @@ div#loader {
   background-color: $alert-color;
 }
 
+// Reset buttons
+#reset_bands, #reset_genres {
+    padding-top: .2rem;
+    color: $alert-color; 
+}
+
 // Sprit Icons.
 $sprite-unit: 20px;
 
