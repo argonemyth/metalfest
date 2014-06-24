@@ -428,6 +428,9 @@ function FestivalMapViewModel() {
     self.selected_bands_str.subscribe(function(bands) {
         // Need to turn strings to the array
         if (bands) {
+            if ( ! $('#reset_bands').is(":visible")) {
+                $('#reset_bands').show();
+            }
             var band_array = bands.split(',');
             self.selected_bands(band_array);
             $.each(band_array, function(index, band) {
@@ -444,6 +447,9 @@ function FestivalMapViewModel() {
             // reset bands 
             self.selected_bands([]);
             self.selected_bands2.removeAll();
+            if ( $('#reset_bands').is(":visible")) {
+                $('#reset_bands').hide();
+            }
         }
     });
 
@@ -487,11 +493,17 @@ function FestivalMapViewModel() {
     self.selected_genres_str.subscribe(function(genres) {
         // Need to turn strings to the array
         if (genres) {
+            if ( ! $('#reset_genres').is(":visible")) {
+                $('#reset_genres').show();
+            }
             self.selected_genres(genres.split(','));
             // console.log(self.selected_genres());
         } else {
             // reset genres
             self.selected_genres([]);
+            if ( $('#reset_genres').is(":visible")) {
+                $('#reset_genres').hide();
+            }
         }
     });
 
@@ -754,6 +766,7 @@ function FestivalMapViewModel() {
             if ( self['selected_' + type + '_str']() ) {
                 self['selected_' + type + '_str']('');
                 $('#' + type + '_selector').select2("val", "");
+                $('#reset_' + type).hide();
             }
         } else {
             console.log("Nothing to reset, man.")

@@ -62,7 +62,7 @@
             <div class="row">
                 <div class="small-12 columns">
                     <label>{% trans "Filter by bands" %}
-                        <span class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'bands')"></i><span>
+                        <span id="reset_bands" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'bands')"></i><span>
                     </label>
                     {# <select multiple="true" data-bind="selectedOptions: selected_bands, value: selected_bands, lookupKey: name, select2: { minimumInputLength: 1, query: bandQuery }"></select> #}
                     <input type="hidden" id="bands_selector" data-bind="value: selected_bands_str, select2: { minimumInputLength: 2,  multiple: true, query: bandQuery }">
@@ -71,7 +71,7 @@
             <div class="row">
                 <div class="small-12 columns">
                     <label>{% trans "Filter by genres" %}
-                        <span class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'genres')"></i><span>
+                        <span id="reset_genres" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'genres')"></i><span>
                     </label>
                     {# <select multiple="true" data-bind="selectedOptions: selected_genres, options: genres, select2: { }"></select> #}
                     <input type="hidden" id="genres_selector" data-bind="value: selected_genres_str, select2: { minimumInputLength: 2,  multiple: true, query: genreQuery }">
