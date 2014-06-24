@@ -723,7 +723,7 @@ function FestivalMapViewModel() {
                     error.insertAfter(element);
             } 
         });
-    } 
+    };
 
     self.submitReportForm = function (form) {
         var $form = $(form);
@@ -745,7 +745,20 @@ function FestivalMapViewModel() {
                 }
             });
         }
-    }
+    };
+
+    self.reset = function(type) {
+        // make sure type is either bands or genres
+        if ( type == 'bands' || type == 'genres') {
+            // We use dictionary to call the observable so we can use variables there
+            if ( self['selected_' + type + '_str']() ) {
+                self['selected_' + type + '_str']('');
+                $('#' + type + '_selector').select2("val", "");
+            }
+        } else {
+            console.log("Nothing to reset, man.")
+        }
+    };
 }
 
 // This binding only control the initalization of the google map with all the festivals.
