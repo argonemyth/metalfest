@@ -8,7 +8,8 @@ from metalmap.views import (FestivalJSONList,
                             ArtistListView,
                             GenreTagListView,
                             FestivalReportErrorView,
-                            GigListView)
+                            GigListView,
+                            CountryListView)
 
 urlpatterns = patterns('metalmap.views',
     url(r'^all/$', FestivalJSONList.as_view(), name='festival-list'),
@@ -16,6 +17,7 @@ urlpatterns = patterns('metalmap.views',
     url(r'^artists/$', ArtistListView.as_view(), name='artists-search'),
     url(r'^gigs/$', GigListView.as_view(), name='gig-search'),
     url(r'^genres/$', GenreTagListView.as_view(), name='genres-search'),
+    url(r'^countries/$', CountryListView.as_view(), name='contries-search'),
     url(r'^(?P<slug>[\d\w\-]+)/report/$', FestivalReportErrorView.as_view(),
         name='festival-report'),
     url(r'^(?P<slug>[\d\w\-]+)/$', FestivalDetail.as_view(), name='festival-detail'),

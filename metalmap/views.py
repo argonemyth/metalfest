@@ -17,7 +17,9 @@ from rest_framework import generics, filters
 from metalmap.models import Festival, Artist, Gig
 from metalmap.serializers import (ArtistSerializer,
                                   GenreTagSerializer,
-                                  GigSerializer)
+                                  GigSerializer,
+                                  CountrySerializer)
+from cities_light.models import Country
 from taggit.models import Tag
 from metalmap.forms import FestivalReportErrorForm
 
@@ -195,6 +197,20 @@ class GenreTagListView(generics.ListAPIView):
         genre = self.request.QUERY_PARAMS.get('search', None)
         if genre is not None:
             queryset = Tag.objects.filter(name__icontains=genre)
+        return queryset
+
+
+class CountryListView(generics.ListAPIView):
+    serializer_class = CountrySerializer
+
+    def get_queryset(self):
+        """
+        filtering against a `search` query parameter in the URL.
+        """
+        queryset = None
+        country = self.request.QUERY_PARAMS.get('search', None)
+        if country is not None:
+            queryset = Country.objects.filter(name__icontains=country)
         return queryset
 
 

@@ -79,6 +79,15 @@
             </div>
             <div class="row">
                 <div class="small-12 columns">
+                    <label>{% trans "Filter by countries" %}
+                        <span id="reset_countries" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'countries')"></i><span>
+                    </label>
+                    {# <select multiple="true" data-bind="selectedOptions: selected_countries, options: countries, select2: { }"></select> #}
+                    <input type="hidden" id="countries_selector" data-bind="value: selected_countries_str, select2: { minimumInputLength: 2,  multiple: true, query: countryQuery }">
+                </div>
+            </div>
+            <div class="row">
+                <div class="small-12 columns">
                     {# <label>{% trans "Filter by dates" %}</label> #}
                     <div id="slider"></div>
                 </div>

@@ -80,6 +80,7 @@ function Festival(data) {
     this.end_date = new Date(data.end_date);
     this.lat = data.latitude;
     this.lng = data.longitude;
+    this.country = data.country;
     // this.lineup = ko.observable(ko.utils.parseJson(data.lineup)); // json string
     // this.genres = ko.observable(ko.utils.parseJson(data.genres)); // json string
     this.lineup = ko.utils.parseJson(data.lineup); // json string
@@ -347,6 +348,8 @@ function FestivalMapViewModel() {
     self.selected_genres_str = ko.observable();
     self.selected_genres = ko.observable(new Array());
     // self.genres = ko.observable(new Array());
+    self.selected_countries_str = ko.observable();
+    self.selected_countries = ko.observable(new Array());
 
     self.displayedFestivals = ko.computed(function() {
         // Represents a filtered list of festivals
@@ -354,12 +357,22 @@ function FestivalMapViewModel() {
             var display_by_dates = false;
             var display_by_bands = false;
             var display_by_genres = false;
+            var display_by_countries = false;
 
             // Filter by dates
             if ( (festival.start_date > self.min_date() && festival.start_date < self.max_date()) &&
                  (festival.end_date > self.min_date() && festival.end_date < self.max_date()) ) {
                 display_by_dates = true;
             }
+
+            // Filter by countries
+            if ( self.selected_countries().length == 0 ) {
+                display_by_countries = true;
+            } else {
+                if ( self.selected_countries().indexOf(festival.country) != -1 ) {
+                    display_by_countries = true;
+                }
+            } 
 
             // Filter by bands
             if ( self.selected_bands().length == 0 ) {
@@ -420,7 +433,7 @@ function FestivalMapViewModel() {
                 console.log("Genre filter: " + display_by_genres);
             }
             */
-            return display_by_dates && display_by_genres && display_by_bands
+            return display_by_dates && display_by_genres && display_by_bands && display_by_countries
         })
 
     }, this);
@@ -507,6 +520,22 @@ function FestivalMapViewModel() {
         }
     });
 
+    self.selected_countries_str.subscribe(function(countries) {
+        // Need to turn strings to the array
+        if (countries) {
+            if ( ! $('#reset_countries').is(":visible")) {
+                $('#reset_countries').show();
+            }
+            self.selected_countries(countries.split(','));
+            // console.log(self.selected_countries());
+        } else {
+            // reset countries
+            self.selected_countries([]);
+            if ( $('#reset_countries').is(":visible")) {
+                $('#reset_countries').hide();
+            }
+        }
+    });
 
 
     self.displayedFestivals.subscribe(function (festivals) {
@@ -715,6 +744,26 @@ function FestivalMapViewModel() {
         });
     };
 
+    self.countryQuery = function (query) {
+        $.ajax({
+            url: '/metalmap/countries/',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                search: query.term
+            },
+            success: function (data) {
+                var countries = [];
+                for ( i in data ) {
+                    countries.push({id: data[i].name, text: data[i].name});
+                }
+                query.callback({
+                    results: countries
+                });
+            }
+        });
+    };
+
     self.showReportForm = function(vm, event) {
         var parentSection = $(event.target).parents("section");
         var formSection = parentSection.next();
@@ -761,7 +810,7 @@ function FestivalMapViewModel() {
 
     self.reset = function(type) {
         // make sure type is either bands or genres
-        if ( type == 'bands' || type == 'genres') {
+        if ( type == 'bands' || type == 'genres' || type == 'countries') {
             // We use dictionary to call the observable so we can use variables there
             if ( self['selected_' + type + '_str']() ) {
                 self['selected_' + type + '_str']('');

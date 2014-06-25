@@ -497,6 +497,11 @@ class Festival(Event):
             return ''
 
     def serialize(self):
+        if self.country:
+            country = self.country.name
+        else:
+            country = None
+
         return {
             'id': self.id,
             'title': self.title,
@@ -507,6 +512,7 @@ class Festival(Event):
             'end_date': self.end_date,
             'latitude': self.latitude,
             'longitude': self.longitude,
+            'country': country,
             'lineup': self.lineup, # json string
             'genres': json.dumps([g.name for g in self.genres.select_related()]),
             'if_past': self.if_past(),
