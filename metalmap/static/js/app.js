@@ -216,6 +216,7 @@ function Gig(data) {
     this.lat = data.latitude;
     this.lng = data.longitude;
     this.location = data.location;
+    this.country = data.country;
     this.lineup = data.artists;
     // this.lineup = ko.utils.parseJson(data.lineup); // json string
     // this.detail_url = data.detail_url; // url of festival detail
@@ -584,6 +585,25 @@ function FestivalMapViewModel() {
             });
         }, this);
     });
+
+    // Control the displaying of events based on country.
+    self.selected_countries.subscribe(function(countries) {
+        return ko.utils.arrayFilter(self.events(), function(band) {
+            $.each(band.events, function(index, event){
+                if ( countries.length == 0 ) {
+                    event.enableMarker();
+                } else {
+                    if ( countries.indexOf(event.country) != -1 ) {
+                        event.enableMarker();
+                    } else {
+                        event.disableMarker();
+                    }
+                }
+            });
+        }, this);
+        // console.log(countries);
+    });
+
     /*
     // we create the subscription function manually because there is no binding
     // between date_range observable in the view.
