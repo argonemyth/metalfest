@@ -309,6 +309,7 @@ div#loader {
 
 // Reset buttons
 #reset_bands, #reset_genres, #reset_countries {
+    display: none;
     padding-top: .2rem;
     color: $alert-color; 
 }
