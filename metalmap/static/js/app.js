@@ -17,10 +17,7 @@ $(document).ready(function () {
             min: new Date(today.getFullYear(), 0, 1),
             max: new Date(today.getFullYear(), 11, 31)
         }
-    // }).on("valuesChanging", function(e, data){
     }).on("valuesChanged", function(e, data){
-        // console.log(data.values);
-        // console.log("Something moved. min: " + data.values.min + " max: " + data.values.max);
         // viewModel.filterMarkersByDates(data.values.min, data.values.max);
         viewModel.min_date(new Date(data.values.min));
         viewModel.max_date(new Date(data.values.max));
@@ -218,9 +215,6 @@ function Gig(data) {
     this.location = data.location;
     this.country = data.country;
     this.lineup = data.artists;
-    // this.lineup = ko.utils.parseJson(data.lineup); // json string
-    // this.detail_url = data.detail_url; // url of festival detail
-    // this.slug = "temp";
 
     // Google LatLng Object
     var festLatLng = new google.maps.LatLng(self.lat,self.lng);
@@ -485,24 +479,6 @@ function FestivalMapViewModel() {
         }
     }, null, "arrayChange");
 
-
-    // self.selected_bands.subscribe(function (selected) {
-    //     if ( selected ) {
-    //         // console.log("Seleted Bands: " + selected);
-    //         // 1. Check if selected are in events array
-    //         $.each(selected, function(index, band){
-    //             obj = _.find(self.events(), function(obj) { return obj.band == band })
-    //             if ( obj == undefined ) {
-    //                 console.log("Adding bands to events");
-    //                 self.events.push({'band': band});
-    //             } else {
-    //                 console.log(obj + "is already in the event list");
-    //             }
-    //         });
-    //     } else {
-    //         console.log("Nothing selected, reset events array");
-    //     }
-    // });
 
     self.selected_genres_str.subscribe(function(genres) {
         // Need to turn strings to the array
@@ -808,9 +784,6 @@ function FestivalMapViewModel() {
 
     self.submitReportForm = function (form) {
         var $form = $(form);
-       //actually save stuff, call ajax, submit form, etc;
-        // console.log($form.attr("action"));
-        // console.log($form.serialize());
 
         if ( $form.valid() ) {
             // console.log("Form is valie, going to submit");
@@ -848,8 +821,6 @@ ko.bindingHandlers.map = {
     init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
         var festivals = ko.utils.unwrapObservable(valueAccessor());
         // console.log("Custom binding init: " + festivals.length);
-        // var latLng = new google.maps.LatLng(55, 11);
-        // var latLng = new google.maps.LatLng(40, 3);
         var latLng = new google.maps.LatLng(30, 25);
         var mapOptions = {
             center: latLng,
@@ -868,18 +839,6 @@ ko.bindingHandlers.map = {
         var festivals = ko.utils.unwrapObservable(valueAccessor());
         if (festivals.length > 0 ) {
             viewModel.showMarkers();
-            // var all_linup = []
-            // ko.utils.arrayForEach(festivals, function(item) {
-            //     if ( item.lineup() ) all_linup = _.union(all_linup, item.lineup());
-            // });
-            // console.log(all_linup);
-            // viewModel.bands(all_linup);
-            // var all_genres = []
-            // ko.utils.arrayForEach(festivals, function(item) {
-            //     if ( item.genres() ) all_genres = _.union(all_genres, item.genres());
-            // });
-            // console.log(all_genres);
-            // viewModel.genres(all_genres);
         } 
     }
 };
@@ -902,9 +861,6 @@ ko.bindingHandlers.animatedVisible = {
         // ko.unwrap(value) ? $(element).fadeIn() : $(element).fadeOut();
         // ko.unwrap(value) ? $(element).animate({right: 0}, 600) : $(element).animate({right: "-100vw"}, 1000);
         if ( ko.unwrap(value) ) {
-            // $("#logo").fadeOut();
-            // $("#show-overlay-button").fadeOut();
-            // $(element).animate({right: 0}, 600)
             if ( clientWidth <= 640 ) {
                 $("#overlay").css("overflow-y", "scroll");
                 $(".hide-for-small-slideup").show();
@@ -913,8 +869,6 @@ ko.bindingHandlers.animatedVisible = {
             $("#hide-overlay-button").show();
             $("#show-overlay-button").hide();
         } else {
-            // $(element).animate({right: "-100vw"}, 600, function() {
-            // var overlayHeight = $("#overlay").outerHeight();
             if ( clientWidth > 640 ) {
                 var overlayHeight = $("#overlay").outerHeight();
                 var logoHeight = $("#logo").outerHeight();
@@ -927,9 +881,6 @@ ko.bindingHandlers.animatedVisible = {
                 var offset = overlayHeight-logoHeight;
             }
             $(element).animate({top: "-" + offset + "px"}, 600, function() {
-                // $("#logo").show();
-                // $("#logo").fadeIn(200);
-                // $("#logo").animate({top: 0}, 300);
                 $("#hide-overlay-button").hide();
                 $("#show-overlay-button").show();
                 $("#overlay").css("overflow", "hidden");
