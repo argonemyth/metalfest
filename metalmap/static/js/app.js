@@ -201,6 +201,8 @@ function Festival(data) {
 
     self.disableMarker = function() {
         self.marker.setVisible(false);
+        self.infobox.close();
+        ko.cleanNode(boxText);
     }
 }
 
