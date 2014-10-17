@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'django_select2',
     'crispy_forms',
     'crispy_forms_foundation',
+    'django_crontab',
     'metalmap',
 )
 
@@ -78,7 +79,8 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Indian/Mauritius'
 
 USE_I18N = True
 
@@ -107,6 +109,13 @@ CRISPY_TEMPLATE_PACK = 'foundation-5'
 RAVEN_CONFIG = {
     'dsn': 'http://388cde39c1dd4053956f14a831a0ba9e:ebf5bb58fe2f44bcad6a3b38fc19c9d8@sentry.sodibur.com/5',
 }
+
+# DEFINE Cronjobs
+
+CRONJOBS = [
+    # run the update every Sat at 6am
+    ('0 6 * * 6', 'django.core.management.call_command', ['update_events'], {}, '>> ' + os.path.join(BASE_DIR, 'logs/cron.log') + ' 2>&1')
+]
 
 # if local_settings.py file present, import the variables from it (overriding
 # locally).

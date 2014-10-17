@@ -22,6 +22,7 @@ requests==2.3.0
 selenium==2.41.0
 six==1.6.1
 wsgiref==0.1.2
+django-crontab==0.5.1
 # for productions
 psycopg2==2.4.5
 gunicorn==0.16.1
