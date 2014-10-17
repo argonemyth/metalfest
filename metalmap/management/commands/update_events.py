@@ -27,9 +27,9 @@ class Command(BaseCommand):
                 artist.update_events_from_lastfm()
                 # Pause 5 seconds for each artist update to reduce request
                 # ban from musicbrainz
-                time.sleep(5)
+                # time.sleep(5)
             except Exception as e:
-                self.stdout.write("++++ Weekly updating for %s (#%s) failed, please update manually." % (artist.name, artist.id))
+                self.stdout.write("++++ Weekly updating for %s (#%s) failed (%s)" % (artist.name, artist.id, e))
 
         self.stdout.write("==== weekly artist update completed [%s]\n\n" % (
             timezone.localtime(timezone.now()),))
