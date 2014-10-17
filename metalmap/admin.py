@@ -6,6 +6,7 @@ from django_object_actions import (DjangoObjectActions,
 
 from metalmap.models import Festival, Artist, Gig
 from metalmap.forms import FestivalAdminForm
+from metalmap.filters import YearFilter
 
 # def get_lastfm_info(modeladmin, request, queryset):
 #     for f in queryset:
@@ -27,7 +28,7 @@ class FestivalAdmin(DjangoObjectActions, admin.ModelAdmin):
                     'start_date', 'end_date')
     list_editable = ('is_metal', 'url', 'facebook_url', 'ticket_url',
                      'start_date', 'end_date',)
-    list_filter = ('is_metal',)
+    list_filter = (YearFilter, 'is_metal',)
     search_fields = ('title', 'description', 'location', 'country__name')
     readonly_fields = ('slug', )
     # ordering = ("start_date", )
