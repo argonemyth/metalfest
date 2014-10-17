@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from optparse import make_option
 from django.utils import timezone
+import time
 
 from metalmap.models import Artist 
 
@@ -22,7 +23,13 @@ class Command(BaseCommand):
             timezone.localtime(timezone.now()), artists.count()))
 
         for artist in artists:
-            artist.update_events_from_lastfm()
+            try:
+                artist.update_events_from_lastfm()
+                # Pause 5 seconds for each artist update to reduce request
+                # ban from musicbrainz
+                time.sleep(5)
+            except Exception as e:
+                self.stdout.write("++++ Weekly updating for %s (#%s) failed, please update manually." % (artist.name, artist.id))
 
         self.stdout.write("==== weekly artist update completed [%s]\n\n" % (
             timezone.localtime(timezone.now()),))

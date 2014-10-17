@@ -212,7 +212,7 @@ class Artist(models.Model):
         artist is an Artist object from pylast
         """
         if not self.is_metal():
-            print "==== %s (#%s) is not a metal band, skip!" % (self.name, self.id)
+            # print "==== %s (#%s) is not a metal band, skip!" % (self.name, self.id)
             return
 
         # logger.info("getting events info from %s" % self.name)
