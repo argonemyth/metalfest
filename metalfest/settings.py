@@ -113,8 +113,8 @@ RAVEN_CONFIG = {
 # DEFINE Cronjobs
 
 CRONJOBS = [
-    # run the update every Sat at 8pm Mauritius Time
-    ('0 4 * * 6', 'django.core.management.call_command', ['update_events'], {}, '>> ' + os.path.join(BASE_DIR, 'log/cron.log') + ' 2>&1')
+    # run the update every Sat at 5am UTC time
+    ('0 5 * * 6', 'django.core.management.call_command', ['update_events'], {}, '>> ' + os.path.join(BASE_DIR, 'log/cron.log') + ' 2>&1')
 ]
 
 # if local_settings.py file present, import the variables from it (overriding
