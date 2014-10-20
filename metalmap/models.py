@@ -290,8 +290,8 @@ class Artist(models.Model):
                             # event.country = Country.objects.get(models.Q(name__iexact=location['country']) | models.Q(alternate_names__icontains=location['country']))
                             event.country = Country.objects.get(name__iexact=location['country'])
                         except Country.DoesNotExist:
-                            logger.warning("Country %s can't be find" % (location['country'], ))
-                            print "==== Country %s can't be find" % (location['country'], )
+                            # logger.warning("Country %s can't be find" % (location['country'], ))
+                            # print "==== Country %s can't be find" % (location['country'], )
                             event.country = None
 
                         if event.country is None:
