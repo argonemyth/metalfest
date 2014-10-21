@@ -26,6 +26,9 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'routebelow.com', 'www.routebelow.com', 'metalmap.argonemyth.com']
 
+# Needed by userena
+SITE_ID = 1
+
 # Application definition
 
 INSTALLED_APPS = (
@@ -35,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'south',
     'rest_framework',
     'cities_light',
@@ -46,10 +50,10 @@ INSTALLED_APPS = (
     'crispy_forms',
     'crispy_forms_foundation',
     'django_crontab',
+    'metalmap',
     'userena',
     'guardian',
     'easy_thumbnails',
-    'metalmap',
     'accounts',
 )
 
