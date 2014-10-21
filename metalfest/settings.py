@@ -29,6 +29,21 @@ ALLOWED_HOSTS = ['127.0.0.1', 'routebelow.com', 'www.routebelow.com', 'metalmap.
 # Needed by userena
 SITE_ID = 1
 
+# TEMPLATE_CONTEXT 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    "django.core.context_processors.request",
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
+)
+
+
 # Application definition
 
 INSTALLED_APPS = (
@@ -55,6 +70,7 @@ INSTALLED_APPS = (
     'guardian',
     'easy_thumbnails',
     'accounts',
+    'social.apps.django_app.default',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -64,6 +80,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
     # 'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
 )
 
@@ -127,6 +144,8 @@ CRONJOBS = [
 
 # Required settings for userena
 AUTHENTICATION_BACKENDS = (
+    'social.backends.facebook.FacebookOAuth2',
+    'social.backends.twitter.TwitterOAuth',
     'userena.backends.UserenaAuthenticationBackend',
     'guardian.backends.ObjectPermissionBackend',
     'django.contrib.auth.backends.ModelBackend',
@@ -136,9 +155,30 @@ AUTH_PROFILE_MODULE = 'accounts.Profile'
 USERENA_SIGNIN_REDIRECT_URL = '/accounts/%(username)s/'
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
+USERENA_MUGSHOT_GRAVATAR = True
 
+# Python social auth
+SOCIAL_AUTH_PIPELINE = (
+    'social.pipeline.social_auth.social_details',
+    'social.pipeline.social_auth.social_uid',
+    'social.pipeline.social_auth.auth_allowed',
+    'social.pipeline.social_auth.social_user',
+    'social.pipeline.user.get_username',
+    # 'social.pipeline.mail.mail_validation',
+    # Associates the current social details with another user account with
+    # a similar email address. Disabled by default.
+    # 'social.pipeline.social_auth.associate_by_email',
+    'social.pipeline.user.create_user',
+    'accounts.pipeline.create_profile',
+    'social.pipeline.social_auth.associate_user',
+    'social.pipeline.social_auth.load_extra_data',
+    'social.pipeline.user.user_details'
+)
+
+# migrations
 SOUTH_MIGRATION_MODULES = {
     'easy_thumbnails': 'easy_thumbnails.south_migrations',
+    'social.apps.django_app.default': 'social.apps.django_app.default.south_migrations',
 }
 
 # if local_settings.py file present, import the variables from it (overriding

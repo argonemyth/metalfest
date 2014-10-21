@@ -52,6 +52,12 @@
         {{ form.as_p }}
         </form>
         {% endcomment %}
+        {% if user and not user.is_anonymous %}
+            <h4>Hello {{ user.get_full_name|default:user.username }}</h4>
+            {# <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a> #}
+        {% else %}
+            <h5><a href="{% url 'social:begin' 'twitter' %}?next={{ request.path }}">login in via Twitter</a></h5>
+        {% endif %}
         <form id="filter">
             {# <select multiple="true" data-bind="options: states, optionsValue: 'id', optionsText: 'text', selectedOptions: selectMultipleStates, select2: { }" style="width: 300px"></select> #}
             <div class="row">

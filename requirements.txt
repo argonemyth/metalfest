@@ -1,7 +1,7 @@
 Django==1.6.2
 Django-Select2==4.2.2
 Pillow==2.6.1
-South==0.8.4
+South==1.0
 Unidecode==0.04.14
 beautifulsoup4==4.3.2
 crispy-forms-foundation==0.3.4
@@ -22,6 +22,7 @@ geopy==0.99
 html2text==2014.9.25
 mock==1.0.1
 python-slugify==0.0.7
+python-social-auth==0.2.1
 raven==5.0.0
 requests==2.3.0
 selenium==2.41.0
