@@ -46,7 +46,11 @@ INSTALLED_APPS = (
     'crispy_forms',
     'crispy_forms_foundation',
     'django_crontab',
+    'userena',
+    'guardian',
+    'easy_thumbnails',
     'metalmap',
+    'accounts',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -116,6 +120,22 @@ CRONJOBS = [
     # run the update every Sat at 5am UTC time
     ('0 5 * * 6', 'django.core.management.call_command', ['update_events'], {}, '>> ' + os.path.join(BASE_DIR, 'log/cron.log') + ' 2>&1')
 ]
+
+# Required settings for userena
+AUTHENTICATION_BACKENDS = (
+    'userena.backends.UserenaAuthenticationBackend',
+    'guardian.backends.ObjectPermissionBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+ANONYMOUS_USER_ID = -1
+AUTH_PROFILE_MODULE = 'accounts.Profile'
+USERENA_SIGNIN_REDIRECT_URL = '/accounts/%(username)s/'
+LOGIN_URL = '/accounts/signin/'
+LOGOUT_URL = '/accounts/signout/'
+
+SOUTH_MIGRATION_MODULES = {
+    'easy_thumbnails': 'easy_thumbnails.south_migrations',
+}
 
 # if local_settings.py file present, import the variables from it (overriding
 # locally).

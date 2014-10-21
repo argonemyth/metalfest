@@ -10,5 +10,6 @@ urlpatterns = patterns('',
     url(r'^select2/', include('django_select2.urls')),
     url(r'^metalmap/', include('metalmap.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^accounts/', include('userena.urls')),
     url(r'^$', include('metalmap.urls')),
 )
