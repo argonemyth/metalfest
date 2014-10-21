@@ -118,7 +118,7 @@ body#fullscreen {
     #overlay {
         position: absolute;
         top: 0;
-        right: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         overflow-y: scroll;
@@ -186,6 +186,34 @@ a.secondary {
 
 a.alert {
     @include link-colors($alert-color, darken($alert-color, 10%), darken($alert-color, 10%), $alert-color, darken($alert-color, 10%));
+}
+
+// Nav bar
+.nav {
+    position: absolute;
+    background-color: #191719;
+    top: 0;
+    right: 0;
+    width: rem-calc(60px);
+    height: 100%;
+    text-align: center;
+    z-index: 3;
+    .logo {
+        display: block;
+        margin: rem-calc(25px) 0;
+    }
+    .side-nav {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        li {
+            font-size: 2rem;
+            border-bottom: 1px solid #0a090a;
+            padding: 5px 0;
+            a { color: #fff; }
+        }
+        li:last-child { border-bottom: 0; }
+    }
 }
 
 // Google Map Infobox
