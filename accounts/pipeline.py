@@ -49,6 +49,14 @@ def create_profile(backend, details, response, user=None, *args, **kwargs):
         profile.save()
         # profile.profile_image_url = response.get('profile_image_url_https')
 
+    if backend.name == 'facebook':
+        profile.facebook_id = response.get('id')
+        gender = response.get('gender')
+        if gender == 'female':
+            profile.gender = 2
+        if gender == 'male':
+            profile.gender = 1
+        profile.save()
 
     # if created and (user.password == u'!'):
     #     # generate password and send out email notification

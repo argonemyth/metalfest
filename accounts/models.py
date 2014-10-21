@@ -36,9 +36,18 @@ class Profile(UserenaBaseProfile):
 
         Facebook avatar will only be used when facebook_id is valid.
         """
-        if (not self.mugshot) and self.profile_image_url:
+        if (not self.mugshot) and self.facebook_id:
+            return "http://graph.facebook.com/%s/picture?type=large" %  self.facebook_id
+        elif (not self.mugshot) and self.profile_image_url:
             return self.profile_image_url
-        elif (not self.mugshot) and self.facebook_id:
-            return get_facebook_avatar(self.facebook_id)
         else:
             return super(Profile, self).get_mugshot_url()
+
+    def user_image(self):
+        """Display usr image if available"""
+        url = self.get_mugshot_url()
+        if url:
+            return '<img src="%s" style="height:80px; width: auto;">' % url
+        else:
+            return None
+    user_image.allow_tags = True

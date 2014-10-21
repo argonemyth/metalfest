@@ -175,6 +175,8 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.user.user_details'
 )
 
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+
 # migrations
 SOUTH_MIGRATION_MODULES = {
     'easy_thumbnails': 'easy_thumbnails.south_migrations',
