@@ -31,6 +31,14 @@
     <title>RouteBelow - A Map for Headbangers</title>
 </head>
 <body id="{% block bodyid %}{% endblock %}">
+    <nav class="nav">
+        <a href="/" target="_self" class="logo"><i class="icons upcoming-opaque"></i></a>
+        <ul class="side-nav">
+          <li><a href="#"><i class="fa fa-map-marker"></i></a></li>
+          <li><a href="{% if user and not user.is_anonymous %}{% url 'userena_profile_detail' user.username %} {% else %} #{% endif %}"><i class="fa fa-user"></i></a></li>
+          <li><a href="#"><i class="fa fa-info"></i></a></li>
+        </ul>
+    </nav>
     {% block content %} 
     {% endblock %} 
 
