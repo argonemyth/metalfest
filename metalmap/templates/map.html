@@ -5,6 +5,7 @@
 {% block bodyid %}fullscreen{% endblock bodyid %}
 
 {% block content %}
+    <div id="page" data-bind="component: { name: route().page, params: route }"></div>
     <map></map>
     {% comment %}
         

@@ -197,7 +197,7 @@ a.alert {
     width: rem-calc(60px);
     height: 100%;
     text-align: center;
-    z-index: 3;
+    z-index: 101;
     .logo {
         display: block;
         margin: rem-calc(25px) 0;
@@ -214,6 +214,15 @@ a.alert {
         }
         li:last-child { border-bottom: 0; }
     }
+}
+
+// Page
+.page {
+    height: 100%;
+    width: 100%;
+    z-index: 100;
+    position: absolute;
+    background: white;
 }
 
 // Google Map Infobox
