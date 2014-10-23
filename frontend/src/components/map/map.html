@@ -1,0 +1,45 @@
+<div id="map" data-bind="map:festivals"></div>
+
+<div id="loader">
+    <i class="fa fa-refresh fa-spin fa-3x"></i>
+    <p>{% trans "the map will be ready shortly..." %}</p>
+</div>
+
+<div id="overlay" class="panel" data-bind='animatedVisible: displayOverlay'>
+    <form id="filter">
+        <div class="row">
+            <div class="small-12 columns">
+                <h3>Find your 2014 metal festivals:</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-12 columns">
+                <label>Your fav. bands
+                    <span id="reset_bands" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'bands')"></i><span>
+                </label>
+                <input type="hidden" id="bands_selector" data-bind="value: selected_bands_str, select2: { minimumInputLength: 2,  multiple: true, query: bandQuery }">
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-12 columns">
+                <label>Your fav. genres
+                    <span id="reset_genres" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'genres')"></i><span>
+                </label>
+                <input type="hidden" id="genres_selector" data-bind="value: selected_genres_str, select2: { minimumInputLength: 2,  multiple: true, query: genreQuery }">
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-12 columns">
+                <label>Filter by countries
+                    <span id="reset_countries" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'countries')"></i><span>
+                </label>
+                <input type="hidden" id="countries_selector" data-bind="value: selected_countries_str, select2: { minimumInputLength: 2,  multiple: true, query: countryQuery }">
+            </div>
+        </div>
+        <div class="row">
+            <div class="small-12 columns">
+                <div id="slider" data-bind="daterange: true"></div>
+            </div>
+        </div>
+    </form>
+</div>

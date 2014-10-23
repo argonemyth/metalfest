@@ -5,61 +5,16 @@
 {% block bodyid %}fullscreen{% endblock bodyid %}
 
 {% block content %}
-    <div id="map" data-bind="map:festivals"></div>
+    <map></map>
     {% comment %}
-    <div id="footer">
-        <h1>METALFEST</h1>
-    </div>
-    <div id="overlay" class="off-canvas-wrap" data-offcanvas>
-        <div class="inner-wrap">
-            <section class="right-small">
-                <a class="right-off-canvas-toggle" href="#">
-                    <span class="fa-stack fa-lg">
-                        <i class="fa fa-square fa-stack-2x"></i>
-                        <i class="fa fa-chevron-left fa-stack-1x fa-inverse"></i>
-                    </span>
-                </a>
-            </section>
-            <aside class="right-off-canvas-menu">
-                <ul class="off-canvas-list">
-                    <li><label>Users</label></li>
-                    <li><a href="#">Hari Seldon</a></li>
-                    <li><a href="#">...</a></li>
-                </ul>
-            </aside>
-            <section class="main-section">
-            </section>
-            <a class="exit-off-canvas"></a>
-        </div>
-    </div>
-    {% endcomment %}
+        
+    <div id="map" data-bind="map:festivals"></div>
     <div id="loader">
         <i class="fa fa-refresh fa-spin fa-3x"></i>
         <p>{% trans "the map will be ready shortly..." %}</p>
     </div>
-    <nav class="nav">
-        <a href="/" target="_self" class="logo"><i class="icons upcoming-opaque"></i></a>
-        <ul class="side-nav">
-          <li><a href="#"><i class="fa fa-map-marker"></i></a></li>
-          <li><a href="{% if user and not user.is_anonymous %}{% url 'userena_profile_detail' user.username %} {% else %} #{% endif %}"><i class="fa fa-user"></i></a></li>
-          <li><a href="#"><i class="fa fa-info"></i></a></li>
-        </ul>
-    </nav>
+
     <div id="overlay" class="panel" data-bind='animatedVisible: displayOverlay'>
-        {% comment %}
-        <header>
-            <div class="row">
-                <div class="small-12 columns">
-                    <h1>THE MAP of METAL</h1>
-                    <h4>Follow the noise all over <i class="fa fa-globe"></i>!</h4>
-                </div>
-            </div>
-        </header>
-            
-        <form action="" method="post">{% csrf_token %}
-        {{ form.as_p }}
-        </form>
-        {% endcomment %}
         {% if user and not user.is_anonymous %}
             <h4>Hello {{ user.get_full_name|default:user.username }}</h4>
             {# <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a> #}
@@ -77,7 +32,8 @@
             <div class="row">
                 <div class="small-12 columns">
                     <label>{% trans "Your fav. bands" %}
-                        <span id="reset_bands" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'bands')"></i><span>
+                        {# <span id="reset_bands" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'bands')"></i><span> #}
+                        <span id="reset_bands" class="pull-right"><i class="fa fa-times-circle"></i><span>
                     </label>
                     {# <select multiple="true" data-bind="selectedOptions: selected_bands, value: selected_bands, lookupKey: name, select2: { minimumInputLength: 1, query: bandQuery }"></select> #}
                     <input type="hidden" id="bands_selector" data-bind="value: selected_bands_str, select2: { minimumInputLength: 2,  multiple: true, query: bandQuery }">
@@ -86,7 +42,8 @@
             <div class="row">
                 <div class="small-12 columns">
                     <label>{% trans "Your fav. genres" %}
-                        <span id="reset_genres" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'genres')"></i><span>
+                        {# <span id="reset_genres" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'genres')"></i><span> #}
+                        <span id="reset_genres" class="pull-right"><i class="fa fa-times-circle"></i><span>
                     </label>
                     {# <select multiple="true" data-bind="selectedOptions: selected_genres, options: genres, select2: { }"></select> #}
                     <input type="hidden" id="genres_selector" data-bind="value: selected_genres_str, select2: { minimumInputLength: 2,  multiple: true, query: genreQuery }">
@@ -95,7 +52,8 @@
             <div class="row">
                 <div class="small-12 columns">
                     <label>{% trans "Filter by countries" %}
-                        <span id="reset_countries" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'countries')"></i><span>
+                        {# <span id="reset_countries" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'countries')"></i><span> #}
+                        <span id="reset_countries" class="pull-right"><i class="fa fa-times-circle"></i><span>
                     </label>
                     {# <select multiple="true" data-bind="selectedOptions: selected_countries, options: countries, select2: { }"></select> #}
                     <input type="hidden" id="countries_selector" data-bind="value: selected_countries_str, select2: { minimumInputLength: 2,  multiple: true, query: countryQuery }">
@@ -170,23 +128,9 @@
             <a id="hide-overlay-button" class="pull-right" data-bind='click: hideOverlay' href="#">[-]</a>
             <a id="show-overlay-button" class="pull-right" data-bind='click: showOverlay' href="#">[+]</a>
         </div>
-            {% comment %}
-                
-            <div id="legal" class="row">
-                <div class="large-12 columns">
-                    {# <p>Copyright &copy; 2009-{% now "Y" %} argonemyth dev.</p> #}
-                    <p>Created by <a href="www.argonemyth.com" target="_blank" title="Full-stack web app / website developerment">argonemyth</a></p>
-                </div>
-            </div>
-            {% endcomment %}
-        
-        {% comment %}
-        <span class="fa-stack fa-lg">
-            <i class="fa fa-square fa-stack-2x"></i>
-            <i class="fa fa-chevron-right fa-stack-1x fa-inverse"></i>
-        </span>
-        {% endcomment %}
     </div>
+    {% endcomment %}
+
     {% comment %}
     <div id="logo" class="panel" data-bind='click: showOverlay'>
         <header>

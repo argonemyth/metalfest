@@ -1,0 +1,18 @@
+{
+  "name": "metalmap",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "foundation": "zurb/bower-foundation",
+    "select2": "~3.4.6",
+    "humane-js": "~3.2.0",
+    "jquery.validation": "~1.12.0"
+    "components-bootstrap": "~3.1.1",
+    "crossroads": "~0.12.0",
+    "hasher": "~1.2.0",
+    "requirejs": "~2.1.11",
+    "requirejs-text": "~2.0.10",
+    "knockout": "~3.2.0-alpha",
+    "knockout-projections": "~1.1.0-pre"
+  }
+}
