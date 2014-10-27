@@ -1,0 +1,12 @@
+{% load crispy_forms_tags %}
+
+<div class="row login-block">
+    <div class="small-12 medium-6 large-4 medium-centered columns">
+        <form id="signin-form" method="POST" action="{% url 'userena_signin' %}" >
+            {% crispy signin_form %}
+        </form>
+        <p style="text-align: center; color: #fff;">or</p>
+        <a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}" class="button expand facebook"><i class="fa fa-facebook"></i> Sign in with Facebook</a>
+        <a href="{% url 'social:begin' 'twitter' %}?next={{ request.path }}" class="button expand twitter"><i class="fa fa-twitter"></i> Sign in with Twitter</a>
+    </div>
+</div>

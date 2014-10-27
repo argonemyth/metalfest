@@ -5,11 +5,11 @@ define(['jquery', 'knockout', './router', 'foundation', 'bootstrap', 'knockout-p
     $(this).foundation();
   });
 
-  console.log("startup.js");
 
   // Components can be packaged as AMD modules, such as the following:
   ko.components.register('map', { require: 'components/map/map' });
   ko.components.register('nav-bar', { require: 'components/nav-bar/nav-bar' });
+  ko.components.register('profile-page', { require: 'components/profile-page/profile' });
 
   // ... or for template-only components, you can just point to a .html file directly:
   ko.components.register('home-page', {

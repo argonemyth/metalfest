@@ -156,6 +156,7 @@ USERENA_SIGNIN_REDIRECT_URL = '/accounts/%(username)s/'
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
 USERENA_MUGSHOT_GRAVATAR = True
+USERENA_REDIRECT_ON_SIGNOUT = '/'  
 
 # Python social auth
 SOCIAL_AUTH_PIPELINE = (

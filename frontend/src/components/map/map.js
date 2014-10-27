@@ -3,7 +3,6 @@ define(['jquery', 'knockout', 'underscore', 'text!./map.html', 'foundation', 'sl
 
     $(document).ready(function () {   
         // Init date slider
-        console.log("hi");
         var today = new Date();
         $("#slider").dateRangeSlider({
             bounds: {

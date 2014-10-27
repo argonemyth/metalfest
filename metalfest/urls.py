@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     url(r'^metalmap/', include('metalmap.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^accounts/', include('userena.urls')),
+    url(r'^profile/', include('accounts.urls')),
     url('', include('social.apps.django_app.urls', namespace='social')),
     url(r'^$', include('metalmap.urls')),
 )
