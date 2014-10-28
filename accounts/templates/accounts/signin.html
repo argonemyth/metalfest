@@ -5,8 +5,73 @@
         <form id="signin-form" method="POST" action="{% url 'userena_signin' %}" >
             {% crispy signin_form %}
         </form>
+        <form id="signup-form" method="POST" action="{% url 'user_signup' %}" class="hide">
+            {% crispy signup_form %}
+        </form>
         <p style="text-align: center; color: #fff;">or</p>
         <a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}" class="button expand facebook"><i class="fa fa-facebook"></i> Sign in with Facebook</a>
         <a href="{% url 'social:begin' 'twitter' %}?next={{ request.path }}" class="button expand twitter"><i class="fa fa-twitter"></i> Sign in with Twitter</a>
     </div>
 </div>
+
+<script>
+    $('#signup-form').validate({
+        errorElement: "small",
+        errorPlacement: function(error, element) {
+            error.insertAfter(element);
+        } 
+    });
+    $(document).on('submit', '#signup-form', function(e){
+        e.preventDefault();
+        console.log("Going to submit signup form.");
+        var $form = $(this);
+        var url = $form.attr('action');
+        $.post(
+            url,
+            $form.serialize()
+        ).success(function(data){
+            console.log(data);
+            $form.find('input').removeClass('error');
+            $form.find('small.error').remove();
+            if (data) {
+                for (var key in data) {
+                    console.log(key, data[key].join(' '), $(key));
+                    $('#' + key).addClass('error').after('<small for="' + key + '"class="error">' + data[key].join(' ') + '</small>');
+                    // $('.' + key + '-radio').addClass('f-error');
+                    // $('.' + key).text('Please check errors in highlighted fields.');
+                    // $('.' + key + '-stripe').text(data[key].join(' '));
+                }
+
+            }
+            // if (data['id_code']) {
+            //     var error_msg = data['id_code'].join(' ');
+            //     $form.find('.errors').text(error_msg);
+            //     $("#id_code").parent().addClass("f-error");
+            // } else {
+            //     // $("#redeem-coupon-feedback").html(data);
+            //     window.location.href = '/';
+            // }
+        }).error(function() {
+            $form.find('.errors').text('An error occured, please try again.');
+        });
+
+});
+/*
+validate({
+                errorElement: "small",
+                rules: {
+                    info_type: {
+                        required: true,
+                        minlength: 1
+                    }
+                },
+                errorPlacement: function(error, element) {
+                    if (element.attr("name") == "info_type" )
+                        error.appendTo("#div_id_info_type");
+                    else
+                        error.insertAfter(element);
+                } 
+            });
+    
+*/
+</script>

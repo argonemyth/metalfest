@@ -12,9 +12,23 @@ define(["knockout", "text!./profile.html"], function(ko, profileTemplate) {
     })
   }
 
-  // HomeViewModel.prototype.doSomething = function() {
-  //   this.message('You invoked doSomething() on the viewmodel.');
-  // };
+  ProfileViewModel.prototype.signup = function() {
+    // this.message('You invoked doSomething() on the viewmodel.');
+    console.log("In signup function");
+    $('#signin-form').hide();
+    $('#signup-form').show();
+    $('#signup-btn').hide();
+    $('#signin-btn').show();
+  };
+
+  ProfileViewModel.prototype.signin = function() {
+    // this.message('You invoked doSomething() on the viewmodel.');
+    console.log("In signin function");
+    $('#signup-form').hide();
+    $('#signin-form').show();
+    $('#signin-btn').hide();
+    $('#signup-btn').show();
+  };
 
   return { viewModel: ProfileViewModel, template: profileTemplate };
 });

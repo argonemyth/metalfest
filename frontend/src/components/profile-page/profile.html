@@ -1,3 +1,11 @@
 <div class="page profile">
     <div data-bind="html: profile_detail"></div>
+    <div class="row">
+        <div class="small-12 medium-6 large-4 medium-centered columns">
+            <a id="signup-btn" data-bind="click: signup">Register</a>
+            <a id="signin-btn" class="hide" data-bind="click: signin">Sign in</a>
+            <a href="{% url 'userena_password_reset' %}" class="pull-right">Forgot password?</a>
+        </div>
+    </div>
 </div>
+

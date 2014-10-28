@@ -95,6 +95,14 @@ html, body#fullscreen{
     height: 100%;
 }
 
+.pull-right {
+    float: right;
+}
+
+input.error {
+    border-color: $alert-color;
+}
+
 body#fullscreen {
     overflow: hidden; // to hide the overlay
     #map {
