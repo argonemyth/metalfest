@@ -29,49 +29,25 @@
         $.post(
             url,
             $form.serialize()
-        ).success(function(data){
+        ).done(function(data){
             console.log(data);
+            var status = data.status;
+            console.log(status);
             $form.find('input').removeClass('error');
             $form.find('small.error').remove();
-            if (data) {
+            if (status == 'errors') {
+                delete data['status'];
                 for (var key in data) {
                     console.log(key, data[key].join(' '), $(key));
                     $('#' + key).addClass('error').after('<small for="' + key + '"class="error">' + data[key].join(' ') + '</small>');
-                    // $('.' + key + '-radio').addClass('f-error');
-                    // $('.' + key).text('Please check errors in highlighted fields.');
-                    // $('.' + key + '-stripe').text(data[key].join(' '));
                 }
-
+            } else {
+                window.location.href = '/';
             }
-            // if (data['id_code']) {
-            //     var error_msg = data['id_code'].join(' ');
-            //     $form.find('.errors').text(error_msg);
-            //     $("#id_code").parent().addClass("f-error");
-            // } else {
-            //     // $("#redeem-coupon-feedback").html(data);
-            //     window.location.href = '/';
-            // }
-        }).error(function() {
+        }).fail(function() {
+            console.log('error');
             $form.find('.errors').text('An error occured, please try again.');
         });
 
 });
-/*
-validate({
-                errorElement: "small",
-                rules: {
-                    info_type: {
-                        required: true,
-                        minlength: 1
-                    }
-                },
-                errorPlacement: function(error, element) {
-                    if (element.attr("name") == "info_type" )
-                        error.appendTo("#div_id_info_type");
-                    else
-                        error.insertAfter(element);
-                } 
-            });
-    
-*/
 </script>

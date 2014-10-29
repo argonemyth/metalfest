@@ -3,8 +3,11 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse
 from django.contrib.auth import authenticate, login, logout, REDIRECT_FIELD_NAME
 
+import json
+
 from userena.decorators import secure_required
 from userena import signals as userena_signals
+from userena import settings as userena_settings
 
 from accounts.models import Profile
 from accounts.forms import SigninForm, RegistrationForm
@@ -61,23 +64,23 @@ def signup(request, signup_form=RegistrationForm,
                                                  user=user)
 
 
-            if success_url: redirect_to = success_url
-            else: redirect_to = reverse('userena_signup_complete',
-                                        kwargs={'username': user.username})
+            # if success_url: redirect_to = success_url
+            # else: redirect_to = reverse('userena_signup_complete',
+            #                             kwargs={'username': user.username})
 
             # A new signed user should logout the old one.
             if request.user.is_authenticated():
                 logout(request)
 
-            # if (userena_settings.USERENA_SIGNIN_AFTER_SIGNUP and
-            #     not userena_settings.USERENA_ACTIVATION_REQUIRED):
-            user = authenticate(identification=user.email, check_password=False)
-            login(request, user)
+            if (userena_settings.USERENA_SIGNIN_AFTER_SIGNUP and
+                not userena_settings.USERENA_ACTIVATION_REQUIRED):
+                    user = authenticate(identification=user.email, check_password=False)
+                    login(request, user)
 
-            return redirect(redirect_to)
+            return HttpResponse(json.dumps({"status": "success"}), content_type='text/json')
         else:
-            print errors_to_json(form.errors)
-            return HttpResponse(errors_to_json(form.errors), content_type='text/json')
+            print errors_to_json(form.errors, True)
+            return HttpResponse(errors_to_json(form.errors, True), content_type='text/json')
 
     return redirect('/')
 
