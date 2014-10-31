@@ -22,12 +22,14 @@ def create_profile(backend, details, response, user=None, *args, **kwargs):
     """
     if not user:
         return
+    """
     try:
         profile = user.get_profile()
     except Profile.DoesNotExist:
         pass
     else:
         return { 'profile': profile}
+    """
 
     print "Details: ", details
     print "Response: ", response 
@@ -49,7 +51,7 @@ def create_profile(backend, details, response, user=None, *args, **kwargs):
     #     profile.save()
         # profile.profile_image_url = response.get('profile_image_url_https')
 
-    if backend.name == 'facebook':
+    if backend.name == 'facebook' and not profile.facebook_id:
         profile.facebook_id = response.get('id')
         gender = response.get('gender')
         if gender == 'female':
