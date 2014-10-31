@@ -1,0 +1,8 @@
+{% load i18n %}{% autoescape off %}
+{% trans "Dear Metalhead" %},
+
+{% blocktrans with site.name as site %}Thank you for signing up at {{ site }}. You are now able to save your search queries!{% endblocktrans %}
+
+{% trans "Sincerely" %},
+Fei from RouteBelow
+{% endautoescape %}

@@ -1,0 +1,18 @@
+{% load i18n %}{% autoescape off %}
+<html>
+<body>
+    <p>{% trans "Dear Metalhead" %},</p>
+    {% blocktrans with site.name as site %}<p>Thank you for signing up at {{ site }}. You are now able to save your search queries!</p>{% endblocktrans %}
+    {% comment %}
+    <p>
+        {% trans "To activate your account you should click on the link below:" %}<br />
+        {{ protocol }}://{{ site.domain }}{% url 'userena_activate' activation_key %}
+    </p>
+    {% endcomment %}
+    <p>
+        {% trans "Sincerely" %},<br />
+        Fei from RouteBlow
+    </p>
+</body>
+</html>
+{% endautoescape %}

@@ -131,6 +131,9 @@ STATICFILES_FINDERS = (
 # Default layout to use with "crispy_forms"
 CRISPY_TEMPLATE_PACK = 'foundation-5'
 
+# Email
+DEFAULT_FROM_EMAIL = "hello@routebelow.com"
+
 RAVEN_CONFIG = {
     'dsn': 'http://388cde39c1dd4053956f14a831a0ba9e:ebf5bb58fe2f44bcad6a3b38fc19c9d8@sentry.sodibur.com/5',
 }
@@ -145,7 +148,7 @@ CRONJOBS = [
 # Required settings for userena
 AUTHENTICATION_BACKENDS = (
     'social.backends.facebook.FacebookOAuth2',
-    'social.backends.twitter.TwitterOAuth',
+    # 'social.backends.twitter.TwitterOAuth',
     'userena.backends.UserenaAuthenticationBackend',
     'guardian.backends.ObjectPermissionBackend',
     'django.contrib.auth.backends.ModelBackend',
@@ -159,6 +162,9 @@ USERENA_MUGSHOT_GRAVATAR = True
 USERENA_REDIRECT_ON_SIGNOUT = '/'  
 USERENA_ACTIVATION_REQUIRED = False
 USERENA_SIGNIN_AFTER_SIGNUP = True
+USERENA_DISABLE_PROFILE_LIST = True
+USERENA_WITHOUT_USERNAMES = True
+# USERENA_PROFILE_DETAIL_TEMPLATE = 'userena/profile_detail.html'
 
 
 # Python social auth
@@ -171,7 +177,7 @@ SOCIAL_AUTH_PIPELINE = (
     # 'social.pipeline.mail.mail_validation',
     # Associates the current social details with another user account with
     # a similar email address. Disabled by default.
-    # 'social.pipeline.social_auth.associate_by_email',
+    'social.pipeline.social_auth.associate_by_email',
     'social.pipeline.user.create_user',
     'accounts.pipeline.create_profile',
     'social.pipeline.social_auth.associate_user',

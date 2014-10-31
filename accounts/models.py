@@ -1,7 +1,15 @@
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
-from userena.models import UserenaBaseProfile
+from django.conf import settings
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.sites.models import Site
+from django.template.loader import render_to_string
+
+from userena.models import UserenaBaseProfile
+from userena.mail import send_mail
+from userena import settings as userena_settings
 
 
 class Profile(UserenaBaseProfile):
@@ -51,3 +59,40 @@ class Profile(UserenaBaseProfile):
         else:
             return None
     user_image.allow_tags = True
+
+    def send_welcome_email(self):
+        """
+        Sends an welcome email to new user.
+        """
+
+        context = {'site': Site.objects.get_current()}
+
+        # Email to the new address
+        subject = render_to_string('accounts/emails/welcome_email_subject.txt',
+                                   context)
+        subject = ''.join(subject.splitlines())
+
+        if userena_settings.USERENA_HTML_EMAIL:
+            message_html = render_to_string('accounts/emails/welcome_email_message.html',
+                                            context)
+        else:
+            message_html = None
+
+        if (not userena_settings.USERENA_HTML_EMAIL or not message_new_html or
+            userena_settings.USERENA_USE_PLAIN_TEMPLATE):
+            message = render_to_string('accounts/emails/welcome_email_message.txt',
+                                       context)
+        else:
+            message = None
+
+        send_mail(subject,
+                  message,
+                  message_html,
+                  settings.DEFAULT_FROM_EMAIL,
+                  [self.user.email, ])
+
+
+@receiver(post_save, sender=Profile)
+def send_welcome_email(sender, instance, created, **kwargs):
+    if created:
+        instance.send_welcome_email()

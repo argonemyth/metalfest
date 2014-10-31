@@ -43,10 +43,10 @@ def create_profile(backend, details, response, user=None, *args, **kwargs):
         for perm in ASSIGNED_PERMISSIONS['user']:
             assign_perm(perm[0], user, user)
 
-    if backend.name == 'twitter':
-        profile.twitter_id = details['username']
-        profile.profile_image_url = response.get('profile_image_url')
-        profile.save()
+    # if backend.name == 'twitter':
+    #     profile.twitter_id = details['username']
+    #     profile.profile_image_url = response.get('profile_image_url')
+    #     profile.save()
         # profile.profile_image_url = response.get('profile_image_url_https')
 
     if backend.name == 'facebook':
