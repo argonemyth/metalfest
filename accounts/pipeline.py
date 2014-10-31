@@ -22,20 +22,7 @@ def create_profile(backend, details, response, user=None, *args, **kwargs):
     """
     if not user:
         return
-    """
-    try:
-        profile = user.get_profile()
-    except Profile.DoesNotExist:
-        pass
-    else:
-        return { 'profile': profile}
-    """
 
-    print "Details: ", details
-    print "Response: ", response 
-    print "Backend: ", backend.name
-
-    #return { 'profile': Profile.objects.get_or_create(user=user)[0] }
     profile, created = Profile.objects.get_or_create(user=user)
     if created:
         # Give permissions to view and change profile
@@ -59,27 +46,5 @@ def create_profile(backend, details, response, user=None, *args, **kwargs):
         if gender == 'male':
             profile.gender = 1
         profile.save()
-
-    # if created and (user.password == u'!'):
-    #     # generate password and send out email notification
-    #     password = User.objects.make_random_password()
-    #     user.set_password(password)
-    #     if user.email:
-    #         context = {'user': profile.get_full_name_or_username(),
-    #                    'username': user.username,
-    #                    'password': password,
-    #                    'email': user.email,
-    #                    'protocol': get_protocol(),
-    #                    'site': Site.objects.get_current()}
-    #         subject = render_to_string('accounts/password_notification_subject.txt',
-    #                                    context)
-    #         subject = ''.join(subject.splitlines())
-
-    #         message = render_to_string('accounts/password_notification_message.txt',
-    #                                    context)
-    #         send_mail(subject,
-    #                   message,
-    #                   settings.DEFAULT_FROM_EMAIL,
-    #                   [user.email])
 
     return { 'profile': profile }
