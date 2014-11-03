@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db import IntegrityError
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponse
 from django.contrib.auth import authenticate, login, logout, REDIRECT_FIELD_NAME
+from django.views.generic.edit import FormView
+from django.views.decorators.csrf import csrf_exempt
 
 import json
 
@@ -10,8 +13,9 @@ from userena import signals as userena_signals
 from userena import settings as userena_settings
 
 from accounts.models import Profile
-from accounts.forms import SigninForm, RegistrationForm
-from accounts.utils import errors_to_json
+from accounts.forms import SigninForm, RegistrationForm, SavedMapForm
+from accounts.utils import errors_to_json, errors_to_dict
+from metalmap.views import JSONResponse
 
 
 def my_profile(request, extra_context=None, **kwargs):
@@ -88,3 +92,56 @@ def signup(request, signup_form=RegistrationForm,
     # extra_context['form'] = form
     # return ExtraContextTemplateView.as_view(template_name=template_name,
     #                                         extra_context=extra_context)(request)
+
+
+@csrf_exempt
+def save_map(request):
+    form = SavedMapForm()
+    if request.method == 'POST' and request.is_ajax():
+        form = SavedMapForm(request.POST)
+        if not form.is_valid():
+            print errors_to_json(form.errors, True)
+            return HttpResponse(errors_to_json(form.errors, True), content_type='text/json')
+
+        saved_map = form.save(commit=False)
+        title = form.cleaned_data['title']
+        try:
+            saved_map.profile = request.user.get_profile()
+            saved_map.save()
+        except IntegrityError:
+            context = {
+                "status": "failed",
+                "message": "You already saved a map wih the title %s, please choose another title." % title
+            } 
+        except Exception as e:
+            context = {
+                "status": "failed",
+                "message": "Oops, an error has occurred, we are not able to save the map at the moment."
+            } 
+        else:
+            context = {
+                "status": "success",
+                "message": "Map %s has been saved." % title,
+            }
+        return JSONResponse(context)
+
+
+class SaveMapView(FormView):
+    form_class =  SavedMapForm
+    # http_method_names = [u'post']
+    # template_name = "accounts/report_error_form.html"
+
+    def form_valid(self, form):
+        form.instance.profile = self.request.user.get_profile()
+        form.instance.save()
+        title = form.cleaned_data['title']
+        context = {
+            "status": "success",
+            "message": "Map %s has been saved." % title,
+        }
+        return JSONResponse(context)
+
+    def form_invalid(self, form):
+        context = errors_to_dict(form.errors)
+        context["status"] = "failed"
+        return JSONResponse(context)

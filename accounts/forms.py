@@ -5,6 +5,7 @@ from django.utils.translation import ugettext as _
 from crispy_forms.helper import FormHelper
 from crispy_forms_foundation.layout import Layout, Fieldset, Field, RowFluid, Row, Column, Div, ButtonHolder, Submit, HTML
 
+from accounts.models import SavedMap
 
 class RegistrationForm(SignupFormOnlyEmail):
     first_name = forms.CharField(label=_(u'First name'),
@@ -54,3 +55,12 @@ class SigninForm(AuthenticationForm):
             HTML('<input type="hidden" name="next" value="/#profile">'),
             ButtonHolder(Submit('submit', _("Sign In"), css_class="secondary expand")),
         )
+
+
+class SavedMapForm(forms.ModelForm):
+    class Meta:
+        model = SavedMap
+        exclude = ('profile', 'created_at', )
+        widgets = {
+            'map_filters': forms.HiddenInput(),
+        }

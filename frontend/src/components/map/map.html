@@ -42,5 +42,22 @@
             </div>
         </div>
     </form>
-    <button class="button" data-bind="click: save">Save</button>
+
+    <div data-bind="visible: ifLoggedIn">
+        <form id="save-form" method="POST" action="/profile/save_map/">
+            <div class="row">
+                <div class="large-12 columns">
+                    <div class="row collapse">
+                        <div class="small-10 columns">
+                            <input type="text" id="id_title" name="title" placeholder="Enter a title to save the map" required>
+                            <input type="hidden" id="id_map_filters" name="map_filters">
+                        </div>
+                        <div class="small-2 columns">
+                            <button type="submit" class="button postfix" data-bind="click: save">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>

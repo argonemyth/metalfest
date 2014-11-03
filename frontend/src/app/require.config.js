@@ -16,7 +16,7 @@ var require = {
         "underscore":           "lib/underscore/underscore-min",
         "mousewheel":           "lib/jScrollPane/jquery.mousewheel",
         "jscrollpane":          "lib/jScrollPane/jquery.jscrollpane.min",
-        "human":                "bower_modules/humane-js/humane.min",
+        "humane":                "bower_modules/humane-js/humane.min",
         "validation":           "bower_modules/jquery.validation/dist/jquery.validate.min",
         "knockout":             "bower_modules/knockout/dist/knockout",
         "knockout-projections": "bower_modules/knockout-projections/dist/knockout-projections",

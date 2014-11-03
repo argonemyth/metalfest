@@ -7,6 +7,9 @@
 {% block content %}
     <div id="page" data-bind="component: { name: route().page, params: route }"></div>
     <map></map>
+    {% if user and not user.is_anonymous %}
+        <div id="user_loggedin" class="hidden"></div>
+    {% endif %}
     {% comment %}
         
     <div id="map" data-bind="map:festivals"></div>

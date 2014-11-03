@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'underscore', 'text!./map.html', 'foundation', 'slider', 'select2', 'human', 'validation', 'jscrollpane'], function($, ko, _, mapTemplate) {
+define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'foundation', 'slider', 'select2', 'validation', 'jscrollpane'], function($, ko, _, humane, mapTemplate) {
 
 
     $(document).ready(function () {   
@@ -21,8 +21,8 @@ define(['jquery', 'knockout', 'underscore', 'text!./map.html', 'foundation', 'sl
         });
 
     // Custom humane notifier
-    // humane.info = humane.spawn({ addnCls: 'info', timeout: 3000, clickToClose: true})
-    // humane.error = humane.spawn({ addnCls: 'error', timeout: 3000, clickToClose: true })
+    humane.info = humane.spawn({ addnCls: 'info', timeout: 3000, clickToClose: true})
+    humane.error = humane.spawn({ addnCls: 'error', timeout: 3000, clickToClose: true })
     });
 
 
@@ -296,6 +296,13 @@ define(['jquery', 'knockout', 'underscore', 'text!./map.html', 'foundation', 'sl
 
     function FestivalMapViewModel() {
         var self = this;
+
+        // Check if the user logged in
+        if ($("#user_loggedin").length==1) {
+            self.ifLoggedIn = ko.observable(true);
+        } else {
+            self.ifLoggedIn = ko.observable(false);
+        }
 
         // Fesivals && events
         self.festivals = ko.observableArray();
@@ -866,9 +873,33 @@ define(['jquery', 'knockout', 'underscore', 'text!./map.html', 'foundation', 'sl
     ];
 
     FestivalMapViewModel.prototype.save = function() {
-        console.log(this.selected_bands_str());
-        console.log(this.selected_genres_str());
-        console.log(this.selected_countries_str());
+        var bands = this.selected_bands_str(); 
+        var genres = this.selected_genres_str(); 
+        var countries = this.selected_countries_str(); 
+        if (bands || genres || countries) {
+            var map_filters = {};
+            if (bands) map_filters["bands"] = bands;
+            if (genres) map_filters["genres"] = genres;
+            if (countries) map_filters["countries"] = countries;
+            $("#id_map_filters").val(JSON.stringify(map_filters));
+
+            var $form = $("#save-form");
+
+            if ( $form.valid() ) {
+                // console.log("Form is valie, going to submit");
+                var post_req = $.post( $form.attr("action"), $form.serialize() );
+
+                post_req.done(function( data ) {
+                    $("#id_title").val('');
+                    if (data.status === "success") {
+                        humane.info(data.message);
+                    } else {
+                        humane.error(data.message);
+                    }
+                });
+            }
+
+        }
     };
     return { viewModel: FestivalMapViewModel, template: mapTemplate };
 });
