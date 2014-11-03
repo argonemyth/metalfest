@@ -17,6 +17,7 @@ class Migration(SchemaMigration):
             ('gender', self.gf('django.db.models.fields.PositiveSmallIntegerField')(null=True, blank=True)),
             ('twitter_id', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
             ('facebook_id', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
+            ('profile_image_url', self.gf('django.db.models.fields.URLField')(max_length=200, null=True, blank=True)),
         ))
         db.send_create_signal(u'accounts', ['Profile'])
 
@@ -34,6 +35,7 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'mugshot': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
             'privacy': ('django.db.models.fields.CharField', [], {'default': "'registered'", 'max_length': '15'}),
+            'profile_image_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'twitter_id': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'profile'", 'unique': 'True', 'to': u"orm['auth.User']"})
         },

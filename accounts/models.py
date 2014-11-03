@@ -96,3 +96,24 @@ class Profile(UserenaBaseProfile):
 def send_welcome_email(sender, instance, created, **kwargs):
     if created:
         instance.send_welcome_email()
+
+
+class SavedMap(models.Model):
+    """
+    This model will record each user's saved map.
+    ```map_filters``` is a JSON string in a text field.
+    """
+    profile = models.ForeignKey(Profile, related_name='saved_maps')
+    title = models.CharField(max_length=100)
+    map_filters = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('saved map')
+        verbose_name_plural = _('saved maps')
+        unique_together = ('profile', 'title')
+        get_latest_by = 'created_at'
+        ordering = ['-created_at']
+
+    def __unicode__(self):
+        return self.title

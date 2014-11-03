@@ -864,5 +864,11 @@ define(['jquery', 'knockout', 'underscore', 'text!./map.html', 'foundation', 'sl
             ]
         }
     ];
+
+    FestivalMapViewModel.prototype.save = function() {
+        console.log(this.selected_bands_str());
+        console.log(this.selected_genres_str());
+        console.log(this.selected_countries_str());
+    };
     return { viewModel: FestivalMapViewModel, template: mapTemplate };
 });

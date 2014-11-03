@@ -8,15 +8,26 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Profile.profile_image_url'
-        db.add_column(u'accounts_profile', 'profile_image_url',
-                      self.gf('django.db.models.fields.URLField')(max_length=200, null=True, blank=True),
-                      keep_default=False)
+        # Adding model 'SavedMap'
+        db.create_table(u'accounts_savedmap', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('profile', self.gf('django.db.models.fields.related.ForeignKey')(related_name='saved_maps', to=orm['accounts.Profile'])),
+            ('title', self.gf('django.db.models.fields.CharField')(max_length=100)),
+            ('map_filters', self.gf('django.db.models.fields.TextField')()),
+            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+        ))
+        db.send_create_signal(u'accounts', ['SavedMap'])
+
+        # Adding unique constraint on 'SavedMap', fields ['profile', 'title']
+        db.create_unique(u'accounts_savedmap', ['profile_id', 'title'])
 
 
     def backwards(self, orm):
-        # Deleting field 'Profile.profile_image_url'
-        db.delete_column(u'accounts_profile', 'profile_image_url')
+        # Removing unique constraint on 'SavedMap', fields ['profile', 'title']
+        db.delete_unique(u'accounts_savedmap', ['profile_id', 'title'])
+
+        # Deleting model 'SavedMap'
+        db.delete_table(u'accounts_savedmap')
 
 
     models = {
@@ -30,6 +41,14 @@ class Migration(SchemaMigration):
             'profile_image_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'twitter_id': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'profile'", 'unique': 'True', 'to': u"orm['auth.User']"})
+        },
+        u'accounts.savedmap': {
+            'Meta': {'ordering': "['-created_at']", 'unique_together': "(('profile', 'title'),)", 'object_name': 'SavedMap'},
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'map_filters': ('django.db.models.fields.TextField', [], {}),
+            'profile': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'saved_maps'", 'to': u"orm['accounts.Profile']"}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         u'auth.group': {
             'Meta': {'object_name': 'Group'},
