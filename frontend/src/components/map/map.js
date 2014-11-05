@@ -308,6 +308,10 @@ define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'founda
         self.festivals = ko.observableArray();
         self.events = ko.observableArray(); //inside of the array, it's a object
 
+        // Saved Maps
+        self.saved_maps = ko.observableArray();
+        self.selected_map = ko.observable();
+
         // Filtering options
         // self.min_date = ko.observable(new Date());
         var today = new Date();
@@ -550,12 +554,44 @@ define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'founda
             // console.log(countries);
         });
 
+        // Load selected map
+        self.selected_map.subscribe(function(map) {
+            // Need to turn strings to the array
+            console.log(map);
+            var filters = JSON.parse(map.map_filters); 
+            for (var type in filters) {
+                console.log(type);
+                // this.selected_bands_str("Arch Enemy");
+                self['selected_' + type + '_str'](filters[type]);
+                var type_array = filters[type].split(',');
+                console.log(type_array);
+                var new_array = new Array(type_array.length);
+                // var new_array = [];
+                for (i=0; i<type_array.length; i++) {
+                    console.log(i + ": " + type_array[i]);
+                    new_array[i] = {"id": type_array[i], "text": type_array[i]};
+                }
+                console.log(new_array);
+                $('#' + type + '_selector').select2("data", new_array);
+                console.log([{id: "Arch Enemy", text: "Arch Enemy"}, {id: "Deceased", text: "Deceased"}]);
+            }
+        });
+
         // Load initial festivals from server, convert it to Task instances, then populate self.festivals
         $.getJSON("/metalmap/all/", function(data) {
             var festival_list = data['festivals']
             var mappedFestivals = $.map(festival_list, function(item) { return new Festival(item) });
             self.festivals(mappedFestivals);
             $("#loader").hide();
+        });
+
+        // Load saved map from server.
+        $.getJSON("/profile/my_maps/", function(data) {
+            for(var i = 0; i < data.length; i++) {
+                var my_map = data[i];
+                self.saved_maps.push(my_map);
+                // console.log(my_map.title);
+            }
         });
 
         // Show all festival markers
@@ -901,5 +937,11 @@ define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'founda
 
         }
     };
+
+    FestivalMapViewModel.prototype.load = function() {
+        this.selected_bands_str("Arch Enemy");
+        $('#bands_selector').select2("data", [{id: "Arch Enemy", text: "Arch Enemy"}]);
+    }
+
     return { viewModel: FestivalMapViewModel, template: mapTemplate };
 });

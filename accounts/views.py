@@ -8,14 +8,16 @@ from django.views.decorators.csrf import csrf_exempt
 
 import json
 
+from rest_framework import generics, filters
 from userena.decorators import secure_required
 from userena import signals as userena_signals
 from userena import settings as userena_settings
 
-from accounts.models import Profile
+from accounts.models import Profile, SavedMap
 from accounts.forms import SigninForm, RegistrationForm, SavedMapForm
 from accounts.utils import errors_to_json, errors_to_dict
 from metalmap.views import JSONResponse
+from accounts.serializers import SavedMapSerializer
 
 
 def my_profile(request, extra_context=None, **kwargs):
@@ -145,3 +147,22 @@ class SaveMapView(FormView):
         context = errors_to_dict(form.errors)
         context["status"] = "failed"
         return JSONResponse(context)
+
+
+class SavedMapListView(generics.ListAPIView):
+    # queryset = Artist.objects.all()
+    serializer_class = SavedMapSerializer 
+    # filter_backends = (filters.SearchFilter,)
+    # search_fields = ('^name',)
+
+    def get_queryset(self):
+        """
+        This view should return a list of all the saved map 
+        for the currently authenticated user.
+        """
+        try:
+            profile = self.request.user.get_profile()
+        except Exception as e:
+            return SavedMap.objects.filter(profile=None)
+        else:
+            return SavedMap.objects.filter(profile=profile)

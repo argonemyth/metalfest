@@ -2,16 +2,26 @@
 
 <div id="loader">
     <i class="fa fa-refresh fa-spin fa-3x"></i>
-    <p>{% trans "the map will be ready shortly..." %}</p>
+    <p>the map will be ready shortly...</p>
 </div>
 
 <div id="overlay" class="panel" data-bind='animatedVisible: displayOverlay'>
+    <div class="row">
+        <div class="large-12 columns">
+            <select data-bind="options: saved_maps,
+                               optionsText: 'title',
+                               value: selected_map,
+                               optionsCaption: 'Your sved map...'"></select>
+        </div>
+    </div>
+
     <form id="filter">
         <div class="row">
             <div class="small-12 columns">
                 <h3>Find your 2014 metal festivals:</h3>
             </div>
         </div>
+
         <div class="row">
             <div class="small-12 columns">
                 <label>Your fav. bands
@@ -60,4 +70,5 @@
             </div>
         </form>
     </div>
+    <button class="button" data-bind="click: load">Load</button>
 </div>
