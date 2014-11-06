@@ -482,6 +482,17 @@ class Festival(Event):
     def if_past(self):
         """check if it's a past event"""
         today = date.today()
+        if not self.end_date and self.lastfm_id:
+            network = pylast.LastFMNetwork(api_key = settings.LASTFM_API_KEY,
+                                           api_secret = settings.LASTFM_API_SECRET)
+            e = pylast.Event(self.lastfm_id, network)
+            end_d = e.get_end_date()
+            if not end_d:
+                end_d = e.get_start_date()
+            if end_d:
+                self.end_date = datetime.datetime.strptime(
+                                    end_d, '%a, %d %b %Y %H:%M:%S').date()
+
         if self.end_date and self.end_date < today:
             return True
         return False
@@ -608,7 +619,7 @@ class Festival(Event):
             if self.end_date is None:
                 # If there is no end date, it's the same as start date
                 end_d = e.get_end_date()
-                if not end_d: 
+                if not end_d:
                     end_d = e.get_start_date()
 
                 if end_d:
@@ -660,7 +671,7 @@ class Festival(Event):
 
     def if_metal(self):
         """
-        Check if this festival is metal festival or not.
+        Check if this festival is metal festival or not
         Criterial: if less than half of the bands are non-metal bands, it's not
         a metal festival!
         """
@@ -728,6 +739,63 @@ class Festival(Event):
                 return True
         else:
             return None 
+
+
+    def if_metal_lastfm(self):
+        """
+        Check if this festival is metal festival or not based on the data from
+        lastfm. It will just return True or False or None.
+
+        Criterial: if less than half of the bands are non-metal bands, it's not
+        a metal festival!
+        """
+        criteria = 0.46 # we lower the criteria in case
+
+        lineup = []
+        if not self.lastfm_id:
+            print "=== %s (#%s) doesn't have lastfm_id, quitting" % (self.title, self.id)
+            return None
+
+
+        network = pylast.LastFMNetwork(api_key = settings.LASTFM_API_KEY,
+                                       api_secret = settings.LASTFM_API_SECRET)
+        try:
+            festival = pylast.Event(self.lastfm_id, network)
+            artists = festival.get_artists()
+        except pylast.WSError:
+            print "=== %s (#%s) pylast error, quitting" % (self.title, self.id)
+            return None
+
+        total_bands = len(artists)
+
+        if total_bands == 0:
+            return False
+
+        metal_bands = 0
+        for a in artists:
+            tags = a.get_top_tags()
+            # If no tags, count this band as non-metal band and remove it from total_bands.
+            if len(tags) == 0:
+                total_bands -= 1
+                # print "=== The band %s has no tag" % (a.name)
+                continue
+
+            metal_tags = [t for t in tags if 'metal' in t]
+            # print "=== The band %s info: %s" % (a.name, metal_tags)
+            if metal_tags:
+                metal_bands += 1.0
+
+        print "=== There are %s metal bands out of %s total bands" % (metal_bands, total_bands)
+        if (metal_bands / total_bands) < criteria:
+            if self.is_metal == True:
+                self.is_metal = False
+                self.save()
+            return False
+        else:
+            if self.is_metal == False:
+                self.is_metal = True
+                self.save()
+            return True
 
 
 class Gig(Event):
