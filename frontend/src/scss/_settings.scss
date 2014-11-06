@@ -578,6 +578,7 @@ $input-focus-border-color: scale-color($body-bg, $lightness: -40%);
 
 // Select variables
 // $select-bg-color: #fafafa;
+$select-bg-color: $body-bg;
 // $select-hover-bg-color: scale-color($select-bg-color, $lightness: -3%);
 
 // Inline Lists
