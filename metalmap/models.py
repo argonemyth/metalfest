@@ -767,7 +767,7 @@ class Festival(Event):
         try:
             festival = pylast.Event(self.lastfm_id, network)
             artists = festival.get_artists()
-        except pylast.WSError:
+        except (pylast.WSError, pylast.MalformedResponseError):
             print "=== %s (#%s) pylast error, quitting" % (self.title, self.id)
             return None
 
