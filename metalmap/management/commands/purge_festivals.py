@@ -19,7 +19,7 @@ class Command(BaseCommand):
         if len(args) > 0:
             start_id = args[0]
         else:
-            start_id = 1
+            start_id = 0
 
         for festival in Festival.objects.filter(Q(id__gt=start_id),
                                                 Q(start_date__isnull=True),
