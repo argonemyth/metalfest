@@ -19,5 +19,6 @@ class Command(BaseCommand):
                 if options['dryrun']:
                     self.stdout.write("Deleting %s (#%s)" % (festival, festival.id))
                 else:
+                    festval_id = festival.id
                     festival.delete()
-                    self.stdout.write("Deleted %s (#%s)" % (festival, festival.id))
+                    self.stdout.write("Deleted %s (#%s)" % (festival, festval_id))
