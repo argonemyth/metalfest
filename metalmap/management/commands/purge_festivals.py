@@ -24,7 +24,7 @@ class Command(BaseCommand):
         for festival in Festival.objects.filter(Q(id__gt=start_id),
                                                 Q(start_date__isnull=True),
                                                 ).order_by("id"):
-            self.stdout.write("Checking %s (#%s)" % (festival, festival.id))
+            # self.stdout.write("Checking %s (#%s)" % (festival, festival.id))
             if festival.if_past() and ( festival.if_metal_lastfm() == False ):
                 if options['dryrun']:
                     self.stdout.write("Deleting %s (#%s)" % (festival, festival.id))
