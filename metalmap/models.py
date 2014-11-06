@@ -485,8 +485,13 @@ class Festival(Event):
         if not self.end_date and self.lastfm_id:
             network = pylast.LastFMNetwork(api_key = settings.LASTFM_API_KEY,
                                            api_secret = settings.LASTFM_API_SECRET)
-            e = pylast.Event(self.lastfm_id, network)
-            end_d = e.get_end_date()
+            try:
+                e = pylast.Event(self.lastfm_id, network)
+                end_d = e.get_end_date()
+            except pylast.WSError:
+                print "=== %s (#%s) pylast error, if_past will return False" % (self.title, self.id)
+                return False
+
             if not end_d:
                 end_d = e.get_start_date()
             if end_d:
