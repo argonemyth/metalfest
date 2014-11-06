@@ -488,7 +488,7 @@ class Festival(Event):
             try:
                 e = pylast.Event(self.lastfm_id, network)
                 end_d = e.get_end_date()
-            except pylast.WSError:
+            except (pylast.WSError, pylast.MalformedResponseError):
                 print "=== %s (#%s) pylast error, if_past will return False" % (self.title, self.id)
                 return False
 
