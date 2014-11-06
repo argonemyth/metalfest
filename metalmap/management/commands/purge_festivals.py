@@ -14,8 +14,7 @@ class Command(BaseCommand):
     )
 
     def handle(self, *args, **options):
-        for festival in Festival.objects.filter(start_date__isnull=True):
-            self.stdout.write("Checking %s (#%s)" % (festival, festival.id))
+        for festival in Festival.objects.filter(start_date__isnull=True).order_by("id"):
             if festival.if_past() and ( festival.if_metal_lastfm() == False ):
                 if options['dryrun']:
                     self.stdout.write("Deleting %s (#%s)" % (festival, festival.id))

@@ -785,7 +785,7 @@ class Festival(Event):
             if metal_tags:
                 metal_bands += 1.0
 
-        print "=== There are %s metal bands out of %s total bands" % (metal_bands, total_bands)
+        # print "=== There are %s metal bands out of %s total bands" % (metal_bands, total_bands)
         if (metal_bands / total_bands) < criteria:
             if self.is_metal == True:
                 self.is_metal = False
