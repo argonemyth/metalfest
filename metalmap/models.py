@@ -639,13 +639,13 @@ class Festival(Event):
             # Get Website
             if self.url is None:
                 website = e.get_website()
-                print "Website: ", website
+                # print "Website: ", website
                 if website is not None:
                     if ("www.facebook.com" in website) and (website != self.facebook_url):
-                        print "It's facebook"
+                        # print "It's facebook"
                         self.facebook_url = website
                     else:
-                        print "It's normal url"
+                        # print "It's normal url"
                         self.url = website
 
             # Get Lineup - this part is not tested
