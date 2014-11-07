@@ -778,7 +778,12 @@ class Festival(Event):
 
         metal_bands = 0
         for a in artists:
-            tags = a.get_top_tags()
+            try:
+                tags = a.get_top_tags()
+            except (pylast.WSError, pylast.MalformedResponseError):
+                # We will treat it like the band doesn't have any tags
+                tags = []
+
             # If no tags, count this band as non-metal band and remove it from total_bands.
             if len(tags) == 0:
                 total_bands -= 1
