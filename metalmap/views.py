@@ -138,11 +138,44 @@ class FestivalJSONList(JSONResponseMixin, BaseListView):
     context_object_name = 'festivals'
 
     def get_queryset(self):
+        """
+        Normally, start_date and end_date would be given via a get query.
+        By default, the app will try to get 2 months before today as
+        start_date and 8 months after today as end_date. If no date queries
+        are given, we need to supply the festival lists whinin the default
+        date range.
+        """
+        start_date = self.request.GET.get('start_date', None)
+        end_date = self.request.GET.get('end_date', None)
+
+        if start_date:
+            try:
+                start_date = datetime.datetime.strptime(start_date, '%a %b %d %Y').date()
+            except Exception as e:
+                start_date = datetime.date.today() - datetime.timedelta(days=62)
+        else:
+            # start_date = datetime.date(2014, 1, 1)
+            start_date = datetime.date.today() - datetime.timedelta(days=62)
+
+        if end_date:
+            try:
+                end_date = datetime.datetime.strptime(end_date, '%a %b %d %Y').date()
+            except Exception as e:
+                end_date = start_date + datetime.timedelta(days=366)
+                
+            if end_date < start_date:
+                end_date = start_date + datetime.timedelta(days=366)
+        else:
+            # end_date = datetime.date(2014, 12, 31)
+            end_date = start_date + datetime.timedelta(days=366)
+
+        # print "Start date: ", start_date, ' ', end_date
+
         all_festivals = super(FestivalJSONList, self).get_queryset()
         return all_festivals.filter(Q(latitude__isnull=False), 
                                     Q(longitude__isnull=False),
-                                    Q(start_date__gte=datetime.date(2014, 1, 1)),
-                                    Q(start_date__lte=datetime.date(2014, 12, 31)))
+                                    Q(start_date__gte=start_date),
+                                    Q(start_date__lte=end_date))
 
 
 class FestivalDetail(AjaxResponseMixin, DetailView):
