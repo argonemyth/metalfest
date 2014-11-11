@@ -180,7 +180,7 @@ define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'founda
                     var artist_list = $(boxText).find(".artists");
                     if ( $(artist_list).length ) $(artist_list).jScrollPane();
                     // bind 
-                    ko.applyBindings(viewModel, boxText);
+                    ko.applyBindings(FestivalMapViewModel, boxText);
                     // Need to get abide working for dynamically loaded form.
                     // Not sure if the callidng foundation() is the correct way to go
                     // but Abide works now.
