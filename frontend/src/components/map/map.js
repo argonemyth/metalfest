@@ -855,8 +855,6 @@ define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'founda
     ko.bindingHandlers.daterange = {
         init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
             // var today = new Date();
-            console.log(date_range);
-            console.log(viewModel);
             $(element).dateRangeSlider({
                 bounds: {
                     // min: new Date(today.getFullYear(), 0, 1),
