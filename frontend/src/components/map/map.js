@@ -1,24 +1,39 @@
 define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'foundation', 'slider', 'select2', 'validation', 'jscrollpane'], function($, ko, _, humane, mapTemplate) {
+    function defaultDateRange() {
+        var minDate = new Date();
+        var maxDate = new Date();
+        minDate.setMonth(minDate.getMonth() - 2); 
+        maxDate.setMonth(maxDate.getMonth() + 10);
+        return {'minDate': minDate, 'maxDate': maxDate,
+                'minDateStr': minDate.toDateString(),
+                'maxDateStr': maxDate.toDateString()};
+    }
 
+    var date_range = defaultDateRange();
 
     $(document).ready(function () {   
         // Init date slider
-        var today = new Date();
-        $("#slider").dateRangeSlider({
-            bounds: {
-                min: new Date(today.getFullYear(), 0, 1),
-                max: new Date(today.getFullYear(), 11, 31)
-            },
-            defaultValues: {
-                // min: today,
-                min: new Date(today.getFullYear(), 0, 1),
-                max: new Date(today.getFullYear(), 11, 31)
-            }
-        }).on("valuesChanged", function(e, data){
-            // viewModel.filterMarkersByDates(data.values.min, data.values.max);
-            viewModel.min_date(new Date(data.values.min));
-            viewModel.max_date(new Date(data.values.max));
-        });
+        // var today = new Date();
+        // $("#slider").dateRangeSlider({
+        //     bounds: {
+        //         // min: new Date(today.getFullYear(), 0, 1),
+        //         // max: new Date(today.getFullYear(), 11, 31)
+        //         min: date_range.minDate,
+        //         max: date_range.maxDate
+        //     },
+        //     defaultValues: {
+        //         // min: new Date(today.getFullYear(), 0, 1),
+        //         // max: new Date(today.getFullYear(), 11, 31)
+        //         min: date_range.minDate,
+        //         max: date_range.maxDate
+        //     }
+        // }).on("valuesChanged", function(e, data){
+        //     // viewModel.filterMarkersByDates(data.values.min, data.values.max);
+        //     // viewModel.min_date(new Date(data.values.min));
+        //     // viewModel.max_date(new Date(data.values.max));
+        //     FestivalMapViewModel.min_date(new Date(data.values.min));
+        //     FestivalMapViewModel.max_date(new Date(data.values.max));
+        // });
 
     // Custom humane notifier
     humane.info = humane.spawn({ addnCls: 'info', timeout: 3000, clickToClose: true})
@@ -578,7 +593,7 @@ define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'founda
         });
 
         // Load initial festivals from server, convert it to Task instances, then populate self.festivals
-        $.getJSON("/metalmap/all/", function(data) {
+        $.getJSON("/metalmap/all/?start_date=" + date_range.minDateStr + "&end_date=" + date_range.maxDateStr, function(data) {
             var festival_list = data['festivals']
             var mappedFestivals = $.map(festival_list, function(item) { return new Festival(item) });
             self.festivals(mappedFestivals);
@@ -839,16 +854,21 @@ define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'founda
     // date range bind
     ko.bindingHandlers.daterange = {
         init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-            var today = new Date();
+            // var today = new Date();
+            console.log(date_range);
+            console.log(viewModel);
             $(element).dateRangeSlider({
                 bounds: {
-                    min: new Date(today.getFullYear(), 0, 1),
-                    max: new Date(today.getFullYear(), 11, 31)
+                    // min: new Date(today.getFullYear(), 0, 1),
+                    // max: new Date(today.getFullYear(), 11, 31)
+                    min: date_range.minDate,
+                    max: date_range.maxDate
                 },
                 defaultValues: {
-                    // min: today,
-                    min: new Date(today.getFullYear(), 0, 1),
-                    max: new Date(today.getFullYear(), 11, 31)
+                    // min: new Date(today.getFullYear(), 0, 1),
+                    // max: new Date(today.getFullYear(), 11, 31)
+                    min: date_range.minDate,
+                    max: date_range.maxDate
                 }
             }).on("valuesChanged", function(e, data){
                 // viewModel.filterMarkersByDates(data.values.min, data.values.max);
