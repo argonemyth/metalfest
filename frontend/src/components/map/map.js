@@ -574,6 +574,20 @@ define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'founda
             // Need to turn strings to the array
             console.log(map);
             var filters = JSON.parse(map.map_filters); 
+            var minDate = filters['min_date'];
+            delete filters['min_date'];
+            var maxDate = filters['max_date'];
+            delete filters['max_date'];
+            console.log(filters);  
+
+            if (minDate && maxDate) { 
+                console.log("changing min & max date");
+                $("#slider").dateRangeSlider("values",
+                    new Date(Date.parse(minDate)),
+                    new Date(Date.parse(maxDate))
+                );
+            }
+
             for (var type in filters) {
                 console.log(type);
                 // this.selected_bands_str("Arch Enemy");
@@ -588,8 +602,8 @@ define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'founda
                 }
                 console.log(new_array);
                 $('#' + type + '_selector').select2("data", new_array);
-                console.log([{id: "Arch Enemy", text: "Arch Enemy"}, {id: "Deceased", text: "Deceased"}]);
             }
+
         });
 
         // Load initial festivals from server, convert it to Task instances, then populate self.festivals
@@ -870,7 +884,6 @@ define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'founda
                 }
             }).on("valuesChanged", function(e, data){
                 // viewModel.filterMarkersByDates(data.values.min, data.values.max);
-                console.log(data);
                 viewModel.min_date(new Date(data.values.min));
                 viewModel.max_date(new Date(data.values.max));
             });
@@ -930,11 +943,17 @@ define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'founda
         var bands = this.selected_bands_str(); 
         var genres = this.selected_genres_str(); 
         var countries = this.selected_countries_str(); 
-        if (bands || genres || countries) {
+        var minDate = this.min_date().toDateString();
+        var maxDate = this.max_date().toDateString();
+
+        if (bands || genres || countries || minDate || maxDate) {
             var map_filters = {};
             if (bands) map_filters["bands"] = bands;
             if (genres) map_filters["genres"] = genres;
             if (countries) map_filters["countries"] = countries;
+            map_filters["min_date"] = minDate;
+            map_filters["max_date"] = maxDate;
+            console.log(map_filters);
             $("#id_map_filters").val(JSON.stringify(map_filters));
 
             var $form = $("#save-form");
