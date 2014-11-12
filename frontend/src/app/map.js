@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'foundation', 'slider', 'select2', 'validation', 'jscrollpane'], function($, ko, _, humane, mapTemplate) {
+define(['jquery', 'knockout', 'underscore', 'humane', 'foundation', 'slider', 'select2', 'validation', 'jscrollpane'], function($, ko, _, humane) {
     function defaultDateRange() {
         var minDate = new Date();
         var maxDate = new Date();
@@ -11,34 +11,9 @@ define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'founda
 
     var date_range = defaultDateRange();
 
-    $(document).ready(function () {   
-        // Init date slider
-        // var today = new Date();
-        // $("#slider").dateRangeSlider({
-        //     bounds: {
-        //         // min: new Date(today.getFullYear(), 0, 1),
-        //         // max: new Date(today.getFullYear(), 11, 31)
-        //         min: date_range.minDate,
-        //         max: date_range.maxDate
-        //     },
-        //     defaultValues: {
-        //         // min: new Date(today.getFullYear(), 0, 1),
-        //         // max: new Date(today.getFullYear(), 11, 31)
-        //         min: date_range.minDate,
-        //         max: date_range.maxDate
-        //     }
-        // }).on("valuesChanged", function(e, data){
-        //     // viewModel.filterMarkersByDates(data.values.min, data.values.max);
-        //     // viewModel.min_date(new Date(data.values.min));
-        //     // viewModel.max_date(new Date(data.values.max));
-        //     FestivalMapViewModel.min_date(new Date(data.values.min));
-        //     FestivalMapViewModel.max_date(new Date(data.values.max));
-        // });
-
     // Custom humane notifier
     humane.info = humane.spawn({ addnCls: 'info', timeout: 3000, clickToClose: true})
     humane.error = humane.spawn({ addnCls: 'error', timeout: 3000, clickToClose: true })
-    });
 
 
     var google_map = {};
@@ -179,8 +154,8 @@ define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'founda
                     // A hack to make sure infobox loadeded the content
                     var artist_list = $(boxText).find(".artists");
                     if ( $(artist_list).length ) $(artist_list).jScrollPane();
-                    // binding for error for 
-                    // ko.applyBindings(FestivalMapViewModel, boxText);
+                    // binding for error form. 
+                    ko.applyBindings(mapViewModel, boxText);
                     // Need to get abide working for dynamically loaded form.
                     // Not sure if the callidng foundation() is the correct way to go
                     // but Abide works now.
@@ -816,9 +791,6 @@ define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'founda
         }
     };
 
-    // var viewModel = new FestivalMapViewModel();
-
-
 
     // Here's a custom visible bind that adds jQuery slide animation 
     ko.bindingHandlers.animatedVisible = {
@@ -995,10 +967,7 @@ define(['jquery', 'knockout', 'underscore', 'humane', 'text!./map.html', 'founda
         }
     };
 
-    FestivalMapViewModel.prototype.load = function() {
-        this.selected_bands_str("Arch Enemy");
-        $('#bands_selector').select2("data", [{id: "Arch Enemy", text: "Arch Enemy"}]);
-    }
+    var mapViewModel = new FestivalMapViewModel();
 
-    return { viewModel: FestivalMapViewModel, template: mapTemplate };
+    return { viewModel: mapViewModel };
 });

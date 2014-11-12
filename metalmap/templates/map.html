@@ -5,12 +5,11 @@
 {% block bodyid %}fullscreen{% endblock bodyid %}
 
 {% block content %}
-    <div id="page" data-bind="component: { name: route().page, params: route }"></div>
-    <map></map>
+    {# <div id="page" data-bind="component: { name: route().page, params: route }"></div> #}
+    {# <map></map> #}
     {% if user and not user.is_anonymous %}
         <div id="user_loggedin" class="hidden"></div>
     {% endif %}
-    {% comment %}
         
     <div id="map" data-bind="map:festivals"></div>
     <div id="loader">
@@ -19,6 +18,14 @@
     </div>
 
     <div id="overlay" class="panel" data-bind='animatedVisible: displayOverlay'>
+        <div class="row">
+            <div class="large-12 columns">
+                <select data-bind="options: saved_maps,
+                                   optionsText: 'title',
+                                   value: selected_map,
+                                   optionsCaption: 'Your sved map...'"></select>
+            </div>
+        </div>
         {% if user and not user.is_anonymous %}
             <h4>Hello {{ user.get_full_name|default:user.username }}</h4>
             {# <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a> #}
@@ -36,8 +43,7 @@
             <div class="row">
                 <div class="small-12 columns">
                     <label>{% trans "Your fav. bands" %}
-                        {# <span id="reset_bands" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'bands')"></i><span> #}
-                        <span id="reset_bands" class="pull-right"><i class="fa fa-times-circle"></i><span>
+                        <span id="reset_bands" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'bands')"></i><span>
                     </label>
                     {# <select multiple="true" data-bind="selectedOptions: selected_bands, value: selected_bands, lookupKey: name, select2: { minimumInputLength: 1, query: bandQuery }"></select> #}
                     <input type="hidden" id="bands_selector" data-bind="value: selected_bands_str, select2: { minimumInputLength: 2,  multiple: true, query: bandQuery }">
@@ -46,8 +52,7 @@
             <div class="row">
                 <div class="small-12 columns">
                     <label>{% trans "Your fav. genres" %}
-                        {# <span id="reset_genres" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'genres')"></i><span> #}
-                        <span id="reset_genres" class="pull-right"><i class="fa fa-times-circle"></i><span>
+                        <span id="reset_genres" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'genres')"></i><span>
                     </label>
                     {# <select multiple="true" data-bind="selectedOptions: selected_genres, options: genres, select2: { }"></select> #}
                     <input type="hidden" id="genres_selector" data-bind="value: selected_genres_str, select2: { minimumInputLength: 2,  multiple: true, query: genreQuery }">
@@ -56,8 +61,7 @@
             <div class="row">
                 <div class="small-12 columns">
                     <label>{% trans "Filter by countries" %}
-                        {# <span id="reset_countries" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'countries')"></i><span> #}
-                        <span id="reset_countries" class="pull-right"><i class="fa fa-times-circle"></i><span>
+                        <span id="reset_countries" class="pull-right"><i class="fa fa-times-circle" data-bind="click: reset.bind($data, 'countries')"></i><span>
                     </label>
                     {# <select multiple="true" data-bind="selectedOptions: selected_countries, options: countries, select2: { }"></select> #}
                     <input type="hidden" id="countries_selector" data-bind="value: selected_countries_str, select2: { minimumInputLength: 2,  multiple: true, query: countryQuery }">
@@ -66,12 +70,32 @@
             <div class="row">
                 <div class="small-12 columns">
                     {# <label>{% trans "Filter by dates" %}</label> #}
-                    <div id="slider"></div>
+                    <div id="slider" data-bind="daterange: true"></div>
                 </div>
             </div>
         </form>
 
+        {% if user and not user.is_anonymous %}
+        {# <div data-bind="visible: ifLoggedIn"> #}
+            <form id="save-form" method="POST" action="/profile/save_map/">
+                <div class="row">
+                    <div class="large-12 columns">
+                        <div class="row collapse">
+                            <div class="small-10 columns">
+                                <input type="text" id="id_title" name="title" placeholder="Enter a title to save the map" required>
+                                <input type="hidden" id="id_map_filters" name="map_filters">
+                            </div>
+                            <div class="small-2 columns">
+                                <button type="submit" class="button postfix" data-bind="click: save">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        {% endif %}
+        {# </div> #}
 
+        {% comment %}
         <div id="legend" class="row">
             <div class="small-12 columns">
                 {# <div id="legend"> #}
@@ -132,8 +156,8 @@
             <a id="hide-overlay-button" class="pull-right" data-bind='click: hideOverlay' href="#">[-]</a>
             <a id="show-overlay-button" class="pull-right" data-bind='click: showOverlay' href="#">[+]</a>
         </div>
+        {% endcomment %}
     </div>
-    {% endcomment %}
 
     {% comment %}
     <div id="logo" class="panel" data-bind='click: showOverlay'>
